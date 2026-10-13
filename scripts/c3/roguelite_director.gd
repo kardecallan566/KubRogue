@@ -18,6 +18,7 @@ var elite_spawned := false
 var elite_resolved := false
 var boss_actor_id := -1
 var wave_start_duration := 0.0
+var stability_cap := INITIAL_STABILITY
 
 func _init(upgrades = null) -> void:
     waves = C3_WAVES.duplicate(true)
@@ -26,6 +27,7 @@ func _init(upgrades = null) -> void:
 
 func start_run() -> void:
     super.start_run()
+    stability = stability_cap
     elite_spawned = false
     elite_resolved = false
     boss_actor_id = -1
@@ -103,7 +105,7 @@ func finish_wave() -> Dictionary:
     # Death at stability 0 wins over recovery. Only surviving runs can heal.
     var heal := 0
     if stability > 0:
-        heal = mini(INITIAL_STABILITY - stability, build.stability_heal())
+        heal = mini(maxi(0, stability_cap - stability), build.stability_heal())
         stability += heal
         last_summary["stability"] = stability
         last_summary["healed"] = heal

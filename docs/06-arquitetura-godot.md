@@ -170,3 +170,12 @@ O `HandCursor2D` é um Control dentro de CanvasLayer, com desenho próprio via C
 - `tests/unit/test_c2_rules.gd` e `tests/integration/test_c2_stage.gd` validam crédito único, tipos, limite de spawn, derrota, progresso e reinício.
 
 A prévia C2 tem **duas ondas**, não é a regra final de cinco ondas: C3 substituirá as tabelas e adicionará habilidades/elite; C4 persistirá as moedas com transação atômica. A mão continua em CanvasLayer; o puzzle continua 3D e não usa HP.
+
+## 18. Implementação C4 — persistência e integração
+
+- **Autoload:** `KubeSession` / `scripts/c4/progress_service.gd` gerencia estado durável (`coins`, `meta`, `records`, `tutorial_completed`, `settings`, `run_number` e `paid_ids`). Compra e crédito alteram snapshot candidato e só confirmam após `write_json` retornar sucesso.
+- **Disk adapter:** `scripts/c4/save_store.gd` encapsula `user://kubrogue_progress_v1.json`, limita tamanho, usa escrita `.tmp`, backup `.bak`, recuperação de JSON inválido e fornece caminho parametrizável para testes.
+- **Hub:** `scenes/c4/hub_stage.tscn` e `hub_stage.gd`; navegação, loja 0–3 por upgrade, tutorial contextual, configurações, records e saldo. Nenhuma UI debita moeda diretamente.
+- **Arena:** `scenes/c4/game_stage.tscn` reutiliza as cinco ondas e cubos do C3, aplica melhorias meta, confirma crédito persistente por cubo resolvido e permite voltar à hub após término. Falha de gravação suspende progresso e disponibiliza retentativa.
+- **Regra importante:** um `run_number` é incrementado no início de cada nova run, e `paid_ids` é zerado **somente** nesse momento; reabrir o app durante a mesma run não recredita ID antigo. As cartas e XP são descartadas após sair.
+- **Sem backend:** progresso somente local, sem identidades online, métricas remotas, anúncios ou monetização.
