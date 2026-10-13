@@ -37,6 +37,23 @@ func _run() -> void:
     get_root().add_child(game)
     check(game.save_ready, "persistent run begins")
     check(game.hand is Control and game.effects is Control, "cursor and particles both 2D")
+    check(not game.hand.is_gripping, "cursor starts open")
+    check(game.hand.get_active_texture().get_width() == 128,
+        "open state loads the actual generated transparent PNG")
+    game.hand.follow_pointer(Vector2(240, 185))
+    check((game.hand.position + game.hand.current_hotspot()).distance_to(Vector2(240, 185)) < 0.01,
+        "open cursor hotspot is aligned with mouse")
+    var idle_texture: Texture2D = game.hand.get_active_texture()
+    game.hand.set_gripping(true)
+    check(game.hand.is_gripping and game.hand.get_active_texture() != idle_texture,
+        "grip state switches to distinct generated closed-hand PNG")
+    check((game.hand.position + game.hand.current_hotspot()).distance_to(Vector2(240, 185)) < 0.01,
+        "closed cursor keeps the same mouse hotspot without jump")
+    game.hand.set_gripping(false)
+    check(game.hand.get_active_texture() == idle_texture,
+        "releasing left mouse returns hand to open state")
+    check(game.hand.mouse_filter == Control.MOUSE_FILTER_IGNORE,
+        "hand cursor never blocks clicks on puzzles")
     check(game.effects.mouse_filter == Control.MOUSE_FILTER_IGNORE, "VFX do not intercept controls")
     check(game.time_bar is ProgressBar and game.stability_bar is ProgressBar and game.wave_bar is ProgressBar,
         "HUD has separate wave/time/stability bars")

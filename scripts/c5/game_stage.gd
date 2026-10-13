@@ -13,7 +13,7 @@ const Build = preload("res://scripts/c3/run_build.gd")
 const BossVisual = preload("res://scripts/visual/cube_3x3.gd")
 const CubeBase = preload("res://scripts/visual/cube_3x3.gd")
 const CubeVisual = preload("res://scripts/visual/cube_2x2.gd")
-const HandCursor = preload("res://scripts/visual/hand_cursor_2d.gd")
+const HandCursor = preload("res://scripts/c5/hand_cursor_sprite.gd")
 const ACTION_INTERVAL := 0.34
 const ROTATION_DURATION := 0.26
 const TARGET_RADIUS := 0.95
@@ -712,6 +712,13 @@ func _process(delta: float) -> void:
         ring.visible = playing and int(id) == focused_id
     if is_instance_valid(hand):
         hand.set_targeting(focused_id >= 0)
+        # Keep the fist closed throughout a held rotation, even while the
+        # selected cube is temporarily busy (focused_id may become -1).
+        var grip_now := playing and inside and not on_ui \
+            and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) \
+            and (focused_id >= 0 or action_locked)
+        hand.set_gripping(grip_now)
+        hand.follow_pointer(mouse)
 
     if not playing:
         return

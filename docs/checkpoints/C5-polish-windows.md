@@ -67,3 +67,14 @@ As capturas do Windows mostraram botões desproporcionalmente largos, informaç�
 - **Testar em 1280×720 e 1920×1080**, inclusive oferta de habilidades, três cartões distintos, clique e teclado, navegação de volta à hub, compras e pausa durante escolha.
 
 O C5 continua em rascunho até aprovação do usuário; não substituir o save C4 e não fazer merge automaticamente.
+
+## C5.3 — Troca do cursor 2D por duas imagens aprovadas
+
+Os sprites `assets/c5/hand_open.png` e `assets/c5/hand_grip.png` são adaptações otimizadas das imagens geradas para a mão aberta e fechada. São PNGs transparentes 128×128, ajustados para um cursor pequeno sem o antigo desenho procedural irregular. A cena C5 usa `scripts/c5/hand_cursor_sprite.gd` em vez do cursor procedural das cenas antigas.
+
+- **Sem pressionar:** mão aberta, com dedo apontando; quando há um cubo selecionável, anel discreto na ponta.
+- **Segurando o botão esquerdo sobre um cubo:** mão fechada, incluindo enquanto o cubo está animando o giro; ao soltar, volta imediatamente ao sprite aberto. Clique fora dos cubos não mantém punho fechado.
+- **Alinhamento:** hotspots próprios nos dois sprites. A posição real de clique não se move ao alternar; cursor ignora eventos de mouse e é escondido sobre menus, pausa e cartas.
+- **Compatibilidade:** C0–C4 continuam usando o cursor antigo; sistema de giros, recompensas, tempo e habilidades não foi modificado.
+
+Verificar na build Windows e no Godot: troca ao apertar/soltar, foco no cubo, manutenção da mão fechada durante giros com botão segurado, visibilidade do mouse padrão sobre interface e ausência de deslocamento ao alternar.
