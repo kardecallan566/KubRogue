@@ -20,7 +20,9 @@ func _run() -> void:
     progress.configure(Store.new(path))
     check(not progress.data["tutorial_completed"], "tutorial shown for first-run user")
     var hub: Hub = Hub.new()
-    get_root().add_child(hub)
+    # A script-typed Hub variable is not inferred as Node by this Godot
+    # compiler path; explicit cast confirms its Control/Node base class.
+    get_root().add_child(hub as Node)
     check(hub.wallet_label.text.contains("0 moedas"), "hub reflects balance")
     hub._show_tutorial(false)
     check(hub.dialog_dim.visible, "replayable tutorial dialog")
