@@ -2,7 +2,7 @@
 
 ## 0. Estado do repositório
 
-C0 foi integrado na **main** após CI aprovado e aprovação do usuário. A branch **dev/checkpoint-01-hand-2x2** contém a primeira fatia jogável C1 com mão 2D, 2×2 real e contadores de recompensa provisórios. C2–C5 continuam futuros; não há MVP completo.
+C0 e C1 estão integrados à **main** após CI e aprovação visual do usuário. A branch **dev/checkpoint-02-waves-economy** traz uma prévia de duas ondas com economia por partida, estabilidade e dois tipos 2×2; C3–C5 seguem futuros, ainda não há MVP completo.
 
 ## 1. Fluxo de desenvolvimento sugerido
 
@@ -112,3 +112,11 @@ Para aceitar C1: rodar o CI, testar 10 resoluções seguidas dentro de janela gr
 ## 11. Correção do C1 após primeiro playtest gráfico (2026-10-13)
 
 A captura do Windows mostrou cubos 2×2 com **vãos largos entre peças** devido à conversão de coordenadas inteiras ±1 para posições 3D usando o passo do 3×3. A correção deixa o domínio intacto e usa `STEP/2` apenas para as oito peças do 2×2. Também houve mudança de direção: a mão passa a ser um **cursor 2D**, sem malha 3D. Um teste automatizado agora confirma costuras compactas antes e depois da animação, e testes de cena verificam Control/CanvasLayer e mouse_filter. Avaliar visualmente antes do merge do C1.
+
+## 12. Implementação do C2 (prévia de duas ondas)
+
+A branch `dev/checkpoint-02-waves-economy` introduz `KubRogueWaveDirector` (fila, spawn, cronômetro, limite de quatro atores, penalidade somente por cubos apresentados, transição de ondas e vitória/derrota), `KubRogueRunWallet` (pagamento idempotente, dinheiro e XP somente em memória) e `KubRogueC2Stage` (campo e mão 2D já aprovados, seleção de alvos, giro real, variante reforçada, pausa e resumo).
+
+As duas ondas existem **para validar mecânica e pacing**. C3 continuará responsável por cinco ondas, elite 3×3, XP de level-up e escolhas de habilidades. C4 implementará carteira persistente e loja. No C2, moedas são perdidas ao fechar a run propositalmente.
+
+Gate: CI verde e teste gráfico no Windows de movimentos dos vários cubos, seleção sem atravessar HUD, timeout, moeda única, estabilidade, pausa e duas transições. Ver [C2](checkpoints/C2-waves-economy.md).
