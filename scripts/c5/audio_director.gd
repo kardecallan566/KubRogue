@@ -100,7 +100,8 @@ func refresh_volumes() -> void:
     music_player.stream_paused = music <= 0.001
     for voice in voices:
         voice.volume_db = linear_to_db(maxf(sfx * 0.65, 0.0001))
-        voice.stream_paused = sfx <= 0.001
+        # A not-yet-playing AudioStreamPlayer does not preserve stream_paused.
+        # Actual mute is gain -80 dB plus play_sfx() skipping all new events.
 
 func play_sfx(kind: String) -> void:
     if not effects.has(kind) or voices.is_empty() or muted_for_test:

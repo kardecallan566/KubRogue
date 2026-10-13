@@ -34,9 +34,9 @@ func _run() -> void:
     check(progress.set_setting("music_volume", 0.55), "unmute music stored")
     check(not sound.music_player.stream_paused, "music resumes after unmute")
     check(progress.set_setting("effects_volume", 0.0), "effects mute stored")
-    check(sound.voices[0].stream_paused, "SFX player muted")
+    check(sound.voices[0].volume_db <= -75.0, "SFX gain effectively muted")
     check(progress.set_setting("effects_volume", 0.6), "effects unmute stored")
-    check(not sound.voices[0].stream_paused, "effects resume")
+    check(sound.voices[0].volume_db > -40.0, "effects resume at saved gain")
 
     var overlay: Feedback = Feedback.new()
     get_root().add_child(overlay)
