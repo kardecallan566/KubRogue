@@ -1,6 +1,6 @@
 extends SceneTree
 const Feedback = preload("res://scripts/c5/feedback_layer.gd")
-const Skin = preload("res://scripts/c5/ui_skin.gd")
+const VisualTheme = preload("res://scripts/c5/ui_skin.gd")
 const Store = preload("res://scripts/c4/save_store.gd")
 var failures := 0
 
@@ -55,7 +55,7 @@ func _run() -> void:
     get_root().add_child(panel)
     var button := Button.new()
     panel.add_child(button)
-    Skin.apply(panel)
+    VisualTheme.apply(panel)
     check(panel.has_theme_stylebox_override("panel"), "custom panel background")
     check(button.has_theme_stylebox_override("normal"), "custom button palette")
     panel.queue_free()

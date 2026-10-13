@@ -1,7 +1,7 @@
 extends Node3D
 class_name KubRogueC5Stage
 const Feedback = preload("res://scripts/c5/feedback_layer.gd")
-const Skin = preload("res://scripts/c5/ui_skin.gd")
+const VisualTheme = preload("res://scripts/c5/ui_skin.gd")
 ## Explicit script dependency so 'godot .' works with a fresh .godot/ cache.
 ## The autoload is still registered as /root/KubeSession in project.godot.
 const ProgressScript = preload("res://scripts/c4/progress_service.gd")
@@ -272,7 +272,7 @@ func _build_hud() -> void:
     effects = Feedback.new()
     effects.name = "GameFeelOverlay"
     overlay.add_child(effects)
-    Skin.apply(overlay)
+    VisualTheme.apply(overlay)
 
 func _build_card_overlay(overlay: CanvasLayer) -> void:
     card_overlay = ColorRect.new()

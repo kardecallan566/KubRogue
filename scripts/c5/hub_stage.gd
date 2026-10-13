@@ -1,6 +1,6 @@
 extends Control
 class_name KubRogueC5Hub
-const Skin = preload("res://scripts/c5/ui_skin.gd")
+const VisualTheme = preload("res://scripts/c5/ui_skin.gd")
 ## Explicit script dependency so 'godot .' works with a fresh .godot/ cache.
 ## The autoload is still registered as /root/KubeSession in project.godot.
 const ProgressScript = preload("res://scripts/c4/progress_service.gd")
@@ -106,7 +106,7 @@ func _build_ui() -> void:
     dialog_box.add_theme_constant_override("separation", 13)
     scroll.add_child(dialog_box)
     _close_modal()
-    Skin.apply(self)
+    VisualTheme.apply(self)
 
 func _refresh() -> void:
     if wallet_label == null:
@@ -125,7 +125,7 @@ func _clear_modal() -> void:
         child.queue_free()
 
 func _open_modal() -> void:
-    Skin.apply(dialog_center)
+    VisualTheme.apply(dialog_center)
     dialog_dim.visible = true
     dialog_center.visible = true
 

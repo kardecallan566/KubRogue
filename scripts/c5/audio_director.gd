@@ -79,7 +79,7 @@ func _synthesize_music() -> AudioStreamWAV:
         var t := float(i) / float(RATE)
         var beat_index := int(floor(t * 2.0))
         var root := float(root_notes[int(floor(t)) % root_notes.size()])
-        var arpeggio := [1.0, 1.25, 1.5, 2.0][beat_index % 4]
+        var arpeggio: float = float([1.0, 1.25, 1.5, 2.0][beat_index % 4])
         var pulse := 0.5 + 0.5 * cos(TAU * fmod(t, 0.5) * 2.0)
         var chord := 0.075 * sin(TAU * root * t)
         chord += 0.045 * sin(TAU * root * 1.5 * t)
