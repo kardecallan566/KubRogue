@@ -62,7 +62,17 @@ func _run() -> void:
     if not stage.action_locked:
         stage._finish_wave()
     check(stage.director.phase == Director.Phase.BETWEEN, "wave finishes into summary")
-    check(stage.director.stability == 75, "one visible actor penalized 25")
+    # Spawn scheduling runs during awaited cube animations. A fixed count of
+    # missed actors is not deterministic here; only actual spawned IDs count.
+    var summary: Dictionary = stage.director.last_summary
+    check(int(summary["unresolved"]) == int(summary["spawned"]) - int(summary["resolved"]),
+        "unresolved count matches displayed cubes")
+    check(int(summary["unseen"]) == int(summary["expected"]) - int(summary["spawned"]),
+        "unshown queue tracked separately")
+    check(int(summary["penalty"]) == int(summary["unresolved"]) * Director.MISSED_PENALTY,
+        "penalty applied only to presented unresolved cubies")
+    check(stage.director.stability == maxi(0, 100 - int(summary["penalty"])),
+        "stability matches actual number of visible misses")
     check(stage.summary_panel.visible and stage.summary_button.text == "Próxima onda",
         "summary shows actionable next wave")
     stage._continue_from_summary()
