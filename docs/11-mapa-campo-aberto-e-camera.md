@@ -13,7 +13,7 @@ Referências de leitura visual:
 
 **O que manter como ideia:** campo aberto, cores agradáveis, detalhes baixos no solo, ausência de corredores, combate concentrado nos personagens, HUD periférica.
 
-**O que transformar para o KubRogue:** campo tridimensional baixo, cubos 3D com sombras e giro verdadeiro das faces, mão flutuante, folhas e formas geométricas originais, uma fantasia de jardim/oficina de enigmas.
+**O que transformar para o KubRogue:** campo tridimensional baixo, cubos 3D com sombras e giro verdadeiro das faces, cursor de mão 2D sobreposto, folhas e formas geométricas originais, uma fantasia de jardim/oficina de enigmas.
 
 ## 2. Bioma inicial: Jardim dos Cubos
 
@@ -26,7 +26,7 @@ Referências de leitura visual:
 3. **Tufos e brotos:** grupos muito pequenos de 2–4 hastes arredondadas, achatados ou em leve relevo, bem espaçados; não criar florestas, árvores ou paredes nas áreas de interação.
 4. **Flores geométricas pontuais:** raras e discretas nas regiões com menos densidade de gameplay; silhuetas próprias em triângulos/círculos com baixa saturação. Jamais confundir com um cubo selecionável.
 5. **Sombras de contato:** pequenas sombras circulares suaves sob cada cubo e sob a mão; deslocam-se junto com os atores e dão volume aos modelos 3D.
-6. **Atores principais:** cubos 2x2 e 3x3 de alto contraste, contorno sutil, destaque de foco e a mão flutuante.
+6. **Atores principais:** cubos 2x2 e 3x3 de alto contraste, contorno sutil, destaque de foco e o cursor de mão 2D desenhado acima dos cubos.
 7. **Efeitos e HUD:** efeitos de solução breves e interface legível, desenhada por cima sem depender da cor do terreno.
 
 **Regra de composição:** pelo menos 75% do piso visto em uma captura deve parecer limpo; cobertura decorativa discreta, sem objetos altos dentro da área de interação. Os cubos devem ser os pontos de maior contraste.
@@ -84,7 +84,7 @@ Sugestão de nós:
   - AmbientLight (WorldEnvironment + DirectionalLight3D)
   - SpawnRing (Node3D com pontos de amostragem, invisível em runtime)
   - CameraRig (Node3D com Camera3D fixa)
-  - CubeContainer / HandRoot / FXRoot
+  - CubeContainer / FXRoot (HandCursor2D em CanvasLayer separado)
 - OverlayHUD (CanvasLayer; ponteiro em HUD impede interações na arena)
 
 **Otimização:** prefira MultiMesh para decoração repetida, sem CollisionShape3D em tufos e manchas; fogos e objetos 3D devem ser simples. Evitar sombras individuais em centenas de brotos. Não gerar plantas aleatórias a cada frame: criar uma vez por seed e reutilizar.

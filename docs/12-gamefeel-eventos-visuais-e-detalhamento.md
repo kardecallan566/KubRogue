@@ -4,7 +4,7 @@
 
 ## 1. Três segundos iniciais
 
-Ao iniciar uma run, a câmera revela o gramado aberto do Jardim dos Cubos. A mão 3D entra com gesto breve, pousa na região central e o primeiro cubo 2x2 aparece em um pulso suave no chão. O jogador deve ver instantaneamente: mão -> cubo -> movimento da camada -> alteração da cor -> recompensa. Evitar apresentação longa ou cutscene.
+Ao iniciar uma run, a câmera revela o gramado aberto do Jardim dos Cubos. O cursor de mão 2D surge sob o ponteiro e se aproxima da região central e o primeiro cubo 2x2 aparece em um pulso suave no chão. O jogador deve ver instantaneamente: mão -> cubo -> movimento da camada -> alteração da cor -> recompensa. Evitar apresentação longa ou cutscene.
 
 **Primeira regra de ouro:** uma interação nova deve ser comunicada por movimento e feedback, não por parágrafos de tutorial.
 
@@ -31,17 +31,17 @@ Pagamento é do evento lógico único de solução; os efeitos **não devem cria
 
 ## 4. A mão como personagem
 
-**Silhueta:** luva/cartoon com dedos arredondados, punho curto, material acetinado não metálico. Ela não precisa ter rosto ou ser realista.
+**Silhueta:** cursor vetorial 2D de luva/cartoon com dedos arredondados e punho curto; sem malha 3D. Ela não precisa ter rosto ou ser realista.
 
 **Estados básicos:**
 - Idle: movimento respiratório lento, totalmente subordinado ao ponteiro.
-- Movimento: inclinação do punho na direção do deslocamento, com smoothing curto e sem atraso de clique.
-- Hover: dedo indicador destacado; pequeno círculo ao redor do alvo.
-- Ação: rotação visível do punho e dedos, sincronizada à camada.
+- Movimento: cursor acompanha diretamente o ponteiro no plano da tela; sem smoothing de posição ou atraso do clique.
+- Hover: ponta do indicador 2D destacada e pequeno círculo; o cubo no mundo mantém seu anel de foco.
+- Ação: pulso do desenho 2D do punho, sincronizado à camada 3D.
 - Cooldown: breve retorno com molas suaves.
 - Vitória: gesto alegre curto sem bloquear HUD.
 - Derrota: desaceleração e baixar a mão, depois resumo.
-- Pausa/overlay: mão congelada, sem capturar input.
+- Pausa/overlay: cursor nativo aparece para interagir com menus; mão 2D não captura input.
 
 Upgrade **Pulso ágil** pode mudar discretamente a cor do rastro, mas todo feedback de poder precisa também aparecer em números para acessibilidade.
 
@@ -108,3 +108,7 @@ Se 10 cubos forem resolvidos em poucos segundos, limitar canais/mesclar moedas p
 ## 12. Aprofundamentos possíveis pós-MVP
 
 Reações do gramado ao movimento da mão, skins temáticas de luvas, skins de adesivos, novas animações de vitória, 4x4, variantes do mesmo campo em diferentes horários, modo foto e eventos ambientais; todos opcionais.
+
+## 13. Ajuste aprovado de direção após screenshot do C1
+
+O 2×2 deve ter **quatro adesivos contíguos em cada face**, separados apenas por uma pequena junta escura entre cubinhos de borda arredondada. Não aceitar aparência de quatro pilares ou blocos desconectados em captura, no giro ou após snap. A mão definitiva da gameplay será **2D em CanvasLayer**, de cor neutra, ponta do indicador como hotspot e aro breve ao selecionar; nunca usar mão tridimensional grande sobre os cubos. O 3×3 continua uma malha tridimensional de peças reais, e a direção espacial de Jardim dos Cubos não muda.

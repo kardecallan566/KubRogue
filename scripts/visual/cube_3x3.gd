@@ -84,6 +84,11 @@ func _build_geometry() -> void:
             piece.add_child(sticker)
             sticker_nodes.append(sticker)
 
+## The 2x2 uses only corner coordinates -1/+1.
+## Its physical spacing differs from the 3x3 domain's unit grid.
+func _grid_step() -> float:
+    return STEP
+
 func sync_poses() -> void:
     if puzzle == null:
         return
@@ -92,7 +97,7 @@ func sync_poses() -> void:
         var p: Vector3i = piece["position"]
         var axes: Array = piece["axes"]
         var root: Node3D = cubies[id]
-        root.position = Vector3(p) * STEP
+        root.position = Vector3(p) * _grid_step()
         root.basis = Basis(
             Vector3(axes[0]), Vector3(axes[1]), Vector3(axes[2])
         ).orthonormalized()

@@ -15,7 +15,12 @@ func _run() -> void:
     get_root().add_child(stage)
     check(stage.camera != null and stage.camera.projection == Camera3D.PROJECTION_ORTHOGONAL, "fixed orthographic camera")
     check(stage.hand != null, "hand exists")
-    check(stage.hand.get_child_count() >= 6, "procedural palm and fingers")
+    check(stage.hand is Control, "hand is 2D Control, not a 3D mesh")
+    check(stage.hand.get_parent() is CanvasLayer, "hand overlays the world in screen space")
+    check(stage.hand.mouse_filter == Control.MOUSE_FILTER_IGNORE, "cursor does not intercept clicks")
+    stage.hand.follow_pointer(Vector2(300.0, 240.0))
+    check(stage.hand.position.distance_to(Vector2(286.0, 237.0)) < 0.01,
+        "2D hand follows the pointer hotspot accurately")
     check(stage.cube != null and stage.cube.cubies.size() == 8, "real 2x2 in field")
     check(stage.cube.moves_remaining() > 0, "starts scrambled")
     check(stage.provisional_coins == 0 and stage.cubes_resolved == 0, "no free reward")

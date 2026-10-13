@@ -2,7 +2,7 @@
 
 ## 0. Estado do repositório
 
-C0 foi integrado na **main** após CI aprovado e aprovação do usuário. A branch **dev/checkpoint-01-hand-2x2** contém a primeira fatia jogável C1 com mão 3D, 2×2 real e contadores de recompensa provisórios. C2–C5 continuam futuros; não há MVP completo.
+C0 foi integrado na **main** após CI aprovado e aprovação do usuário. A branch **dev/checkpoint-01-hand-2x2** contém a primeira fatia jogável C1 com mão 2D, 2×2 real e contadores de recompensa provisórios. C2–C5 continuam futuros; não há MVP completo.
 
 ## 1. Fluxo de desenvolvimento sugerido
 
@@ -105,6 +105,10 @@ Foram localizados os scripts procedurais do 3×3 no [Kubos](https://github.com/k
 
 ## 10. Implementação C1 em validação
 
-A branch `dev/checkpoint-01-hand-2x2` contém um **2×2 verdadeiro (8 cubinhos/24 adesivos)** com estado discreto, sequências inversas determinísticas, e reutiliza a apresentação por pivôs do 3×3. A mão de luva estilizada 3D segue o cursor no gramado e um clique/segurar próximo ao alvo consome exatamente um giro por cooldown. Um contador provisório concede +10 moedas e +1 XP ao resolver; novos cubos são gerados automaticamente. **Não existe economia persistente ainda.** O C0 permanece acessível.
+A branch `dev/checkpoint-01-hand-2x2` contém um **2×2 verdadeiro (8 cubinhos/24 adesivos)** com estado discreto, sequências inversas determinísticas, e reutiliza a apresentação por pivôs do 3×3. O cursor de mão estilizada **2D** segue a posição do mouse na interface sobre o gramado e um clique/segurar próximo ao alvo consome exatamente um giro por cooldown. Um contador provisório concede +10 moedas e +1 XP ao resolver; novos cubos são gerados automaticamente. **Não existe economia persistente ainda.** O C0 permanece acessível.
 
 Para aceitar C1: rodar o CI, testar 10 resoluções seguidas dentro de janela gráfica, observar fluidez da mão e alinhamento de adesivos em movimento. Critérios completos em [C1](checkpoints/C1-hand-2x2.md). **Sem merge na main** antes desse gate visual.
+
+## 11. Correção do C1 após primeiro playtest gráfico (2026-10-13)
+
+A captura do Windows mostrou cubos 2×2 com **vãos largos entre peças** devido à conversão de coordenadas inteiras ±1 para posições 3D usando o passo do 3×3. A correção deixa o domínio intacto e usa `STEP/2` apenas para as oito peças do 2×2. Também houve mudança de direção: a mão passa a ser um **cursor 2D**, sem malha 3D. Um teste automatizado agora confirma costuras compactas antes e depois da animação, e testes de cena verificam Control/CanvasLayer e mouse_filter. Avaliar visualmente antes do merge do C1.

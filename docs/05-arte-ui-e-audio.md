@@ -32,15 +32,15 @@ Especificação integral e critérios de teste: [11 — Mapa aberto](11-mapa-cam
 
 ## 4. Mão protagonista
 
-- Mão estilizada flutuante em 3D, com silhueta reconhecível contra cubos.
-- Estado neutro: ligeira inclinação acompanhando movimento do mouse.
-- Estado hover: dedos se preparam; cursor/contorno sinaliza cubo alcançável.
-- Estado ação: giro de punho e toque de dedo sincronizados com o movimento da camada.
-- Estado cooldown: retorno elástico leve; não usar animação longa que atrase controles.
+- **Cursor de mão 2D** estilizado, desenhado sobre a câmera em uma CanvasLayer e independente da geometria dos cubos 3D.
+- Estado neutro: acompanha exatamente a posição do mouse na tela, sem atraso por interpolação 3D.
+- Estado hover: o cursor 2D ganha um aro discreto na ponta do indicador e o alvo 3D recebe destaque.
+- Estado ação: pulso/rotação muito breve do ícone 2D sincronizado com o giro real da camada 3D.
+- Estado cooldown: animação curta da mão 2D, sem retardar nem alterar a posição real do cursor.
 - Estado vitória: gesto alegre curto.
 - Evolução visual opcional mínima: brilho/tom da luva com carta ativa, sem depender disso para entendimento.
 
-Não usar uma mão humana realista altamente detalhada que ocupe demais a tela. Dimensão e transparência devem evitar cobrir a informação do cubo.
+Não usar uma mão humana realista nem um modelo 3D flutuante que ocupe demais a tela. Dimensão e transparência devem evitar cobrir a informação do cubo.
 
 ## 5. Feedback obrigatório
 
@@ -108,3 +108,7 @@ Escalar fontes e layout para 1280x720 e 1920x1080 sem sobreposição. HUD usa co
 ## 11. Microinterações obrigatórias
 
 Cada giro tem gesto da mão, rotação **válida de camada**, snap e som de plástico; solução revela faces uniformes antes da recompensa em moedas/XP separadas. As oito habilidades sinalizam efeitos sem esconder cores dos cubos. O roteiro visual, auditivo e de câmera está em [12 — Gamefeel](12-gamefeel-eventos-visuais-e-detalhamento.md).
+
+## 12. Ajuste do C1: integração 2D/3D
+
+O cursor de mão é **vetorial/procedural 2D** com luva, contorno escuro e hotspot no indicador, desenhado em `CanvasLayer` e com `mouse_filter=IGNORE`. Não projeta geometria 3D da mão na cena. O cubo continua integralmente 3D e girando camadas verdadeiras. Ao passar sobre controles da HUD, o cursor personalizado some e o ponteiro nativo volta. O chão verde recebe um material sem sombreamento forte para preservar cor pastel, enquanto cubos mantêm iluminação 3D. Referência operacional: [C1](checkpoints/C1-hand-2x2.md).

@@ -7,3 +7,8 @@ const PocketState = preload("res://scripts/puzzle/cube_state_2x2.gd")
 
 func _new_puzzle():
     return PocketState.new()
+
+## Corners at -1/+1 are two grid coordinates apart, but must sit
+## only STEP units apart physically. Keep a thin STEP-CELL seam.
+func _grid_step() -> float:
+    return STEP * 0.5

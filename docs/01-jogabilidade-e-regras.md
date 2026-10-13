@@ -3,7 +3,7 @@
 ## 1. Loop principal (segundo a segundo)
 
 1. Cubos embaralhados surgem no anel periférico visível do campo gramado, em posições seguras, com aviso visual breve.
-2. Jogador move o mouse; a mão 3D segue a posição projetada sobre o plano da arena.
+2. Jogador move o mouse; um **cursor de mão 2D** acompanha diretamente a posição na tela. A posição sobre o campo XZ é calculada separadamente para verificar o alvo e iniciar a rotação.
 3. Ao pairar sobre um cubo, surge realce de alvo, indicação curta de movimentos faltantes e sua recompensa.
 4. Clique esquerdo realiza **uma ação de resolução**; segurar repete no intervalo de cooldown da mão. Uma ação resolve exatamente um movimento lógico legal, salvo efeitos explicitamente sinalizados.
 5. Uma face/camada gira 90° ou 180° conforme o movimento registrado. Nenhum progresso é registrado antes de a transição ser concluída.
@@ -29,7 +29,7 @@ Evitar exigir movimentos bruscos do mouse ou repetição muito rápida. Clique e
 
 - Campo gramado aberto no plano XZ, câmera ortográfica **fixa** 15–25° afastada da vertical, com leitura top-down 2.5D.
 - Cursor é projetado em plano XZ usando a câmera fixa; a mão fica limitada à área útil invisível. Suavização curta sem atraso no clique. Não seguir cursor com câmera no MVP.
-- Mão flutua levemente acima dos cubos, mostra pose de apontar ao selecionar e gesto de girar ao executar.
+- Mão é um ícone 2D original na interface (CanvasLayer), com indicador de alvo e breve animação de toque. Não existe malha de mão 3D na gameplay; o efeito não pode cobrir os adesivos.
 - Concluir giro no alvo ativo antes de aceitar um novo comando; fila máxima de **uma ação antecipada**, cancelada ao sair do alvo.
 - Feedback de input em até um frame visual; nenhuma ação pode iniciar em mais de um cubo simultaneamente.
 - Botão direito reservado para recurso futuro (modo manual/inspeção), sem função obrigatória no MVP.
@@ -100,3 +100,7 @@ Confirmar giro e estado SOLVED -> persistir pagamento único -> creditar XP e re
 ## 11. Campo de ação
 
 **Jardim dos Cubos:** gramado contínuo com pequenas manchas, tufos discretos e câmera ortográfica fixa quase superior. Sem plataforma circular, paredes ou obstáculos. A área lógica é limitada, mas nenhuma borda física é visível. Ver [11](11-mapa-campo-aberto-e-camera.md).
+
+## 12. Decisão de apresentação pós-C1
+
+A mão é **2D em screen-space** e não acompanha coordenadas do mundo com geometria 3D. A seleção continua sendo calculada pelo cursor sobre o plano XZ para girar um cubo real. A camada de mão ignora eventos do mouse e se oculta quando a HUD é apontada, restaurando cursor nativo nesse caso. O 2×2 deve manter peças adjacentes com costura fina (passo físico `0.338` e corpo `0.327` no protótipo). Veja o relatório de correção no [C1](checkpoints/C1-hand-2x2.md).

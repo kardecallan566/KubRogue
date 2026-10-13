@@ -1,10 +1,10 @@
 extends Node3D
-## C1 playable vertical slice: the cursor controls a 3D hand to solve real 2x2 cubies.
+## C1 playable vertical slice: a 2D hand cursor controls rotations of compact real 2x2 cubies.
 ## No waves, economy persistence or roguelite cards exist yet.
 class_name KubRogueC1Stage
 
 const CubeVisual = preload("res://scripts/visual/cube_2x2.gd")
-const HandVisual = preload("res://scripts/visual/hand_3d.gd")
+const HandCursor = preload("res://scripts/visual/hand_cursor_2d.gd")
 const ACTION_INTERVAL := 0.34
 const ROTATION_DURATION := 0.26
 const TARGET_RADIUS := 1.22
@@ -13,7 +13,7 @@ const REWARD_XP := 1
 
 var camera: Camera3D
 var cube: CubeVisual
-var hand: HandVisual
+var hand: HandCursor
 var focus_ring: MeshInstance3D
 var counter_label: Label
 var instruction_label: Label
@@ -42,6 +42,9 @@ func _field_material(color: Color) -> StandardMaterial3D:
     var mat := StandardMaterial3D.new()
     mat.albedo_color = color
     mat.roughness = 1.0
+    # Preserve the actual soft-green field in Compatibility/Forward+.
+    # Sun and ambient lighting were overexposing the grass in Windows.
+    mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
     return mat
 
 func _build_field() -> void:
@@ -103,19 +106,16 @@ func _build_light_and_camera() -> void:
 func _build_actors() -> void:
     cube = CubeVisual.new()
     cube.name = "TargetCube2x2"
-    cube.scale = Vector3.ONE * 1.72
-    cube.position = Vector3(0.65, 0.58, 0.0)
+    # Physical 2x2 height = (CELL + STEP) * scale. Rest on the grass.
+    cube.scale = Vector3.ONE * 2.55
+    cube.position = Vector3(0.65, 0.85, 0.0)
     add_child(cube)
-    hand = HandVisual.new()
-    hand.name = "CursorHand"
-    hand.position = Vector3(-1.2, 1.4, 1.0)
-    add_child(hand)
 
     focus_ring = MeshInstance3D.new()
     focus_ring.name = "TargetFocusRing"
     var mesh := TorusMesh.new()
-    mesh.inner_radius = 0.84
-    mesh.outer_radius = 0.92
+    mesh.inner_radius = 0.97
+    mesh.outer_radius = 1.06
     focus_ring.mesh = mesh
     var ring_mat := StandardMaterial3D.new()
     ring_mat.albedo_color = Color("#f3f9d1")
@@ -160,6 +160,9 @@ func _build_overlay() -> void:
     button.custom_minimum_size = Vector2(0, 35)
     button.pressed.connect(_manual_new_cube)
     content.add_child(button)
+    hand = HandCursor.new()
+    hand.name = "HandCursor2D"
+    layer.add_child(hand)
     _update_hud()
 
 func _spawn_cube() -> void:
@@ -216,20 +219,28 @@ func _pointer_on_hud() -> bool:
 
 func _process(delta: float) -> void:
     action_cooldown = maxf(0.0, action_cooldown - delta)
+    var mouse: Vector2 = get_viewport().get_mouse_position()
+    var viewport_rect: Rect2 = get_viewport().get_visible_rect()
+    var inside_window := viewport_rect.has_point(mouse)
+    var over_hud := _pointer_on_hud()
+
+    # Screen-space hand is not attached to the world, does not obscure stickers
+    # with 3D geometry, and never consumes UI/gameplay input.
+    if is_instance_valid(hand):
+        hand.follow_pointer(mouse)
+        hand.visible = inside_window and not over_hud
+    var wanted_mode := Input.MOUSE_MODE_VISIBLE if over_hud or not inside_window else Input.MOUSE_MODE_HIDDEN
+    if Input.mouse_mode != wanted_mode:
+        Input.set_mouse_mode(wanted_mode)
+
     var point: Variant = _cursor_ground_point()
     var targetable := false
-    if point is Vector3 and is_instance_valid(hand) and is_instance_valid(cube):
+    if point is Vector3 and is_instance_valid(cube) and inside_window and not over_hud:
         var hit: Vector3 = point
-        var safe_point := Vector3(
-            clampf(hit.x, -5.9, 5.9), 1.43,
-            clampf(hit.z, -3.5, 3.5)
-        )
-        # Keep the drawn hand beside the actual cursor so stickers stay readable.
-        var hand_pos := safe_point + Vector3(0.47, 0.0, 0.29)
-        hand.position = hand.position.lerp(hand_pos, minf(delta * 17.0, 1.0))
         var horizontal_delta := Vector2(hit.x - cube.position.x, hit.z - cube.position.z)
-        targetable = horizontal_delta.length() <= TARGET_RADIUS and not _pointer_on_hud()
+        targetable = horizontal_delta.length() <= TARGET_RADIUS
         targetable = targetable and not respawning and not cube.movement_busy and not cube.is_solved()
+
     if targetable != has_target:
         has_target = targetable
         _update_hud()
@@ -239,6 +250,10 @@ func _process(delta: float) -> void:
         focus_ring.visible = has_target
     if has_target and action_cooldown <= 0.0 and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
         _advance_selected_cube()
+
+func _exit_tree() -> void:
+    # Never leave the Windows pointer hidden when leaving the gameplay scene.
+    Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 ## Common gameplay action used by live mouse input and C1 integration tests.
 ## The caller enforces hover for real mouse actions. This method validates
