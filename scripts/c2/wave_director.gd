@@ -13,6 +13,7 @@ const WAVES := [
     {"duration": 42.0, "types": ["apprentice", "apprentice", "reinforced", "apprentice", "apprentice", "reinforced"]},
     {"duration": 55.0, "types": ["apprentice", "reinforced", "apprentice", "reinforced", "apprentice", "reinforced", "apprentice", "reinforced"]}
 ]
+var waves: Array = WAVES.duplicate(true)
 var phase: Phase = Phase.IDLE
 var wallet = Wallet.new()
 var wave_index := -1
@@ -40,10 +41,10 @@ func start_run() -> void:
 func begin_next_wave() -> bool:
     if phase != Phase.IDLE and phase != Phase.BETWEEN:
         return false
-    if wave_index + 1 >= WAVES.size():
+    if wave_index + 1 >= waves.size():
         return false
     wave_index += 1
-    var definition: Dictionary = WAVES[wave_index]
+    var definition: Dictionary = waves[wave_index]
     time_left = float(definition["duration"])
     spawn_clock = SPAWN_INTERVAL   # first spawn can appear immediately
     next_spawn_index = 0
@@ -54,9 +55,9 @@ func begin_next_wave() -> bool:
     return true
 
 func definition() -> Dictionary:
-    if wave_index < 0 or wave_index >= WAVES.size():
+    if wave_index < 0 or wave_index >= waves.size():
         return {}
-    return WAVES[wave_index]
+    return waves[wave_index]
 
 func total_expected() -> int:
     if definition().is_empty():
@@ -128,7 +129,7 @@ func finish_wave() -> Dictionary:
     active.clear()
     if stability <= 0:
         phase = Phase.DEFEAT
-    elif wave_index == WAVES.size() - 1:
+    elif wave_index == waves.size() - 1:
         phase = Phase.VICTORY
     else:
         phase = Phase.BETWEEN

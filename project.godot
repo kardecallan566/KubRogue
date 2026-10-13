@@ -1,10 +1,10 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C2 Ondas e Cubos"
-run/main_scene="res://scenes/c2/wave_stage.tscn"
+config/name="KubRogue — C3 Roguelite 5 Ondas"
+run/main_scene="res://scenes/c3/roguelite_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C2: two-wave multi-cube gameplay prototype, 2D cursor and run-scoped currency. C0 and C1 scenes remain available."
+config/description="C3: five waves, elite 3x3, 8 temporary skills; run-scoped currency. Previous scenes remain available."
 
 [display]
 window/size/viewport_width=1280

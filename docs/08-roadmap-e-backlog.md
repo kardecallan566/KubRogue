@@ -120,3 +120,7 @@ A branch `dev/checkpoint-02-waves-economy` introduz `KubRogueWaveDirector` (fila
 As duas ondas existem **para validar mecânica e pacing**. C3 continuará responsável por cinco ondas, elite 3×3, XP de level-up e escolhas de habilidades. C4 implementará carteira persistente e loja. No C2, moedas são perdidas ao fechar a run propositalmente.
 
 Gate: CI verde e teste gráfico no Windows de movimentos dos vários cubos, seleção sem atravessar HUD, timeout, moeda única, estabilidade, pausa e duas transições. Ver [C2](checkpoints/C2-waves-economy.md).
+
+## 13. Checkpoint C3 implementado em branch
+
+O C2 foi aprovado pelo usuário, passou no CI e entrou na `main` pelo PR #3. A branch `dev/checkpoint-03-roguelite` acrescenta cinco ondas, a elite 3×3 verdadeira (26 peças/54 adesivos), XP e cartas de upgrade temporário. `KubRogueC3Director` reaproveita a direção de ondas do C2 por composição/herança, preservando cenas antigas. `KubRogueRunBuild` mantém catálogo de oito cartas, ofertas exclusivas, níveis máximos, efeitos e limiares de XP. A economia de C3 permanece em memória, sem loja/salvamento. Gate: CI do Godot e teste manual com a mão 2D; não integrar até aprovação. [Checklist](checkpoints/C3-roguelite.md).

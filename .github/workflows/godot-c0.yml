@@ -1,4 +1,4 @@
-name: KubRogue C0-C2 - Godot 4.7.2 validation
+name: KubRogue C0-C3 - Godot 4.7.2 validation
 
 on:
   push:
@@ -58,9 +58,15 @@ jobs:
       - name: C2 multi-actor wave scene and rewards
         run: timeout 120s godot --headless --path . --script res://tests/integration/test_c2_stage.gd
 
-      - name: Boot C2 wave scene
+      - name: C3 five waves, elite spawn, progression and rewards
+        run: timeout 90s godot --headless --path . --script res://tests/unit/test_c3_rules.gd
+
+      - name: C3 playable scene, card pause and real boss rotations
+        run: timeout 120s godot --headless --path . --script res://tests/integration/test_c3_stage.gd
+
+      - name: Boot C3 wave scene
         shell: bash
         run: |
           set -eo pipefail
           godot --headless --path . --quit-after 40 2>&1 | tee /tmp/c0-boot.log
-          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:|C2.*FAIL:' /tmp/c0-boot.log; then exit 1; fi
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:|C2.*FAIL:|C3.*FAIL:' /tmp/c0-boot.log; then exit 1; fi
