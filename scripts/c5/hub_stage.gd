@@ -35,7 +35,8 @@ func _label(parent: Node, content: String, font_size: int = 18) -> Label:
 func _button(parent: Node, title: String, action: Callable, width: float = 320) -> Button:
     var btn := Button.new()
     btn.text = title
-    btn.custom_minimum_size = Vector2(width, 64)
+    btn.custom_minimum_size = Vector2(width, 46)
+    btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
     var lower := title.to_lower()
     if lower.contains("jogar") or lower.contains("começar"):
         btn.set_meta("arcade_variant", "gold")
@@ -74,28 +75,46 @@ func _build_ui() -> void:
     centering.mouse_filter = Control.MOUSE_FILTER_IGNORE
     add_child(centering)
     var panel := PanelContainer.new()
-    panel.custom_minimum_size = Vector2(555, 595)
+    panel.custom_minimum_size = Vector2(460, 0)
     centering.add_child(panel)
     var column := VBoxContainer.new()
-    column.add_theme_constant_override("separation", 10)
+    column.add_theme_constant_override("separation", 11)
     panel.add_child(column)
-    var logo := _label(column, "K U B R O G U E", 34)
+    var logo := _label(column, "KUBROGUE", 34)
     logo.name = "HeroTitle"
     logo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    var subtitle := _label(column, "✦  JARDIM DOS CUBOS  ✦", 16)
+    var subtitle := _label(column, "JARDIM DOS CUBOS  ·  ROGUELITE", 13)
+    subtitle.name = "Muted"
     subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    wallet_label = _label(column, "", 25)
+    wallet_label = _label(column, "", 26)
     wallet_label.name = "Counter"
     wallet_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    records_label = _label(column, "", 16)
+    records_label = _label(column, "", 14)
     records_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    feedback_label = _label(column, "5 ONDAS  ·  EVOLUA SUAS HABILIDADES", 15)
+    var gap := HSeparator.new()
+    gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    column.add_child(gap)
+    feedback_label = _label(column, "RESOLVA  ·  EVOLUA  ·  CONQUISTE", 13)
+    feedback_label.name = "Muted"
     feedback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    _button(column, "▶  JOGAR", _play)
-    _button(column, "★  LOJA DE MELHORIAS", _show_shop)
-    _button(column, "?  COMO JOGAR", func(): _show_tutorial(false))
-    _button(column, "⚙  CONFIGURAÇÕES", _show_settings)
-    _button(column, "✕  SAIR DO JOGO", func(): get_tree().quit())
+    var main_actions := VBoxContainer.new()
+    main_actions.name = "PrimaryActions"
+    main_actions.add_theme_constant_override("separation", 8)
+    column.add_child(main_actions)
+    _button(main_actions, "JOGAR", _play, 332)
+    _button(main_actions, "LOJA DE MELHORIAS", _show_shop, 332)
+
+    var secondary := HBoxContainer.new()
+    secondary.name = "SecondaryActions"
+    secondary.add_theme_constant_override("separation", 8)
+    secondary.alignment = BoxContainer.ALIGNMENT_CENTER
+    column.add_child(secondary)
+    var how_button := _button(secondary, "COMO JOGAR", func(): _show_tutorial(false), 162)
+    how_button.set_meta("compact", true)
+    var settings_button := _button(secondary, "CONFIGURAÇÕES", _show_settings, 162)
+    settings_button.set_meta("compact", true)
+    var exit_button := _button(column, "SAIR", func(): get_tree().quit(), 154)
+    exit_button.set_meta("compact", true)
 
     dialog_dim = ColorRect.new()
     dialog_dim.name = "ModalBackdrop"
@@ -113,7 +132,7 @@ func _build_ui() -> void:
     dialog_center.add_child(modal_panel)
     var scroll := ScrollContainer.new()
     scroll.name = "DialogScroll"
-    scroll.custom_minimum_size = Vector2(570, 500)
+    scroll.custom_minimum_size = Vector2(570, 460)
     scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
     scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
     modal_panel.add_child(scroll)
@@ -127,9 +146,9 @@ func _build_ui() -> void:
 func _refresh() -> void:
     if wallet_label == null:
         return
-    wallet_label.text = "★  %d MOEDAS" % session.balance()
+    wallet_label.text = "%d MOEDAS" % session.balance()
     var rec: Dictionary = session.data["records"]
-    records_label.text = "Melhor onda: %d/5   ·   Cubos: %d   ·   Combo: %d" % [
+    records_label.text = "Onda %d/5    ·    Cubos %d    ·    Combo %d" % [
         rec["best_wave"], rec["best_solved"], rec["best_combo"]
     ]
     if not session.last_error.is_empty():
@@ -180,19 +199,31 @@ func _finish_tutorial_and_play() -> void:
 
 func _show_shop() -> void:
     _clear_modal()
-    _label(dialog_box, "LOJA DE MELHORIAS", 28)
-    _label(dialog_box, "Saldo: %d moedas  ·  Todas as melhorias duram entre partidas." % session.balance(), 18)
+    _label(dialog_box, "MELHORIAS PERMANENTES", 25)
+    _label(dialog_box, "Saldo disponível: %d moedas" % session.balance(), 17)
     for id in ["hand_training", "cubist_pocket", "stable_field"]:
-        var lvl: int = session.meta_level(id)
+        var level: int = session.meta_level(id)
         var cost: int = session.next_cost(id)
-        _label(dialog_box, "%s  ·  Nível %d/3" % [session.UPGRADE_NAMES[id], lvl], 20)
-        _label(dialog_box, session.UPGRADE_DESCRIPTIONS[id], 15)
-        var buy := _button(dialog_box, "MÁXIMO" if cost < 0 else "Comprar por %d moedas" % cost,
-            _buy_upgrade.bind(id), 430)
+        var shop_card := PanelContainer.new()
+        shop_card.name = "ShopPerk_%s" % id
+        shop_card.set_meta("skill_category", "Moedas" if id == "cubist_pocket" else "Velocidade")
+        dialog_box.add_child(shop_card)
+        var perk_content := VBoxContainer.new()
+        perk_content.add_theme_constant_override("separation", 5)
+        shop_card.add_child(perk_content)
+        var header := HBoxContainer.new()
+        perk_content.add_child(header)
+        var perk_title := _label(header, session.UPGRADE_NAMES[id], 19)
+        perk_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        _label(header, "NV %d/3" % level, 14)
+        _label(perk_content, session.UPGRADE_DESCRIPTIONS[id], 14)
+        var buy := _button(perk_content,
+            "NÍVEL MÁXIMO" if cost < 0 else "MELHORAR  ·  %d MOEDAS" % cost,
+            _buy_upgrade.bind(id), 340)
         buy.disabled = cost < 0 or session.balance() < cost
     if not session.last_error.is_empty():
         _label(dialog_box, session.last_error, 15)
-    _button(dialog_box, "VOLTAR", _close_modal, 430)
+    _button(dialog_box, "VOLTAR", _close_modal, 300)
     _open_modal()
 
 func _buy_upgrade(id: String) -> void:

@@ -189,3 +189,15 @@ A HUD da partida agora destaca **onda e progresso**, **tempo**, **estabilidade**
 A música procedural foi substituída por uma composição original de **oito compassos em 132 BPM**, com melodia pluck, acordes rítmicos, baixo, bumbo, caixa e chimbal. O loop dura aproximadamente **14,55 segundos** em dó maior, com progressão C–F–Am–G. O arquivo é gerado em memória e os volumes/mute anteriores continuam funcionando.
 
 **Testar:** iniciar `godot .`, percorrer hub/loja, verificar hover/press dos botões, iniciar partida e conferir as três barras da HUD, cartas, pausa e a trilha com volume 0%, 50% e 100%. Acompanhar os testes C0–C5 e a exportação Windows na branch.
+
+### C5.2 — Revisão de legibilidade e cards de habilidades
+
+Após testar a primeira versão arcade, a hub, a HUD e o seletor de habilidades foram **reconstruídos visualmente**, sem alterar as regras nem recompensas.
+
+- **Hub:** painel menor e mais equilibrado, título/saldo/recordes separados, duas ações principais e ações secundárias discretas; sem botões gigantes empilhados.
+- **HUD:** ocupa largura reduzida, com onda, tempo, estabilidade, XP, moedas e contexto agrupados; barra de tempo/onda/estabilidade permanece integrada à lógica C3. Ações de pausar, reiniciar e voltar cabem em uma linha; a recuperação de salvamento só surge se há moedas pendentes.
+- **Cartas:** três cards próprios em `scripts/c5/skill_card.gd`, com categoria, nome, transição de nível, bônus, descrição e botão **Escolher** separados. Lado a lado em larguras comuns de PC e empilhados com rolagem em janelas estreitas. Selecionar ainda chama `RunBuild.select_card`, com cronômetro congelado.
+- **Loja:** cada melhoria permanente tem cartão com nome, nível, benefício e preço, sem texto comprimido.
+- **Estilo:** botões continuam coloridos e táteis, mas têm bevel/sombra discretos em `StyleBoxFlat` em vez de imagens enormes esticadas; painel claro, hierarquia tipográfica e melhor espaçamento.
+
+Os testes C5 foram atualizados para verificar os cards, os estados de botões, o congelamento do cronômetro e a nova HUD, além das regressões C0–C4. A branch C5 continua separada da main até validação visual.

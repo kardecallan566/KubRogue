@@ -2,6 +2,7 @@ extends Node3D
 class_name KubRogueC5Stage
 const Feedback = preload("res://scripts/c5/feedback_layer.gd")
 const VisualTheme = preload("res://scripts/c5/ui_skin.gd")
+const SkillCard = preload("res://scripts/c5/skill_card.gd")
 ## Explicit script dependency so 'godot .' works with a fresh .godot/ cache.
 ## The autoload is still registered as /root/KubeSession in project.godot.
 const ProgressScript = preload("res://scripts/c4/progress_service.gd")
@@ -38,7 +39,11 @@ var last_solve_time := -999.0
 var card_overlay: ColorRect
 var card_center: CenterContainer
 var card_header: Label
-var card_buttons: Array[Button] = []
+var card_widgets: Array = []
+var card_grid: GridContainer
+var card_scroll: ScrollContainer
+var card_panel: PanelContainer
+var card_subtitle: Label
 var camera: Camera3D
 var hand: HandCursor
 var actors: Dictionary = {} # cube_id -> {root, cube, ring, kind, home}
@@ -187,80 +192,101 @@ func _build_hud() -> void:
     add_child(overlay)
     hud_panel = PanelContainer.new()
     hud_panel.name = "WaveHUD"
-    hud_panel.position = Vector2(20.0, 18.0)
-    hud_panel.custom_minimum_size = Vector2(375.0, 0.0)
+    hud_panel.position = Vector2(16.0, 16.0)
+    hud_panel.custom_minimum_size = Vector2(326.0, 0.0)
     hud_panel.mouse_filter = Control.MOUSE_FILTER_STOP
     overlay.add_child(hud_panel)
     var content := VBoxContainer.new()
-    content.add_theme_constant_override("separation", 5)
+    content.add_theme_constant_override("separation", 6)
     hud_panel.add_child(content)
 
-    title_label = _add_label(content, "✦  KUBROGUE  ✦", 26)
+    var heading := HBoxContainer.new()
+    content.add_child(heading)
+    title_label = _add_label(heading, "KUBROGUE", 21)
     title_label.name = "Title"
-    title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    var tagline := _add_label(content, "JARDIM DOS CUBOS  ·  ROGUELITE", 14)
-    tagline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    wave_label = _add_label(content, "", 18)
+    title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    var version := _add_label(heading, "JARDIM DOS CUBOS", 11)
+    version.name = "Muted"
+    version.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+    var progress_head := HBoxContainer.new()
+    content.add_child(progress_head)
+    wave_label = _add_label(progress_head, "", 16)
     wave_label.name = "Counter"
+    wave_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    time_label = _add_label(progress_head, "", 15)
+    time_label.name = "HudTime"
+
     wave_bar = ProgressBar.new()
     wave_bar.name = "WaveBar"
-    wave_bar.max_value = 5.0
+    wave_bar.custom_minimum_size.y = 9
     content.add_child(wave_bar)
-
-    time_label = _add_label(content, "", 18)
-    time_label.name = "HudTime"
     time_bar = ProgressBar.new()
     time_bar.name = "TimeBar"
+    time_bar.custom_minimum_size.y = 7
     content.add_child(time_bar)
-    stability_label = _add_label(content, "", 17)
+
+    stability_label = _add_label(content, "", 15)
     stability_bar = ProgressBar.new()
     stability_bar.name = "StabilityBar"
+    stability_bar.custom_minimum_size.y = 10
     content.add_child(stability_bar)
 
-    stats_label = _add_label(content, "", 16)
+    var separator := HSeparator.new()
+    separator.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    content.add_child(separator)
+    stats_label = _add_label(content, "", 15)
     stats_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-    bank_label = _add_label(content, "", 16)
+    bank_label = _add_label(content, "", 17)
     bank_label.name = "Counter"
-    target_label = _add_label(content, "", 15)
+
+    var contextual := VBoxContainer.new()
+    contextual.add_theme_constant_override("separation", 3)
+    content.add_child(contextual)
+    target_label = _add_label(contextual, "", 13)
     target_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-    message_label = _add_label(content, "Clique ou segure sobre os cubos.", 14)
+    message_label = _add_label(contextual, "Resolva os cubos antes do tempo!", 12)
+    message_label.name = "Muted"
     message_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-    message_label.custom_minimum_size.y = 36.0
+    message_label.custom_minimum_size.y = 28
 
     var actions := HBoxContainer.new()
-    actions.add_theme_constant_override("separation", 4)
+    actions.add_theme_constant_override("separation", 6)
     content.add_child(actions)
     pause_button = Button.new()
+    pause_button.name = "PauseAction"
     pause_button.text = "PAUSAR"
     pause_button.set_meta("arcade_variant", "blue")
-    pause_button.custom_minimum_size = Vector2(155, 53)
+    pause_button.set_meta("compact", true)
+    pause_button.custom_minimum_size = Vector2(89, 41)
     pause_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     pause_button.pressed.connect(_toggle_pause)
     actions.add_child(pause_button)
     var reset_button := Button.new()
-    reset_button.text = "RECOMEÇAR"
+    reset_button.text = "REINICIAR"
     reset_button.set_meta("arcade_variant", "red")
-    reset_button.custom_minimum_size = Vector2(161, 53)
+    reset_button.set_meta("compact", true)
+    reset_button.custom_minimum_size = Vector2(93, 41)
     reset_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     reset_button.pressed.connect(restart_run)
     actions.add_child(reset_button)
-    var second_actions := HBoxContainer.new()
-    second_actions.add_theme_constant_override("separation", 4)
-    content.add_child(second_actions)
     var back_button := Button.new()
-    back_button.text = "VOLTAR"
-    back_button.set_meta("arcade_variant", "red")
-    back_button.custom_minimum_size = Vector2(155, 53)
+    back_button.text = "MENU"
+    back_button.set_meta("arcade_variant", "teal")
+    back_button.set_meta("compact", true)
+    back_button.custom_minimum_size = Vector2(80, 41)
     back_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     back_button.pressed.connect(_request_exit)
-    second_actions.add_child(back_button)
+    actions.add_child(back_button)
     retry_button = Button.new()
-    retry_button.text = "SALVAR"
-    retry_button.set_meta("arcade_variant", "teal")
-    retry_button.custom_minimum_size = Vector2(161, 53)
-    retry_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    retry_button.text = "TENTAR SALVAR MOEDAS"
+    retry_button.name = "RetrySave"
+    retry_button.set_meta("arcade_variant", "gold")
+    retry_button.custom_minimum_size = Vector2(270, 43)
+    retry_button.visible = false
     retry_button.pressed.connect(_retry_credits)
-    second_actions.add_child(retry_button)
+    content.add_child(retry_button)
+
     exit_dialog = ConfirmationDialog.new()
     exit_dialog.title = "Sair da partida"
     exit_dialog.dialog_text = "Voltar à hub? Moedas confirmadas já foram salvas; XP e cartas são temporários."
@@ -280,25 +306,25 @@ func _build_hud() -> void:
     center.mouse_filter = Control.MOUSE_FILTER_IGNORE
     overlay.add_child(center)
     summary_panel = PanelContainer.new()
-    summary_panel.custom_minimum_size = Vector2(390, 210)
+    summary_panel.custom_minimum_size = Vector2(430, 0)
     summary_panel.mouse_filter = Control.MOUSE_FILTER_STOP
     center.add_child(summary_panel)
     var text_box := VBoxContainer.new()
-    text_box.add_theme_constant_override("separation", 15)
+    text_box.add_theme_constant_override("separation", 12)
     summary_panel.add_child(text_box)
-    summary_title = _add_label(text_box, "", 25)
-    summary_body = _add_label(text_box, "", 18)
+    summary_title = _add_label(text_box, "", 24)
+    summary_body = _add_label(text_box, "", 16)
     summary_body.autowrap_mode = TextServer.AUTOWRAP_WORD
     summary_button = Button.new()
     summary_button.custom_minimum_size = Vector2(220, 44)
     summary_button.pressed.connect(_continue_from_summary)
-    summary_button.set_meta("arcade_variant", "gold")
+    summary_button.set_meta("arcade_variant", "teal")
     text_box.add_child(summary_button)
-
     dim.visible = false
     center.visible = false
     dim.set_meta("result_center", center)
     summary_panel.set_meta("dimmer", dim)
+
     _build_card_overlay(overlay)
     hand = HandCursor.new()
     hand.name = "HandCursor2D"
@@ -307,37 +333,71 @@ func _build_hud() -> void:
     effects.name = "GameFeelOverlay"
     overlay.add_child(effects)
     VisualTheme.apply(overlay)
+    get_viewport().size_changed.connect(_layout_cards)
 
 func _build_card_overlay(overlay: CanvasLayer) -> void:
     card_overlay = ColorRect.new()
     card_overlay.name = "CardOfferDim"
-    card_overlay.color = Color(0.07, 0.11, 0.19, 0.78)
+    card_overlay.color = Color(0.08, 0.16, 0.15, 0.75)
     card_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     card_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
     overlay.add_child(card_overlay)
+
     card_center = CenterContainer.new()
     card_center.name = "CardOfferCenter"
     card_center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     card_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
     overlay.add_child(card_center)
-    var panel := PanelContainer.new()
-    panel.custom_minimum_size = Vector2(560.0, 280.0)
-    card_center.add_child(panel)
-    var box := VBoxContainer.new()
-    box.add_theme_constant_override("separation", 10)
-    panel.add_child(box)
-    card_header = _add_label(box, "ESCOLHA UMA HABILIDADE", 24)
-    _add_label(box, "Uma carta por nível · apenas nesta partida", 16)
-    for i in range(3):
-        var button := Button.new()
-        button.custom_minimum_size = Vector2(500.0, 60.0)
-        button.pressed.connect(_choose_card.bind(i))
-        button.name = "CardChoice_%d" % i
-        button.set_meta("arcade_variant", "teal" if i == 1 else "gold")
-        box.add_child(button)
-        card_buttons.append(button)
+
+    card_panel = PanelContainer.new()
+    card_panel.name = "SkillSelectionPanel"
+    card_center.add_child(card_panel)
+    var body := VBoxContainer.new()
+    body.add_theme_constant_override("separation", 12)
+    card_panel.add_child(body)
+    card_header = _add_label(body, "ESCOLHA UMA HABILIDADE", 24)
+    card_header.name = "Title"
+    card_header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    card_subtitle = _add_label(body, "UMA MELHORIA PARA ESTA PARTIDA", 13)
+    card_subtitle.name = "Muted"
+    card_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+    card_scroll = ScrollContainer.new()
+    card_scroll.name = "CardScroll"
+    card_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+    card_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+    body.add_child(card_scroll)
+    card_grid = GridContainer.new()
+    card_grid.name = "SkillCards"
+    card_grid.add_theme_constant_override("h_separation", 12)
+    card_grid.add_theme_constant_override("v_separation", 12)
+    card_scroll.add_child(card_grid)
+    for index in range(3):
+        var widget := SkillCard.new()
+        widget.name = "SkillChoice_%d" % index
+        widget.chosen.connect(_choose_card)
+        card_grid.add_child(widget)
+        card_widgets.append(widget)
+
+    _layout_cards()
     card_overlay.visible = false
     card_center.visible = false
+
+func _layout_cards() -> void:
+    if card_panel == null or card_scroll == null or card_grid == null:
+        return
+    var screen: Vector2 = get_viewport().get_visible_rect().size
+    var wide := screen.x >= 1050.0
+    var available := maxf(350.0, screen.x - 48.0)
+    var max_width := minf(990.0 if wide else 575.0, available)
+    card_panel.custom_minimum_size = Vector2(max_width, 0)
+    card_grid.columns = 3 if wide else 1
+    var inner_width := max_width - 52.0
+    card_grid.custom_minimum_size.x = inner_width
+    var each_width := (inner_width - 24.0) / 3.0 if wide else inner_width
+    for widget in card_widgets:
+        widget.custom_minimum_size = Vector2(each_width, 215.0 if wide else 170.0)
+    card_scroll.custom_minimum_size = Vector2(inner_width, 246.0 if wide else minf(360.0, maxf(165.0, screen.y - 170.0)))
 
 func _show_cards() -> void:
     if director.is_finished() or build.pending <= 0:
@@ -348,18 +408,18 @@ func _show_cards() -> void:
     offers_open = true
     _sound("level")
     _spark(Vector3.ZERO, "level")
-    card_header.text = "NÍVEL %d  ·  ESCOLHA UMA HABILIDADE" % build.xp_level
-    for i in range(card_buttons.size()):
-        var button := card_buttons[i]
-        button.visible = i < ids.size()
-        if i < ids.size():
-            var card: Dictionary = build.card_data(ids[i])
-            button.text = "%s (Nv %d → %d)  |  %s  |  %s" % [
-                String(card["name"]), build.rank(ids[i]), build.rank(ids[i]) + 1,
-                String(card["value"]), String(card["description"])
-            ]
+    card_header.text = "NÍVEL %d  ·  SUA PRÓXIMA HABILIDADE" % build.xp_level
+    for index in range(card_widgets.size()):
+        var widget = card_widgets[index]
+        widget.visible = index < ids.size()
+        if index < ids.size():
+            var card: Dictionary = build.card_data(ids[index])
+            widget.configure_skill(index, card, build.rank(ids[index]))
+    _layout_cards()
     card_overlay.visible = true
     card_center.visible = true
+    if not card_widgets.is_empty():
+        card_widgets[0].set_selected_focus()
     if is_instance_valid(hand):
         hand.visible = false
     Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -798,29 +858,29 @@ func _toggle_pause() -> void:
 func _update_hud() -> void:
     if director == null or wave_label == null:
         return
-    wave_label.text = "✦  ONDA %d / %d  ✦" % [
+    wave_label.text = "ONDA %d / %d" % [
         maxi(1, director.wave_index + 1), director.waves.size()
     ]
-    time_label.text = "⏱  TEMPO  %02d s%s" % [ceili(director.time_left), "  ·  PAUSA" if paused else ""]
+    time_label.text = "%02d s%s" % [ceili(director.time_left), "  PAUSA" if paused else ""]
     if time_bar != null:
         var wave_time: float = float(director.definition().get("duration", 45.0))
         time_bar.max_value = wave_time + build.time_bonus()
         time_bar.value = director.time_left
-    stability_label.text = "♥  ESTABILIDADE  %d / %d" % [director.stability, director.stability_cap]
+    stability_label.text = "ESTABILIDADE   %d / %d" % [director.stability, director.stability_cap]
     if stability_bar != null:
         stability_bar.max_value = director.stability_cap
         stability_bar.value = director.stability
     if wave_bar != null:
         wave_bar.max_value = maxi(1, director.total_expected())
         wave_bar.value = director.wave_resolved
-    stats_label.text = "CUBOS %d/%d  ·  +%d MOEDAS\nXP %d  ·  NÍVEL %d" % [
-        director.wave_resolved, director.total_expected(),
-        director.wallet.coins, director.wallet.xp, build.xp_level
+    stats_label.text = "CUBOS %d/%d   ·   XP %d   ·   NÍVEL %d" % [
+        director.wave_resolved, director.total_expected(), director.wallet.xp, build.xp_level
     ]
     if bank_label != null:
-        bank_label.text = "★  CARTEIRA  %d moedas" % progress.balance()
+        bank_label.text = "MOEDAS   %d  ·  +%d na partida" % [progress.balance(), director.wallet.coins]
     if retry_button != null:
         retry_button.disabled = pending_credits.is_empty()
+        retry_button.visible = not pending_credits.is_empty()
     if focused_id >= 0 and actors.has(focused_id):
         var item: Dictionary = actors[focused_id]
         var cube: CubeBase = item["cube"]
@@ -829,7 +889,7 @@ func _update_hud() -> void:
             cube.moves_remaining()
         ]
     else:
-        target_label.text = "Combo x%d · %s" % [combo_streak, build.active_description()]
+        target_label.text = "COMBO x%d  ·  %s" % [combo_streak, build.active_description()]
     if pause_button != null:
         pause_button.text = "CONTINUAR" if paused else "PAUSAR"
 

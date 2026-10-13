@@ -55,3 +55,15 @@ A referência visual fornecida mostra a construção gradual de botões arcade: 
 - **Áudio:** a progressão original C–F–Am–G em oito compassos, 132 BPM, usando lead sincopado, baixo de notas curtas, arpejo de acordes e percussão procedural. Loop ~14,55 segundos; redução de clique na junção; volumes permanecem persistentes e aplicados em tempo real.
 
 **Testes adicionados:** textura de botão e estados hover/pressed, duração real do PCM da música e presença das três barras da HUD, além da suíte anterior. Validação gráfica/sonora no Windows é obrigatória antes do merge.
+
+## Refinamento C5.2 — Revisão de experiência após screenshots
+
+As capturas do Windows mostraram botões desproporcionalmente largos, informações de combate excessivas e três habilidades apresentadas como barras horizontais de texto sem hierarquia. A implementação foi refeita mantendo a identidade do campo aberto/cubos.
+
+- `ui_skin.gd` usa botões nativos com profundidade moderada e cantos arredondados; eliminadas texturas gigantes e o contorno excessivo do texto. As cores identificam função, mas o conteúdo é legível independentemente da cor.
+- `hub_stage.gd` separa título, moeda, recorde, ações primárias e secundárias. A loja passou a oferecer cartões individuais sem interferir no estado de compra do C4.
+- `game_stage.gd` mostra status em um painel compacto à esquerda com três barras discretas; dinheiro e XP em linhas específicas; botões de ação menores e recuperação do salvamento visível **somente quando necessária**.
+- `skill_card.gd` fornece opções sem truncamento: categoria, nome, nível, bônus, explicação e botão. Três cartões lado a lado em janelas largas; coluna única rolável em janelas pequenas. Não muda as probabilidades de escolha ou os efeitos de C3.
+- **Testar em 1280×720 e 1920×1080**, inclusive oferta de habilidades, três cartões distintos, clique e teclado, navegação de volta à hub, compras e pausa durante escolha.
+
+O C5 continua em rascunho até aprovação do usuário; não substituir o save C4 e não fazer merge automaticamente.

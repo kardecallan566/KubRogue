@@ -62,19 +62,31 @@ func _run() -> void:
     VisualTheme.apply(panel)
     check(panel.has_theme_stylebox_override("panel"), "custom panel background")
     check(button.has_theme_stylebox_override("normal"), "custom button palette")
-    var idle: StyleBoxTexture = button.get_theme_stylebox("normal") as StyleBoxTexture
-    var hover: StyleBoxTexture = button.get_theme_stylebox("hover") as StyleBoxTexture
-    var pressed: StyleBoxTexture = button.get_theme_stylebox("pressed") as StyleBoxTexture
-    check(idle != null and hover != null and pressed != null, "arcade buttons use generated layered textures")
+    var idle: StyleBoxFlat = button.get_theme_stylebox("normal") as StyleBoxFlat
+    var hover: StyleBoxFlat = button.get_theme_stylebox("hover") as StyleBoxFlat
+    var pressed: StyleBoxFlat = button.get_theme_stylebox("pressed") as StyleBoxFlat
+    check(idle != null and hover != null and pressed != null,
+        "restyled arcade buttons use lightweight native StyleBoxFlat")
     if idle != null and hover != null and pressed != null:
-        check(idle.texture.get_width() == 288 and idle.texture.get_height() == 104,
-            "original button texture includes deep layered bevel")
-        var idle_pixel: Color = idle.texture.get_image().get_pixel(140, 30)
-        var hover_pixel: Color = hover.texture.get_image().get_pixel(140, 30)
-        var press_pixel: Color = pressed.texture.get_image().get_pixel(140, 30)
-        check(idle_pixel != hover_pixel, "hover visibly changes the highlight")
-        check(press_pixel != idle_pixel, "pressed state visually depresses face")
-        check(idle.texture.get_image().get_pixel(0, 0).a < 0.01, "corners stay transparent")
+        check(idle.corner_radius_top_left >= 8, "buttons have restrained rounded corners")
+        check(hover.bg_color != idle.bg_color, "hover visibly lightens face")
+        check(pressed.border_width_bottom < idle.border_width_bottom,
+            "pressed state loses bottom depth without oversized plinth")
+        check(idle.shadow_size <= 3, "button shadow is subtle")
+    var SkillCard = load("res://scripts/c5/skill_card.gd")
+    var skill_widget = SkillCard.new()
+    get_root().add_child(skill_widget)
+    skill_widget.configure_skill(1, {
+        "id":"bolsa_encantada", "tag":"Moedas", "name":"Bolsa encantada",
+        "value":"+15% por nível", "description":"Moedas extras por solução"
+    }, 0)
+    check(skill_widget.title_label.text == "Bolsa encantada", "card title is separate")
+    check(skill_widget.bonus_label.text == "+15% por nível", "bonus is readable alone")
+    check(skill_widget.level_label.text.contains("0") and skill_widget.level_label.text.contains("1"),
+        "card shows level transition independently")
+    check(skill_widget.action_button.text == "ESCOLHER", "card has a distinct action")
+    check(skill_widget.custom_minimum_size.y >= 200, "skill card has room to breathe")
+    skill_widget.queue_free()
     panel.queue_free()
 
     for suffix in ["", ".bak", ".tmp"]:

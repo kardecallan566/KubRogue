@@ -25,7 +25,7 @@ func _run() -> void:
     var play_buttons := hub.find_children("*", "Button", true, false)
     check(play_buttons.size() >= 5, "cartoon hub offers at least five navigation buttons")
     if play_buttons.size() > 0:
-        check(play_buttons[0].get_theme_stylebox("normal") is StyleBoxTexture,
+        check(play_buttons[0].get_theme_stylebox("normal") is StyleBoxFlat,
             "hub primary action has layered arcade artwork")
     hub._show_settings()
     check(hub.dialog_center.visible, "settings modal works")
@@ -40,10 +40,27 @@ func _run() -> void:
     check(game.effects.mouse_filter == Control.MOUSE_FILTER_IGNORE, "VFX do not intercept controls")
     check(game.time_bar is ProgressBar and game.stability_bar is ProgressBar and game.wave_bar is ProgressBar,
         "HUD has separate wave/time/stability bars")
-    check(game.pause_button.get_theme_stylebox("normal") is StyleBoxTexture,
+    check(game.pause_button.get_theme_stylebox("normal") is StyleBoxFlat,
         "pause button uses the new illustrated arcade theme")
     check(game.hud_panel.get_theme_stylebox("panel") is StyleBoxFlat,
         "HUD panel is styled rather than native gray")
+    check(game.hud_panel.custom_minimum_size.x <= 350, "HUD width is compact")
+    check(game.card_widgets.size() == 3, "three skill cards, not stretched single-line buttons")
+    check(game.card_grid is GridContainer and game.card_scroll is ScrollContainer,
+        "skill modal uses responsive grid and scrolling")
+    game.build.register_xp(5)
+    game._show_cards()
+    check(game.offers_open and game.card_center.visible, "skill selection opens")
+    check(game.card_widgets[0].title_label.text.length() > 0
+        and game.card_widgets[0].description_label.text.length() > 0,
+        "skill cards separate names and explanatory text")
+    var paused_clock := game.director.time_left
+    game._process(1.0)
+    check(is_equal_approx(game.director.time_left, paused_clock),
+        "timer stops while choosing a skill")
+    game._choose_card(0)
+    check(not game.offers_open and game.build.offers_taken == 1,
+        "choosing exactly one card closes overlay and improves build")
     check(game.get_node("GrassBatch") is MultiMeshInstance3D, "grass instanced not 66 nodes")
     check(game.get_node("GrassBatch").multimesh.instance_count == 66, "66 decorative patches batched")
     check(game.director.waves.size() == 5, "five roguelite waves preserved")
