@@ -51,3 +51,9 @@ Abra `project.godot` no Godot 4.7.2 e pressione **F5**. Para ler o save: no edit
 - As configurações de partículas e tremor ficam persistidas, mas só serão exercitadas pelos VFX do C5.
 - C4 não inclui Steamworks, export comercial, efeitos finais, 4×4 ou monetização.
 - O checkpoint **não deve ser integrado à main até a validação gráfica pelo usuário**.
+
+## Correção de inicialização limpa (Godot CLI — 2026-10-13)
+
+O comando `godot .` em um clone sem cache podia informar `Could not find type "KubRogueProgress" in the current scope`, pois a hub e a arena tipavam uma classe global definida no próprio script de autoload, antes de o índice de classes de `.godot/` estar disponível. O C4 agora usa `const ProgressScript = preload("res://scripts/c4/progress_service.gd")` nos dois consumidores, com tipos `ProgressScript`, sem depender da descoberta global por `class_name`. O autoload `KubeSession` permanece inalterado. A suíte CI passa a iniciar o projeto **antes da importação no editor e sem pasta `.godot/`**, replicando uma primeira execução de `godot .`. Não é necessário apagar os saves de `user://`.
+
+Para atualizar seu checkout: `git pull origin dev/checkpoint-04-hub-save-shop` e executar `godot .`.

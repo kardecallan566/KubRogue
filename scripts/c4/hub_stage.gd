@@ -1,8 +1,11 @@
 extends Control
 class_name KubRogueHub
+## Explicit script dependency so 'godot .' works with a fresh .godot/ cache.
+## The autoload is still registered as /root/KubeSession in project.godot.
+const ProgressScript = preload("res://scripts/c4/progress_service.gd")
 ## Original KubRogue hub with a light geometric garden theme.
 ## All purchases are delegated to KubeSession; the UI never changes balances.
-var session: KubRogueProgress
+var session: ProgressScript
 var wallet_label: Label
 var records_label: Label
 var feedback_label: Label
@@ -13,7 +16,7 @@ var dialog_box: VBoxContainer
 func _ready() -> void:
     set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     mouse_filter = Control.MOUSE_FILTER_STOP
-    session = get_node("/root/KubeSession") as KubRogueProgress
+    session = get_node("/root/KubeSession") as ProgressScript
     _build_ui()
     session.progress_changed.connect(_refresh)
     _refresh()

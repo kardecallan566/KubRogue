@@ -1,5 +1,8 @@
 extends Node3D
 class_name KubRogueC4Stage
+## Explicit script dependency so 'godot .' works with a fresh .godot/ cache.
+## The autoload is still registered as /root/KubeSession in project.godot.
+const ProgressScript = preload("res://scripts/c4/progress_service.gd")
 ## Checkpoint C2: multi-cube wave gameplay, with in-memory currency and XP.
 ## Final 5 waves, 3x3 boss, abilities, persistent shop belong to C3/C4.
 const WaveRules = preload("res://scripts/c3/roguelite_director.gd")
@@ -14,7 +17,7 @@ const TARGET_RADIUS := 0.95
 const MAX_CUBES := 4
 
 var director: WaveRules
-var progress: KubRogueProgress
+var progress: ProgressScript
 var save_ready := false
 var pending_credits: Dictionary = {}
 var best_combo_in_run := 0
@@ -64,7 +67,7 @@ const SPAWN_POINTS := [
 ]
 
 func _ready() -> void:
-    progress = get_node("/root/KubeSession") as KubRogueProgress
+    progress = get_node("/root/KubeSession") as ProgressScript
     _build_field()
     _build_light_and_camera()
     _build_hud()
