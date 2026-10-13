@@ -102,3 +102,7 @@ Completar cada checkpoint com evidências: captura curta, checklist, versão do 
 - [ ] Não pagar moeda anunciada sem salvar; idempotência conferida por teste.
 
 Direção completa em [11](11-mapa-campo-aberto-e-camera.md), [12](12-gamefeel-eventos-visuais-e-detalhamento.md) e problemas da auditoria em [13](13-auditoria-de-consistencia.md).
+
+## 8. Situação dos itens de C0
+
+A cena de **inspeção 3×3** e o código do cubo foram adicionados no checkpoint 00; **isso não marca nenhum requisito de gameplay do MVP como concluído**. O 2×2, mão, combate e cinco ondas continuam com caixas abertas. Ver [C0](checkpoints/C0-kubos-asset-audit.md).

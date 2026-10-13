@@ -72,7 +72,7 @@ Uma animação de morte/partículas pode ocorrer após a solução confirmada. P
 
 ## 8. Integração do modelo 3D existente
 
-Ainda **não há arquivo disponibilizado no repositório**. Na futura implementação, antes de editar:
+A auditoria C0 encontrou o cubo procedural 3×3×3 em [Kubos](https://github.com/kardecallan566/Kubos) e adaptou o código de peças/movimentos. **Não há arquivo .glb/.gltf**: a geometria é construída por GDScript. No desenvolvimento posterior, antes de criar novos modelos:
 - Solicitar/importar o modelo e verificar formato (.glb/.gltf preferencial), licença, número de cubinhos, orientação de eixos, texturas, pivôs, materiais e animações existentes.
 - Se vier como malha monolítica, avaliar separação por peças sem perder as cores. Um modelo com uma única textura fixa pode não permitir girar camadas de forma convincente.
 - **Fallback legítimo:** gerar cubinhos e seis materiais no Godot até conseguir adaptar o asset real.
@@ -94,3 +94,7 @@ A documentação técnica oficial confirma glTF 2.0 e .glb como formatos de impo
 ## 10. Sincronização rigorosa do puzzle
 
 Uma instância registra ID único, seed, tipo e cursor de solução. `CubePuzzleModel` é a fonte da verdade e bloqueia entrada enquanto `ROTATING`; ao fim do giro, aplica snap na grade, atualiza orientação/adesivos e testa se todas as faces estão uniformes. Não confundir leve rotação ambiental do ator com giro de camadas. Ao resolver antes do plano inverso terminar, descartar giros excedentes. Nunca conceder prêmio por efeito visual, input ou animação interrompida. No mapa, somente `CubeActor` ativo pode ser alvo; gramado e plantas não são clicáveis. Ver [12](12-gamefeel-eventos-visuais-e-detalhamento.md).
+
+## 11. Integração efetiva do 3×3 no C0
+
+A versão adaptada da base Kubos reside em `scripts/puzzle/cube_state.gd`, `scripts/visual/rounded_box_mesh.gd` e `scripts/visual/cube_3x3.gd`, com demonstração em `scenes/c0/cube_inspection.tscn`. O estado 3×3 utiliza 26 peças e 54 adesivos, anima pivôs temporários e pode seguir o histórico inverso para chegar ao estado inicial. Essa reutilização **não gera um 2×2 automaticamente** e não comprova a qualidade visual sem execução no editor. Consulte [auditoria C0](checkpoints/C0-kubos-asset-audit.md).

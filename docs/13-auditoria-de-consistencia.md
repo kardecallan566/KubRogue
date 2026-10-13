@@ -60,3 +60,7 @@ Os itens acima **não foram executados** na fase documental. Aprovação de text
 ## 6. Controle de mudanças
 
 Antes de fechar um checkpoint, verificar se as decisões continuam alinhadas: campo aberto, mão central, movimentos válidos, cinco ondas, moedas persistentes, cartas temporárias, elite 3x3 e escopo MVP enxuto. Se dados do protótipo invalidarem hipóteses, atualizar primeiro o doc 10 e a autoridade correspondente, depois o resto.
+
+## 7. Atualização C0 — prova de asset em código
+
+O repositório privado Kubos foi examinado; o suposto “modelo 3D” é procedural GDScript (26 cubinhos e 54 plaquinhas), não .glb. A branch C0 de KubRogue agora tem adaptação 3×3, cena de inspeção e testes. O risco de **modelo não disponível** foi mitigado no 3×3, mas o risco de **2×2** e de controle arcade da mão permanece. A validação gráfica e o CI não podem ser presumidos aprovados apenas pelo commit. [Detalhes e rastreabilidade](checkpoints/C0-kubos-asset-audit.md).

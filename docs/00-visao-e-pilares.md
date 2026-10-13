@@ -69,3 +69,7 @@ O projeto deve ser demonstrável sem explicação verbal do desenvolvedor.
 ## 9. Visão espacial obrigatória
 
 **Jardim dos Cubos:** campo aberto verde suave, solo sem bordas visíveis, tufos pequenos e manchas discretas. A câmera ortográfica fica quase de cima e **fixa no MVP**, enquanto a mão acompanha o cursor. Terreno grande dá sensação de continuidade, porém a área jogável tem limites lógicos invisíveis, sem mapa infinito procedural. Sem plataforma circular, muro ou grid de pisos. Inspiração no princípio de espaço livre de King of Pickaxe, com texturas e arte originais. Ver [11](11-mapa-campo-aberto-e-camera.md).
+
+## 10. Nota de implementação C0
+
+O modelo 3×3×3 do [Kubos](https://github.com/kardecallan566/Kubos) foi localizado no repositório do mesmo proprietário e adaptado em uma **cena técnica de inspeção** separada, com 26 cubinhos e 54 adesivos. O 2×2, a mão e o loop jogável permanecem futuros. Veja [auditoria C0](checkpoints/C0-kubos-asset-audit.md).
