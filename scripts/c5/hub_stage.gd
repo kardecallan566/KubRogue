@@ -35,7 +35,16 @@ func _label(parent: Node, content: String, font_size: int = 18) -> Label:
 func _button(parent: Node, title: String, action: Callable, width: float = 320) -> Button:
     var btn := Button.new()
     btn.text = title
-    btn.custom_minimum_size = Vector2(width, 46)
+    btn.custom_minimum_size = Vector2(width, 64)
+    var lower := title.to_lower()
+    if lower.contains("jogar") or lower.contains("começar"):
+        btn.set_meta("arcade_variant", "gold")
+    elif lower.contains("loja") or lower.contains("comprar"):
+        btn.set_meta("arcade_variant", "teal")
+    elif lower.contains("config") or lower.contains("como jogar"):
+        btn.set_meta("arcade_variant", "blue")
+    elif lower.contains("sair") or lower.contains("voltar"):
+        btn.set_meta("arcade_variant", "red")
     btn.pressed.connect(func(): get_node("/root/KubeAudio").play_sfx("tap"))
     btn.pressed.connect(action)
     parent.add_child(btn)
@@ -65,21 +74,28 @@ func _build_ui() -> void:
     centering.mouse_filter = Control.MOUSE_FILTER_IGNORE
     add_child(centering)
     var panel := PanelContainer.new()
-    panel.custom_minimum_size = Vector2(550, 550)
+    panel.custom_minimum_size = Vector2(555, 595)
     centering.add_child(panel)
     var column := VBoxContainer.new()
-    column.add_theme_constant_override("separation", 12)
+    column.add_theme_constant_override("separation", 10)
     panel.add_child(column)
-    _label(column, "K U B R O G U E", 34)
-    _label(column, "JARDIM DOS CUBOS  ·  Resolva. Evolua. Recomece.", 16)
+    var logo := _label(column, "K U B R O G U E", 34)
+    logo.name = "HeroTitle"
+    logo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var subtitle := _label(column, "✦  JARDIM DOS CUBOS  ✦", 16)
+    subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     wallet_label = _label(column, "", 25)
-    records_label = _label(column, "", 17)
-    feedback_label = _label(column, "Cinco ondas · mão 2D · cubos 3D · Música original", 16)
-    _button(column, "JOGAR", _play)
-    _button(column, "LOJA DE MELHORIAS", _show_shop)
-    _button(column, "COMO JOGAR", func(): _show_tutorial(false))
-    _button(column, "CONFIGURAÇÕES", _show_settings)
-    _button(column, "SAIR DO JOGO", func(): get_tree().quit())
+    wallet_label.name = "Counter"
+    wallet_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    records_label = _label(column, "", 16)
+    records_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    feedback_label = _label(column, "5 ONDAS  ·  EVOLUA SUAS HABILIDADES", 15)
+    feedback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    _button(column, "▶  JOGAR", _play)
+    _button(column, "★  LOJA DE MELHORIAS", _show_shop)
+    _button(column, "?  COMO JOGAR", func(): _show_tutorial(false))
+    _button(column, "⚙  CONFIGURAÇÕES", _show_settings)
+    _button(column, "✕  SAIR DO JOGO", func(): get_tree().quit())
 
     dialog_dim = ColorRect.new()
     dialog_dim.name = "ModalBackdrop"
@@ -111,7 +127,7 @@ func _build_ui() -> void:
 func _refresh() -> void:
     if wallet_label == null:
         return
-    wallet_label.text = "Saldo permanente: %d moedas" % session.balance()
+    wallet_label.text = "★  %d MOEDAS" % session.balance()
     var rec: Dictionary = session.data["records"]
     records_label.text = "Melhor onda: %d/5   ·   Cubos: %d   ·   Combo: %d" % [
         rec["best_wave"], rec["best_solved"], rec["best_combo"]

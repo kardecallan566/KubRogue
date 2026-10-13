@@ -33,6 +33,12 @@ func _run() -> void:
     check(game.save_ready, "persistent run begins")
     check(game.hand is Control and game.effects is Control, "cursor and particles both 2D")
     check(game.effects.mouse_filter == Control.MOUSE_FILTER_IGNORE, "VFX do not intercept controls")
+    check(game.time_bar is ProgressBar and game.stability_bar is ProgressBar and game.wave_bar is ProgressBar,
+        "HUD has separate wave/time/stability bars")
+    check(game.pause_button.get_theme_stylebox("normal") is StyleBoxTexture,
+        "pause button uses the new illustrated arcade theme")
+    check(game.hud_panel.get_theme_stylebox("panel") is StyleBoxFlat,
+        "HUD panel is styled rather than native gray")
     check(game.get_node("GrassBatch") is MultiMeshInstance3D, "grass instanced not 66 nodes")
     check(game.get_node("GrassBatch").multimesh.instance_count == 66, "66 decorative patches batched")
     check(game.director.waves.size() == 5, "five roguelite waves preserved")

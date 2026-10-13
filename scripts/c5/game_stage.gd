@@ -49,6 +49,9 @@ var spawn_attempt := 0
 var animation_clock := 0.0
 var paused := false
 
+var time_bar: ProgressBar
+var stability_bar: ProgressBar
+var wave_bar: ProgressBar
 var hud_panel: PanelContainer
 var title_label: Label
 var wave_label: Label
@@ -185,47 +188,77 @@ func _build_hud() -> void:
     hud_panel = PanelContainer.new()
     hud_panel.name = "WaveHUD"
     hud_panel.position = Vector2(20.0, 18.0)
-    hud_panel.custom_minimum_size = Vector2(335.0, 0.0)
+    hud_panel.custom_minimum_size = Vector2(375.0, 0.0)
     hud_panel.mouse_filter = Control.MOUSE_FILTER_STOP
     overlay.add_child(hud_panel)
     var content := VBoxContainer.new()
     content.add_theme_constant_override("separation", 5)
     hud_panel.add_child(content)
-    title_label = _add_label(content, "KUBROGUE   ·   C5", 24)
-    _add_label(content, "Jardim dos Cubos | Roguelite", 16)
-    wave_label = _add_label(content, "", 17)
+
+    title_label = _add_label(content, "✦  KUBROGUE  ✦", 26)
+    title_label.name = "Title"
+    title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var tagline := _add_label(content, "JARDIM DOS CUBOS  ·  ROGUELITE", 14)
+    tagline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    wave_label = _add_label(content, "", 18)
+    wave_label.name = "Counter"
+    wave_bar = ProgressBar.new()
+    wave_bar.name = "WaveBar"
+    wave_bar.max_value = 5.0
+    content.add_child(wave_bar)
+
     time_label = _add_label(content, "", 18)
+    time_label.name = "HudTime"
+    time_bar = ProgressBar.new()
+    time_bar.name = "TimeBar"
+    content.add_child(time_bar)
     stability_label = _add_label(content, "", 17)
+    stability_bar = ProgressBar.new()
+    stability_bar.name = "StabilityBar"
+    content.add_child(stability_bar)
+
     stats_label = _add_label(content, "", 16)
+    stats_label.autowrap_mode = TextServer.AUTOWRAP_WORD
     bank_label = _add_label(content, "", 16)
-    target_label = _add_label(content, "", 16)
+    bank_label.name = "Counter"
+    target_label = _add_label(content, "", 15)
     target_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-    message_label = _add_label(content, "Clique ou segure a mão sobre os cubos.", 15)
+    message_label = _add_label(content, "Clique ou segure sobre os cubos.", 14)
     message_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+    message_label.custom_minimum_size.y = 36.0
 
     var actions := HBoxContainer.new()
-    actions.add_theme_constant_override("separation", 10)
+    actions.add_theme_constant_override("separation", 4)
     content.add_child(actions)
     pause_button = Button.new()
-    pause_button.text = "Pausar"
-    pause_button.custom_minimum_size = Vector2(130, 35)
+    pause_button.text = "PAUSAR"
+    pause_button.set_meta("arcade_variant", "blue")
+    pause_button.custom_minimum_size = Vector2(155, 53)
+    pause_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     pause_button.pressed.connect(_toggle_pause)
     actions.add_child(pause_button)
     var reset_button := Button.new()
-    reset_button.text = "Recomeçar"
-    reset_button.custom_minimum_size = Vector2(140, 35)
+    reset_button.text = "RECOMEÇAR"
+    reset_button.set_meta("arcade_variant", "red")
+    reset_button.custom_minimum_size = Vector2(161, 53)
+    reset_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     reset_button.pressed.connect(restart_run)
     actions.add_child(reset_button)
     var second_actions := HBoxContainer.new()
+    second_actions.add_theme_constant_override("separation", 4)
     content.add_child(second_actions)
     var back_button := Button.new()
-    back_button.text = "Voltar à hub"
-    back_button.custom_minimum_size = Vector2(140, 35)
+    back_button.text = "VOLTAR"
+    back_button.set_meta("arcade_variant", "red")
+    back_button.custom_minimum_size = Vector2(155, 53)
+    back_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     back_button.pressed.connect(_request_exit)
     second_actions.add_child(back_button)
     retry_button = Button.new()
-    retry_button.text = "Tentar salvar"
-    retry_button.custom_minimum_size = Vector2(140, 35)
+    retry_button.text = "SALVAR"
+    retry_button.set_meta("arcade_variant", "teal")
+    retry_button.custom_minimum_size = Vector2(161, 53)
+    retry_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     retry_button.pressed.connect(_retry_credits)
     second_actions.add_child(retry_button)
     exit_dialog = ConfirmationDialog.new()
@@ -259,6 +292,7 @@ func _build_hud() -> void:
     summary_button = Button.new()
     summary_button.custom_minimum_size = Vector2(220, 44)
     summary_button.pressed.connect(_continue_from_summary)
+    summary_button.set_meta("arcade_variant", "gold")
     text_box.add_child(summary_button)
 
     dim.visible = false
@@ -299,6 +333,7 @@ func _build_card_overlay(overlay: CanvasLayer) -> void:
         button.custom_minimum_size = Vector2(500.0, 60.0)
         button.pressed.connect(_choose_card.bind(i))
         button.name = "CardChoice_%d" % i
+        button.set_meta("arcade_variant", "teal" if i == 1 else "gold")
         box.add_child(button)
         card_buttons.append(button)
     card_overlay.visible = false
@@ -448,7 +483,7 @@ func _pick_spawn() -> Variant:
         var projection := camera.unproject_position(world)
         if camera.is_position_behind(world) or not inset.has_point(projection):
             continue
-        if projection.x < 365.0 and projection.y < 325.0:
+        if hud_panel.get_global_rect().grow(24.0).has_point(projection):
             continue
         var clear := true
         for id in actors:
@@ -756,24 +791,34 @@ func _toggle_pause() -> void:
         return
     paused = not paused
     _sound("tap")
-    pause_button.text = "Continuar" if paused else "Pausar"
+    pause_button.text = "CONTINUAR" if paused else "PAUSAR"
     message_label.text = "PAUSADO — o relógio parou." if paused else "Jogo retomado!"
     _update_hud()
 
 func _update_hud() -> void:
     if director == null or wave_label == null:
         return
-    wave_label.text = "Onda %d/%d  ·  Campo aberto" % [
+    wave_label.text = "✦  ONDA %d / %d  ✦" % [
         maxi(1, director.wave_index + 1), director.waves.size()
     ]
-    time_label.text = "Tempo: %02d s%s" % [ceili(director.time_left), "  ·  PAUSA" if paused else ""]
-    stability_label.text = "Estabilidade: %d / %d" % [director.stability, director.stability_cap]
-    stats_label.text = "Cubos %d/%d · Moedas %d · XP %d (Nv %d)" % [
+    time_label.text = "⏱  TEMPO  %02d s%s" % [ceili(director.time_left), "  ·  PAUSA" if paused else ""]
+    if time_bar != null:
+        var wave_time: float = float(director.definition().get("duration", 45.0))
+        time_bar.max_value = wave_time + build.time_bonus()
+        time_bar.value = director.time_left
+    stability_label.text = "♥  ESTABILIDADE  %d / %d" % [director.stability, director.stability_cap]
+    if stability_bar != null:
+        stability_bar.max_value = director.stability_cap
+        stability_bar.value = director.stability
+    if wave_bar != null:
+        wave_bar.max_value = maxi(1, director.total_expected())
+        wave_bar.value = director.wave_resolved
+    stats_label.text = "CUBOS %d/%d  ·  +%d MOEDAS\nXP %d  ·  NÍVEL %d" % [
         director.wave_resolved, director.total_expected(),
         director.wallet.coins, director.wallet.xp, build.xp_level
     ]
     if bank_label != null:
-        bank_label.text = "Carteira permanente: %d moedas" % progress.balance()
+        bank_label.text = "★  CARTEIRA  %d moedas" % progress.balance()
     if retry_button != null:
         retry_button.disabled = pending_credits.is_empty()
     if focused_id >= 0 and actors.has(focused_id):
@@ -786,7 +831,7 @@ func _update_hud() -> void:
     else:
         target_label.text = "Combo x%d · %s" % [combo_streak, build.active_description()]
     if pause_button != null:
-        pause_button.text = "Continuar" if paused else "Pausar"
+        pause_button.text = "CONTINUAR" if paused else "PAUSAR"
 
 func _exit_tree() -> void:
     Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

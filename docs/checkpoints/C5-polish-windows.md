@@ -45,3 +45,13 @@ A cena inicial é a nova hub; para comparar com a versão aprovada C4, abra `sce
 ## Limites
 
 O C5 é preparação para um primeiro **teste distribuível**, não publicação final na Steam/Google Play, e não inclui assinaturas digitais, integração Steamworks, conquistas online, multiplayer ou verificação anticheat. Os sons e cores são originais e ainda devem passar por revisão humana de estética e conforto.
+
+## Revisão solicitada — UI arcade e música mais alegre
+
+A referência visual fornecida mostra a construção gradual de botões arcade: traço, cor, sombra, luz e highlight. A implementação interpreta **essa técnica**, mas gera a textura original proceduralmente a cada variante/estado, sem incorporar a arte enviada nem fonte de terceiros. O desenho tem moldura marrom profunda, face colorida arredondada, listras suaves, brilho superior e texto branco com contraste forte.
+
+- **Hub/loja/tutoriais/ajustes:** botões mais espessos, variações dourada (ação), verde (compras), azul (configuração/pausa) e vermelha (voltar/sair), estados ativo/hover/pressed/desabilitado. Painéis claros com bordas e sombra, sem transparências ilegíveis.
+- **Gameplay:** barras de progresso da onda, tempo e estabilidade, com valores originais sincronizados à lógica. A área retangular da HUD é considerada no posicionamento dos cubos para impedir alvos cobertos.
+- **Áudio:** a progressão original C–F–Am–G em oito compassos, 132 BPM, usando lead sincopado, baixo de notas curtas, arpejo de acordes e percussão procedural. Loop ~14,55 segundos; redução de clique na junção; volumes permanecem persistentes e aplicados em tempo real.
+
+**Testes adicionados:** textura de botão e estados hover/pressed, duração real do PCM da música e presença das três barras da HUD, além da suíte anterior. Validação gráfica/sonora no Windows é obrigatória antes do merge.

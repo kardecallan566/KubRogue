@@ -177,3 +177,15 @@ godot --headless --path . --export-release "Windows Desktop" builds/windows/KubR
 A pasta `builds/windows` deve conter `KubRogue.exe` e `KubRogue.pck`; mantenha os dois arquivos juntos. O `.exe` não é instalador nem build assinada. Alternativamente, o workflow [C5 — Windows test build](.github/workflows/windows-export.yml), executado ao publicar na branch C5 ou acionado manualmente em GitHub Actions, poderá gerar um ZIP de teste após importar os templates oficiais. **Não afirmar que o ZIP foi gerado antes de executar esse workflow.**
 
 Manual e lista de testes: [Checkpoint C5](docs/checkpoints/C5-polish-windows.md). Não integrar à main antes de sua aprovação no Windows.
+
+### C5.1 — HUD arcade e trilha energética
+
+**Atualização na mesma branch `dev/checkpoint-05-polish-windows`**, sem merge automático na `main`.
+
+O tema das interfaces agora é **cartoon arcade com profundidade**: botões ilustrados procedurais com base marrom, frente dourada/verde/azul/vermelha, listras diagonais, brilho no topo, sombra e estados de hover/pressed. Não há arquivo de fonte, textura externa ou imagem copiada da referência. O estilo é aplicado à hub, loja, tutorial, configurações, cartas de habilidades, resumos de onda e ações da HUD.
+
+A HUD da partida agora destaca **onda e progresso**, **tempo**, **estabilidade**, **moedas/XP** e **saldo permanente**, com barras distintas, mantendo a região principal do campo gramado livre para os cubos. O spawn desvia dinamicamente da área real ocupada pelo painel.
+
+A música procedural foi substituída por uma composição original de **oito compassos em 132 BPM**, com melodia pluck, acordes rítmicos, baixo, bumbo, caixa e chimbal. O loop dura aproximadamente **14,55 segundos** em dó maior, com progressão C–F–Am–G. O arquivo é gerado em memória e os volumes/mute anteriores continuam funcionando.
+
+**Testar:** iniciar `godot .`, percorrer hub/loja, verificar hover/press dos botões, iniciar partida e conferir as três barras da HUD, cartas, pausa e a trilha com volume 0%, 50% e 100%. Acompanhar os testes C0–C5 e a exportação Windows na branch.
