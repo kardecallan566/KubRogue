@@ -453,6 +453,9 @@ func _process(delta: float) -> void:
     var playing := director.phase == WaveRules.Phase.RUNNING and not paused and not offers_open
     if playing:
         animation_clock += delta
+        if combo_streak > 0 and animation_clock - last_solve_time > 12.0:
+            combo_streak = 0
+            _update_hud()
     if is_instance_valid(hand):
         hand.follow_pointer(mouse)
         hand.visible = inside and not on_ui and playing

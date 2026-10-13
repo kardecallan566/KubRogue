@@ -107,5 +107,16 @@ func _run() -> void:
     director.tick(200.0)
     director.finish_wave()
     check(director.phase == Director.Phase.VICTORY, "solved elite allows final victory")
+    # Selecting the time card inside wave 5 MUST NOT change the elapsed
+    # clock used by the boss spawn window.
+    director.start_run()
+    director.phase = Director.Phase.BETWEEN
+    director.wave_index = 3
+    check(director.begin_next_wave(), "new boss wave for time-bonus check")
+    director.tick(9.0)
+    build.ranks["folego_extra"] = 3
+    check(not director._boss_due(), "future-wave time bonus does not retroactively accelerate boss")
+    director.tick(9.0)
+    check(director._boss_due(), "boss due after 18 actual wave seconds")
     print("KubRogue C3 unit tests: %d failures" % failures)
     quit(0 if failures == 0 else 1)

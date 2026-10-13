@@ -17,6 +17,7 @@ var build: Build
 var elite_spawned := false
 var elite_resolved := false
 var boss_actor_id := -1
+var wave_start_duration := 0.0
 
 func _init(upgrades = null) -> void:
     waves = C3_WAVES.duplicate(true)
@@ -38,6 +39,7 @@ func begin_next_wave() -> bool:
         # The time card only affects waves that start AFTER selection.
         if wave_index > 0:
             time_left += build.time_bonus()
+        wave_start_duration = time_left
     return result
 
 func total_expected() -> int:
@@ -52,15 +54,13 @@ func pending_count() -> int:
 func _boss_due() -> bool:
     if wave_index != BOSS_WAVE or elite_spawned:
         return false
-    var elapsed: float = float(C3_WAVES[BOSS_WAVE]["duration"]) + build.time_bonus() - time_left
+    var elapsed: float = wave_start_duration - time_left
     return elapsed >= ELITE_DUE
 
 func can_spawn() -> bool:
     if phase != Phase.RUNNING or time_left <= 0.0:
         return false
-    var elapsed: float = float(C3_WAVES[BOSS_WAVE]["duration"]) + (
-        build.time_bonus() if wave_index == BOSS_WAVE else 0.0
-    ) - time_left if wave_index == BOSS_WAVE else 0.0
+    var elapsed: float = wave_start_duration - time_left if wave_index == BOSS_WAVE else 0.0
     if _boss_due():
         return active.size() < MAX_ACTIVE and (spawn_clock >= SPAWN_INTERVAL or elapsed >= ELITE_LATEST)
     var max_common := 3 if wave_index == BOSS_WAVE and not elite_spawned else MAX_ACTIVE
