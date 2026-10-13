@@ -174,6 +174,6 @@ New-Item -ItemType Directory -Force builds/windows | Out-Null
 godot --headless --path . --export-release "Windows Desktop" builds/windows/KubRogue.exe
 ```
 
-A pasta `builds/windows` deve conter `KubRogue.exe` e `KubRogue.pck`; mantenha os dois arquivos juntos. O `.exe` não é instalador nem build assinada. Alternativamente, o workflow [C5 — Windows test build](.github/workflows/windows-export.yml), acionado manualmente em GitHub Actions, poderá gerar um ZIP de teste após importar os templates oficiais. **Não afirmar que o ZIP foi gerado antes de executar esse workflow.**
+A pasta `builds/windows` deve conter `KubRogue.exe` e `KubRogue.pck`; mantenha os dois arquivos juntos. O `.exe` não é instalador nem build assinada. Alternativamente, o workflow [C5 — Windows test build](.github/workflows/windows-export.yml), executado ao publicar na branch C5 ou acionado manualmente em GitHub Actions, poderá gerar um ZIP de teste após importar os templates oficiais. **Não afirmar que o ZIP foi gerado antes de executar esse workflow.**
 
 Manual e lista de testes: [Checkpoint C5](docs/checkpoints/C5-polish-windows.md). Não integrar à main antes de sua aprovação no Windows.

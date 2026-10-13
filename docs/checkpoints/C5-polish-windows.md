@@ -13,7 +13,7 @@
 5. **Conforto:** camera shake apenas se `screen_shake` estiver ativado e apenas ao perder estabilidade; default OFF. Animação pequena, sem telas piscando.
 6. **Cenário:** o Jardim dos Cubos permanece um gramado plano contínuo, sem bordas ou plataforma. Tufos não têm colisão; no C5 66 tufos são instâncias do mesmo mesh por MultiMesh em vez de nós independentes.
 7. **Arquitetura:** C4 não foi sobrescrito. Novas cenas em `scenes/c5/`, scripts em `scripts/c5/`; as cenas C0–C4 continuam abrindo diretamente.
-8. **Windows:** `export_presets.cfg` define preset `Windows Desktop` x86_64. O workflow separado `windows-export.yml` pode ser acionado em Actions/Run workflow para baixar o template oficial 4.7.2 e criar arquivo ZIP com `KubRogue.exe` e `KubRogue.pck`. É um pacote de teste, não instalador, não assinado, sem Steamworks e sem certificação Steam.
+8. **Windows:** `export_presets.cfg` define preset `Windows Desktop` x86_64. O workflow separado `windows-export.yml` é executado ao atualizar a branch C5 e também pode ser acionado manualmente em Actions/Run workflow para baixar o template oficial 4.7.2 e criar arquivo ZIP com `KubRogue.exe` e `KubRogue.pck`. É um pacote de teste, não instalador, não assinado, sem Steamworks e sem certificação Steam.
 
 ## Testar no Windows
 

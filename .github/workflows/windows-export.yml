@@ -1,6 +1,9 @@
 name: C5 - Windows test build (manual)
 
 on:
+  push:
+    branches:
+      - dev/checkpoint-05-polish-windows
   workflow_dispatch:
 
 permissions:
