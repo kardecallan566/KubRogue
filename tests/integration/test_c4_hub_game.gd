@@ -19,11 +19,7 @@ func _run() -> void:
     var progress = get_root().get_node("KubeSession")
     progress.configure(Store.new(path))
     check(not progress.data["tutorial_completed"], "tutorial shown for first-run user")
-    # Keep the dynamically loaded hub as Variant for CI diagnostics:
-    # GDScript 4.7 may not prove the native base of a preloaded script here.
-    var hub: Variant = Hub.new()
-    # A script-typed Hub variable is not inferred as Node by this Godot
-    # compiler path; explicit cast confirms its Control/Node base class.
+    var hub: Hub = Hub.new()
     get_root().add_child(hub)
     check(hub.wallet_label.text.contains("0 moedas"), "hub reflects balance")
     hub._show_tutorial(false)
