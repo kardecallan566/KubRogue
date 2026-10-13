@@ -2,7 +2,7 @@
 
 ## 0. Estado do repositório
 
-Esta primeira entrega publica **somente documentos de planejamento**. Não é uma entrega de código, cena, arquivo 3D importado, executável ou jogo testado. A implementação só começa em um checkpoint posterior.
+A entrega inicial foi somente documentação; a branch **dev/checkpoint-00-kubos-cube** agora inclui código, testes e uma cena técnica de inspeção 3×3 do C0, **ainda sem gameplay de MVP**. A implementação de C1–C5 continua futura.
 
 ## 1. Fluxo de desenvolvimento sugerido
 
@@ -98,3 +98,7 @@ O principal risco é substituir o loop de resolver com dezenas de sistemas adici
 **C0:** confirmar captura/referência de campo gramado e importar o modelo existente só quando disponibilizado. **C1:** validar mapa top-down + input em 720p/1080p e o giro real 2x2 antes de prosseguir. **C2:** testar spawn visível e regra de só penalizar alvos apresentados. **C3:** validar pausa de cartas em meio à onda, elite com vaga reservada e cinco ofertas úteis. **C4:** garantir moeda persistida antes do efeito de pagamento e menu coeso com visual de gramado/oficina. **C5:** comparar visuais com referências para verificar **originalidade**, não semelhança pixel a pixel.
 
 A especificação de mundo está no [11](11-mapa-campo-aberto-e-camera.md) e o microfeedback no [12](12-gamefeel-eventos-visuais-e-detalhamento.md).
+
+## 9. Execução real do C0
+
+Foram localizados os scripts procedurais do 3×3 no [Kubos](https://github.com/kardecallan566/Kubos). O KubRogue passa a ter um projeto Godot isolado para inspeção do modelo, sem importar a economia ou interface do outro jogo. O checkpoint exige teste headless, CI e validação gráfica manual antes de avançar. Consulte [auditoria de asset](checkpoints/C0-kubos-asset-audit.md) e [checklist](checkpoints/C0-test-plan.md).

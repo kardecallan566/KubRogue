@@ -1,0 +1,51 @@
+name: KubRogue C0 - Godot 4.7.2 validation
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev/checkpoint-**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install official Godot 4.7.2 (same version as Kubos)
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 -o godot.zip \
+            https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          echo "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4  godot.zip" | sha256sum -c -
+          unzip -q godot.zip
+          chmod +x Godot_v4.7.2-stable_linux.x86_64
+          sudo mv Godot_v4.7.2-stable_linux.x86_64 /usr/local/bin/godot
+          godot --version
+
+      - name: Import project and compile scripts
+        shell: bash
+        run: |
+          set -eo pipefail
+          godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/c0-import.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|FALHOU:' /tmp/c0-import.log; then exit 1; fi
+
+      - name: Domain invariant tests from Kubos
+        run: timeout 90s godot --headless --path . --script res://tests/unit/test_cube_state.gd
+
+      - name: Cubie geometry and layer animation integration
+        run: timeout 90s godot --headless --path . --script res://tests/integration/test_c0_cube.gd
+
+      - name: Boot C0 inspection scene
+        shell: bash
+        run: |
+          set -eo pipefail
+          godot --headless --path . --quit-after 40 2>&1 | tee /tmp/c0-boot.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:' /tmp/c0-boot.log; then exit 1; fi

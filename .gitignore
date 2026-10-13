@@ -1,0 +1,18 @@
+# Godot generated cache and local workspace
+.godot/
+.import/
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+builds/
+dist/
+exports/
+.vscode/
+.idea/
+# Do not commit local keys or signing credentials
+*.keystore
+*.jks
+.env
+.env.*

@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado atual: fase de pré-produção — somente documentação.** Este repositório ainda NÃO contém um projeto Godot jogável, o modelo 3D citado pelo idealizador, scripts nem assets. Os números e parâmetros são hipóteses iniciais para teste, não características implementadas.
+> **Estado atual:** Checkpoint C0 de inspeção técnica implementado em `dev/checkpoint-00-kubos-cube`. Já existe um projeto Godot com cubo 3×3×3 e controles de demonstração, mas **ainda não há gameplay de ondas, mão jogável, economia ou MVP**. Os números de balanceamento continuam hipóteses.
 
 ## Conceito em uma frase
 
@@ -16,7 +16,7 @@
 - **Loop:** solucionar cubos -> ganhar moedas e XP -> escolher cartas durante a run em pausa segura -> superar ondas -> comprar melhorias permanentes -> recomeçar.
 - **Primeiro destino:** PC Windows, mouse e teclado, Godot 4.x + GDScript, com meta de 60 FPS na configuração-alvo de desenvolvimento. Outras plataformas vêm depois.
 - **MVP:** 5 ondas, cubo 2x2 comum, 2x2 reforçado e elite 3x3; mão, moedas, XP, 8 habilidades, 3 melhorias permanentes, interface, áudio, salvamento local e fluxo completo de vitória/derrota.
-- **Modelo 3D existente:** a integração depende de receber e inspecionar o arquivo e sua licença. Até lá, o desenvolvimento posterior pode usar geometria provisória gerada no Godot.
+- **Modelo 3D existente:** estrutura procedural 3×3×3 localizada e adaptada do repositório privado [Kubos](https://github.com/kardecallan566/Kubos), com 26 cubinhos, 54 adesivos e rotação por camada. O MVP 2×2 continua futuro.
 
 ## Documentação de planejamento
 
@@ -41,7 +41,7 @@
 
 Validar o modelo 3D e o campo aberto -> protótipo de rotação -> validar o prazer de resolver cubos com a mão -> construir uma onda jogável -> conectar progressão de uma partida -> completar cinco ondas -> integrar economia persistente -> acabamento e testes.
 
-O **primeiro teste obrigatório** é provar que resolver um cubo com uma mão visível é divertido e legível. Não investir em uma loja extensa ou dezenas de variantes antes dessa prova.
+O **próximo teste obrigatório (C1)** é provar que resolver um cubo com uma mão visível é divertido e legível. Não investir em uma loja extensa ou dezenas de variantes antes dessa prova.
 
 ## Fonte técnica e referência
 
@@ -50,3 +50,15 @@ O **primeiro teste obrigatório** é provar que resolver um cubo com uma mão vi
 - [Godot — importação de cenas 3D](https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_3d_scenes/)
 
 Nenhuma implementação, modelo ou código de terceiros é copiado pela documentação.
+
+## Checkpoint C0 — Inspeção técnica 3D (implementado nesta branch)
+
+O C0 reutiliza exclusivamente o núcleo procedural do [Kubos](https://github.com/kardecallan566/Kubos), sem copiar os sistemas econômicos ou o jogo. **Não é um MVP** nem um combate jogável: é uma cena de validação do modelo.
+
+- **Abrir:** use Godot **4.7.2**, abra `project.godot` e execute F5. A cena `scenes/c0/cube_inspection.tscn` aparece com gramado aberto, câmera ortográfica fixa e cubo 3×3×3.
+- **Painel:** Embaralhar (seed determinística), Resolver próximo giro, Resolver todos, Reiniciar.
+- **Tests:** `godot --headless --editor --path . --import --quit`; depois `godot --headless --path . --script res://tests/unit/test_cube_state.gd` e `godot --headless --path . --script res://tests/integration/test_c0_cube.gd`.
+- **Docs:** [Auditoria técnica e origem](docs/checkpoints/C0-kubos-asset-audit.md) e [checklist manual](docs/checkpoints/C0-test-plan.md).
+- **Gate:** inspeção visual real e testes CI precisam passar antes da aprovação/merge e início de C1. A visualização do C0 não inclui mão, seleção, economia, ondas ou 2×2.
+
+O projeto **Kubos não é alterado** por esse trabalho. O KubRogue continua um jogo separado.

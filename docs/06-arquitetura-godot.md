@@ -1,6 +1,6 @@
 # 06 — Plano de arquitetura técnica em Godot
 
-> **Documento de arquitetura pretendida.** Não há projeto Godot implementado nesta etapa.
+> **Arquitetura de MVP planejada.** O projeto Godot da **inspeção C0** já existe, mas a arquitetura completa de gameplay descrita neste documento **ainda não está implementada**.
 
 ## 1. Stack e princípios
 
@@ -139,3 +139,7 @@ Converter cursor com `Camera3D.project_ray_origin()` e `Camera3D.project_ray_nor
 5. Retomar do estado congelado após escolha, sem adicionar ticks de timer.
 
 Testes de save, idempotência e carta terminal são obrigatórios; a especificação documental não substitui teste real no editor. Ver [13](13-auditoria-de-consistencia.md).
+
+## 14. Implementação atual vs proposta
+
+**Atuais no C0:** `project.godot`, `scenes/c0/cube_inspection.tscn`, `scripts/c0/cube_inspection.gd`, `scripts/puzzle/cube_state.gd`, `scripts/visual/cube_3x3.gd`, `scripts/visual/rounded_box_mesh.gd`, testes e workflow. **Apenas propostos:** `HandController`, `WaveDirector`, `EconomyService`, 2×2, hub, cartas e persistência. Não classificar código futuro como implementado. [Auditoria de origem](checkpoints/C0-kubos-asset-audit.md).

@@ -1,0 +1,17 @@
+config_version=5
+
+[application]
+config/name="KubRogue — C0 Inspeção do Cubo"
+run/main_scene="res://scenes/c0/cube_inspection.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/description="C0: technical inspection of the adapted procedural 3x3x3 cube from Kubos. Not a gameplay MVP."
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.57, 0.74, 0.48, 1)
