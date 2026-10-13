@@ -95,7 +95,7 @@ Mensagens podem ser dispensadas, mas ações tutorializadas devem funcionar de v
 
 ## 10. Ordem canônica da solução e pausa
 
-Confirmar giro e estado SOLVED -> persistir pagamento único -> creditar XP e registrar oferta -> verificar vitória/derrota e andamento da onda -> cancelar ofertas de run finalizada -> se ainda ativa, pausar gameplay e abrir escolha -> continuar com timer preservado. A oferta não depende de transição de onda. Não cobrar por cubos que nunca surgiram. Ver [13](13-auditoria-de-consistencia.md).
+Confirmar giro e estado SOLVED -> persistir pagamento único -> creditar XP e registrar oferta pendente -> se onda encerrou, computar cubos apresentados não resolvidos e descontar estabilidade -> avaliar **derrota/vitória** -> cancelar ofertas de run finalizada -> caso continue, pausar gameplay e abrir escolha -> continuar com timer preservado. A oferta não depende de transição de onda. Não cobrar por cubos que nunca surgiram. Ver [13](13-auditoria-de-consistencia.md).
 
 ## 11. Campo de ação
 

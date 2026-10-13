@@ -134,7 +134,7 @@ Converter cursor com `Camera3D.project_ray_origin()` e `Camera3D.project_ray_nor
 
 1. Completar giro e validar estado lógico SOLVED.
 2. Persistir moeda única e atualizar XP, registrar oferta pendente.
-3. Verificar condição terminal de onda/run (vitória/derrota tem prioridade).
+3. Se a onda encerrou, penalizar cubos apresentados não resolvidos e atualizar estabilidade; **depois** verificar resultado terminal (derrota/vitória tem prioridade sobre novas cartas).
 4. Se continuar jogando, mostrar oferta de carta na próxima pausa segura e congelar timer/spawn/ação.
 5. Retomar do estado congelado após escolha, sem adicionar ticks de timer.
 
