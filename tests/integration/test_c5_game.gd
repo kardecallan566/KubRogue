@@ -20,8 +20,13 @@ func _run() -> void:
     progress.configure(Store.new(path))
     var hub: Hub = Hub.new()
     get_root().add_child(hub)
-    check(hub.wallet_label != null and hub.wallet_label.text.contains("0 moedas"), "C5 hub renders bank")
+    check(hub.wallet_label != null and hub.wallet_label.text.contains("0 MOEDAS"), "C5 hub renders bank")
     check(hub.dialog_box != null and hub.dialog_box.get_parent() is ScrollContainer, "hub modal scrolls")
+    var play_buttons := hub.find_children("*", "Button", true, false)
+    check(play_buttons.size() >= 5, "cartoon hub offers at least five navigation buttons")
+    if play_buttons.size() > 0:
+        check(play_buttons[0].get_theme_stylebox("normal") is StyleBoxTexture,
+            "hub primary action has layered arcade artwork")
     hub._show_settings()
     check(hub.dialog_center.visible, "settings modal works")
     check(progress.set_setting("reduced_particles", true), "reduced effects setting persists")
