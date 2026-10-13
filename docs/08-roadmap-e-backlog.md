@@ -2,7 +2,7 @@
 
 ## 0. Estado do repositório
 
-A entrega inicial foi somente documentação; a branch **dev/checkpoint-00-kubos-cube** agora inclui código, testes e uma cena técnica de inspeção 3×3 do C0, **ainda sem gameplay de MVP**. A implementação de C1–C5 continua futura.
+C0 foi integrado na **main** após CI aprovado e aprovação do usuário. A branch **dev/checkpoint-01-hand-2x2** contém a primeira fatia jogável C1 com mão 3D, 2×2 real e contadores de recompensa provisórios. C2–C5 continuam futuros; não há MVP completo.
 
 ## 1. Fluxo de desenvolvimento sugerido
 
@@ -16,7 +16,7 @@ Manter **main** sempre legível. Para o código, trabalhar por branches curtas d
 
 **Aceite:** equipe entende se o modelo permite giros de faces. Se não, há um fallback procedural decidido, sem bloquear produto.
 
-**Bloqueador:** o asset 3D não está atualmente entregue no repositório; não assumir rig existente.
+**Resultado de C0:** o cubo procedural 3×3 do projeto Kubos foi reaproveitado com seus 26 cubinhos/54 adesivos e rotação de camadas; integrado em main.
 
 ### C1 — Núcleo da solução 3D (primeira fatia jogável)
 
@@ -102,3 +102,9 @@ A especificação de mundo está no [11](11-mapa-campo-aberto-e-camera.md) e o m
 ## 9. Execução real do C0
 
 Foram localizados os scripts procedurais do 3×3 no [Kubos](https://github.com/kardecallan566/Kubos). O KubRogue passa a ter um projeto Godot isolado para inspeção do modelo, sem importar a economia ou interface do outro jogo. O checkpoint exige teste headless, CI e validação gráfica manual antes de avançar. Consulte [auditoria de asset](checkpoints/C0-kubos-asset-audit.md) e [checklist](checkpoints/C0-test-plan.md).
+
+## 10. Implementação C1 em validação
+
+A branch `dev/checkpoint-01-hand-2x2` contém um **2×2 verdadeiro (8 cubinhos/24 adesivos)** com estado discreto, sequências inversas determinísticas, e reutiliza a apresentação por pivôs do 3×3. A mão de luva estilizada 3D segue o cursor no gramado e um clique/segurar próximo ao alvo consome exatamente um giro por cooldown. Um contador provisório concede +10 moedas e +1 XP ao resolver; novos cubos são gerados automaticamente. **Não existe economia persistente ainda.** O C0 permanece acessível.
+
+Para aceitar C1: rodar o CI, testar 10 resoluções seguidas dentro de janela gráfica, observar fluidez da mão e alinhamento de adesivos em movimento. Critérios completos em [C1](checkpoints/C1-hand-2x2.md). **Sem merge na main** antes desse gate visual.

@@ -143,3 +143,14 @@ Testes de save, idempotência e carta terminal são obrigatórios; a especifica�
 ## 14. Implementação atual vs proposta
 
 **Atuais no C0:** `project.godot`, `scenes/c0/cube_inspection.tscn`, `scripts/c0/cube_inspection.gd`, `scripts/puzzle/cube_state.gd`, `scripts/visual/cube_3x3.gd`, `scripts/visual/rounded_box_mesh.gd`, testes e workflow. **Apenas propostos:** `HandController`, `WaveDirector`, `EconomyService`, 2×2, hub, cartas e persistência. Não classificar código futuro como implementado. [Auditoria de origem](checkpoints/C0-kubos-asset-audit.md).
+
+## 15. Checkpoint C1 — núcleo jogável em implementação
+
+- **Domain:** `scripts/puzzle/cube_state_2x2.gd`, subclasse do motor discreto 3×3; oito cantos, 24 adesivos. Reutiliza `move/scramble/reversed_history` e substitui `is_valid/is_solved`.
+- **Render:** `scripts/visual/cube_2x2.gd` herda o adaptador visual do C0, que agora oferece `_new_puzzle()` para injetar 2×2 ou 3×3 sem duplicar geometria/pivôs.
+- **Mão:** `scripts/visual/hand_3d.gd`, modelo provisório autoral construído com malhas simples, sem controle de economia.
+- **Stage:** `scripts/c1/hand_puzzle_prototype.gd`, projeta cursor pelo raio da Camera3D fixa, verifica distância e bloqueio de HUD, aplica cooldown e recompensa apenas após `is_solved`. Nenhuma recompensa é persistida no C1.
+- **Cena:** `scenes/c1/hand_puzzle_prototype.tscn` usa Jardim dos Cubos e é a main scene nesta branch; a inspeção C0 continua no projeto.
+- **CI:** import headless, domínio C0/C1, modelos 3×3/2×2, teste de estágio e boot.
+
+Nada disso substitui `HandController` com controle avançado, `RunDirector`, `EconomyService` ou quadros de onda previstos nos checkpoints posteriores. Ver [documento C1](checkpoints/C1-hand-2x2.md).
