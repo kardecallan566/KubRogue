@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado do desenvolvimento:** C0 e C1 estão integrados na `main`. O **C2** está em `dev/checkpoint-02-waves-economy`: prévia de duas ondas com cubos aprendizes e reforçados, mão 2D, estabilidade, cronômetro, recompensa por resolução e fluxo de vitória/derrota. **Moedas e XP ainda só existem na partida atual**; a loja, salvamento, cartas, chefe e cinco ondas pertencem aos próximos checkpoints.
+> **Estado do desenvolvimento:** C0, C1 e C2 foram integrados à `main`. O **C3** está em `dev/checkpoint-03-roguelite`: cinco ondas, cubo elite 3×3, cinco níveis de escolha de habilidades, oito cartas com efeitos reais e progressão por XP. As moedas permanecem **somente dentro da partida**; a loja, o salvamento e o acabamento comercial ainda não estão no projeto.
 
 ## Conceito em uma frase
 
@@ -115,3 +115,18 @@ godot --headless --path . --script res://tests/integration/test_c2_stage.gd
 ```
 
 [Documentação detalhada e checklist do C2](docs/checkpoints/C2-waves-economy.md). **Nenhum merge em main até teste visual e aprovação deste checkpoint.**
+
+## Checkpoint C3 — Roguelite com cinco ondas (branch de teste)
+
+**Código em `dev/checkpoint-03-roguelite`, não integrado à main enquanto faltar sua validação visual.**
+
+Execute F5 para abrir `scenes/c3/roguelite_stage.tscn`, em Godot 4.7.2. C0/C1/C2 seguem acessíveis via cenas antigas (F6).
+
+- **Cinco ondas** com 5, 8, 9, 11 e 10 cubos previstos, cronômetros 45/55/65/70/90 s.
+- Cubos 2×2 aprendiz e reforçado, além de **elite 3×3** na onda 5. Um espaço fica reservado para a elite surgir por volta do segundo 18–20 da última onda, mesmo se há três comuns em tela.
+- **XP cumulativo 5/12/21/32/45**: escolha 1 de 3 cartas, com cronômetro e surgimento de cubos congelados durante a oferta. Cartas podem subir até nível 3 e têm efeito na run atual.
+- **Oito habilidades reais:** Pulso ágil (velocidade), Dedo certeiro (giro extra), Luva magnética (alcance), Bolsa encantada (moedas), Ritmo de mestre (combo), Fôlego extra (tempo futuro), Olhar de cubista (menos giros dos novos reforçados), Mão paciente (recuperação de estabilidade).
+- **Pagamento único por resolução legítima**, inclusive +80 moedas/+6 XP da elite; bônus de moedas limitados a +150%; dinheiro não salva ainda.
+- Vitória exige completar a quinta onda e **resolver** a elite; estabilidade em zero ou elite não resolvida significam derrota.
+
+Veja [Checklist do C3](docs/checkpoints/C3-roguelite.md). **Não é o MVP final**: a economia persistente, loja, tutorial e exportação são C4–C5.
