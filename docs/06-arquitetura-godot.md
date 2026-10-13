@@ -1,0 +1,124 @@
+# 06 — Plano de arquitetura técnica em Godot
+
+> **Documento de arquitetura pretendida.** Não há projeto Godot implementado nesta etapa.
+
+## 1. Stack e princípios
+
+- **Engine:** Godot 4.x estável, GDScript 2.0, cenas 3D com UI em Control; testar especificamente na instalação utilizada no desenvolvimento antes de fixar versão mínima.
+- **Render:** proposta Compatibility ou Forward+ após medir o visual e FPS em Windows. Evitar depender de recursos exclusivos de renderer sem justificativa.
+- **Arte:** .glb / .gltf preferenciais para importar o cubo 3D; materiais com instâncias e parâmetros por variante.
+- **Persistência:** JSON ou Resource serializado em user://, com esquema versionado e escrita atômica.
+- **Desacoplamento:** lógica do cubo pura e testável; apresentação reage a sinais; EconomyService é única origem de transações.
+
+## 2. Árvore de diretórios PROPOSTA
+
+- project.godot
+- scenes/bootstrap/ (inicialização)
+- scenes/ui/ (hub, loja, pausa, resultado, oferta de cartas)
+- scenes/gameplay/ (arena, mão, cubo, VFX)
+- scripts/core/ (estado global, eventos, save, configuração)
+- scripts/puzzle/ (modelo do cubo, movimentos, embaralhamento e solução inversa)
+- scripts/gameplay/ (atores, spawn, ondas, run, targeting)
+- scripts/progression/ (catálogo de upgrades, XP, economia, meta)
+- scripts/ui/ (controladores da HUD e menus)
+- data/ (recursos .tres com tabelas de cubos, ondas, cartas, preços)
+- assets/models/ (modelos autorizados), assets/materials/, assets/audio/, assets/fonts/, assets/vfx/
+- tests/ (lógica e testes de integração executáveis)
+- docs/ (estes arquivos)
+
+Esses caminhos são um **contrato de organização**; não criar pastas vazias ou fingir que arquivos já existem.
+
+## 3. Cenas e papéis
+
+| Cena/nó | Responsabilidade | Não deve fazer |
+|---|---|---|
+| **AppRoot** | iniciar serviços, carregar save, alternar menu/run | calcular movimentos do cubo |
+| **HubMenu** | navegar, mostrar dinheiro, chamar loja | alterar moeda diretamente |
+| **GameArena** | coordenar espaço, câmera, HUD e instâncias | guardar saldo persistente |
+| **HandController (Node3D)** | ler input, converter cursor para mundo, selecionar alvo e pedir giro | gerar/editar solução lógica |
+| **CubeActor (Node3D)** | ciclo spawn->ativo->rotação->conclusão, sinais e recompensa solicitada | armazenar dados globais |
+| **CubeView3D (Node3D)** | apresentar peças e animar giro validado | decidir vitória pelo brilho/material |
+| **WaveDirector (Node)** | tabela de spawns, timer, pendências e término | conceder duas recompensas |
+| **RunDirector (Node)** | transição de ondas, estabilidade, vitória/derrota, sessão | executar compras meta |
+| **HUD (Control)** | exibição reativa de estado | ser fonte de dados econômicos |
+| **OfferPanel (Control)** | escolha 1/3 de cartas | gerar efeitos fora do catálogo |
+| **ShopPanel (Control)** | apresentação de preços, estado do botão | debitar saldos sem serviço |
+
+## 4. Serviços e classes de lógica
+
+- **PuzzleState / PuzzleMove:** coordenadas discretas, adesivos/cores, giro de face/camada, teste de estado resolvido e operações de inversão.
+- **ScrambleGenerator:** semente local da run, tamanho do cubo, profundidade, prevenção de cancelamentos óbvios.
+- **SolutionPlan:** sequência reversa conhecida; nunca se apresentar como solver de solução mínima.
+- **CubeCatalog:** dados por tipo, incluindo N, movimentos, moedas, XP, peso de spawn e prefab.
+- **WaveCatalog:** lista de tipos, tempos, quotas, elite e total de spawns, determinísticos por seed.
+- **TargetingService:** 2.5D mouse->plano, filtros de estado, prioridade do alvo sob cursor, evitar cobrir UI.
+- **EconomyService:** única API para creditar moedas resolvidas e comprar upgrades; valida IDs de pagamento únicos.
+- **ProgressionService:** XP, níveis, ofertas pendentes, níveis de cartas e limites.
+- **MetaService:** níveis permanentes, cálculo de bônus iniciais da run.
+- **SaveService:** esquema, leitura, verificação, snapshot e escrita segura.
+- **AudioService / SettingsService:** volumes, acessibilidade e persistência.
+
+Evitar Autoload para cada objeto. Usar Autoload somente para serviços de vida longa (save/economia/configurações) e instâncias locais para run e puzzle.
+
+## 5. Contratos de eventos (conceituais)
+
+Eventos sugeridos, emitidos uma vez com tipos claros:
+- cube_spawned(cube_id, cube_type)
+- cube_targeted(cube_id)
+- cube_move_started(cube_id, move)
+- cube_move_completed(cube_id, move, moves_remaining)
+- cube_solved(cube_id, coin_value, xp_value)
+- cube_expired(cube_id)
+- coins_changed(total, delta)
+- xp_changed(level, xp_total)
+- upgrade_offered(choices, run_id)
+- upgrade_selected(upgrade_id, new_level)
+- stability_changed(new_value)
+- wave_finished(wave_number, unresolved_count)
+- run_finished(victory, stats)
+
+O produtor de eventos **não** chama UI por caminho absoluto. Consumidores devem se desconectar ao sair de cena. O serviço de economia verifica IDs processados dentro da run antes de creditar saldo.
+
+## 6. Configuração por recursos
+
+Preferir recursos tipados para cubos, ondas, cartas e melhorias permanentes. Cada entrada deve conter ID estável, valores, descrição, ícone ou referência visual e limites. Centralizar números de balanceamento em dados, não espalhar literais em GDScript. Dados ausentes devem produzir erro legível no desenvolvimento e fallback seguro em runtime.
+
+## 7. Modelo->animação (sequenciamento seguro)
+
+1. HandController verifica seleção, entrada permitida e cooldown.
+2. CubeActor reserva uma ação, sem modificar economia.
+3. PuzzleState produz movimento legal do plano.
+4. CubeView3D anima camada correspondente e notifica finalização.
+5. PuzzleState finaliza/valida movimento, sincroniza posições.
+6. CubeActor verifica vitória; se verdadeiro, emite cube_solved **uma só vez**.
+7. EconomyService credita moedas, ProgressionService credita XP, HUD recebe atualização.
+8. CubeActor finaliza animação cosmética e libera/retira a instância.
+
+Se ocorrer interrupção, encerrar animação com estado lógico consistente ou desfazer ação em andamento; nunca pagar por progresso não confirmado.
+
+## 8. Importação e testes do modelo 3D
+
+O asset do cubo já existe segundo o idealizador, mas **não está aqui**. A futura etapa deve registrar: autoria/licença, formato, pivô, número de submalhas, mapeamento das faces, unidade de escala, materiais, animações e cena de inspeção. Caso o modelo não seja desmontável em cubinhos, protótipo procedural antes de modificar o arquivo original.
+
+A documentação oficial Godot recomenda glTF 2.0/.glb; veja https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_3d_scenes/ e https://docs.godotengine.org/en/stable/getting_started/first_3d_game/02.player_input.html.
+
+## 9. Save e idempotência
+
+- Save local versionado com chaves explícitas; valores numéricos inteiros, não negativos.
+- Receita por cubo ganha ID de transação único dentro da run e marcador de crédito confirmado.
+- Compra de upgrade valida saldo + nível e salva alteração como única operação coerente.
+- Ao encerrar run antecipadamente, não ressuscitar cubos antigos nem conceder moeda por cena fechada.
+- **Não** incluir login, backend, ranking global, anúncios, analytics invasivo ou rede no MVP.
+
+## 10. Performance
+
+Alvo de teste inicial: resolução 1280x720 e 1920x1080, 60 FPS no PC de desenvolvimento, **4 cubos ativos** e efeito máximo. Mídia 3D deve escalar para máquinas inferiores. Usar profiler: medir frame time, draw calls, nós e custo de sombra. Evitar alocar cubinhos/partículas todo frame; pooling só após diagnóstico, mas não fechar os olhos para vazamentos de nós.
+
+## 11. Testabilidade/CI futura
+
+- Testar PuzzleState e ScrambleGenerator sem cena gráfica.
+- Testar pagamentos e compra com dados sintéticos.
+- Testar temporalidade de ondas com clock injetável/falso.
+- Smoke test de inicializar projeto e abrir arena.
+- Relatórios de erro com seed, onda, cubo e transação (sem dados pessoais).
+- Gatilho de integração no GitHub após existir projeto executável; não publicar badge verde sem pipeline real.
