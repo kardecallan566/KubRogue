@@ -1,10 +1,13 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C3 Roguelite 5 Ondas"
-run/main_scene="res://scenes/c3/roguelite_stage.tscn"
+config/name="KubRogue — C4 Jardim e Progresso"
+run/main_scene="res://scenes/c4/hub_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C3: five waves, elite 3x3, 8 temporary skills; run-scoped currency. Previous scenes remain available."
+config/description="C4: hub, shop, permanent coins and upgrades, tutorial and five-wave roguelite. Earlier scenes remain available."
+
+[autoload]
+KubeSession="*res://scripts/c4/progress_service.gd"
 
 [display]
 window/size/viewport_width=1280

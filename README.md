@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado do desenvolvimento:** C0, C1 e C2 foram integrados à `main`. O **C3** está em `dev/checkpoint-03-roguelite`: cinco ondas, cubo elite 3×3, cinco níveis de escolha de habilidades, oito cartas com efeitos reais e progressão por XP. As moedas permanecem **somente dentro da partida**; a loja, o salvamento e o acabamento comercial ainda não estão no projeto.
+> **Estado do desenvolvimento:** C0, C1, C2 e C3 estão integrados à `main`. O **C4**, na branch `dev/checkpoint-04-hub-save-shop`, adiciona hub, tutorial, carteira persistente, três melhorias permanentes, recordes e configurações. O jogo ainda não está comercialmente pronto; áudio definitivo, polimento e export pertencem ao C5.
 
 ## Conceito em uma frase
 
@@ -130,3 +130,25 @@ Execute F5 para abrir `scenes/c3/roguelite_stage.tscn`, em Godot 4.7.2. C0/C1/C2
 - Vitória exige completar a quinta onda e **resolver** a elite; estabilidade em zero ou elite não resolvida significam derrota.
 
 Veja [Checklist do C3](docs/checkpoints/C3-roguelite.md). **Não é o MVP final**: a economia persistente, loja, tutorial e exportação são C4–C5.
+
+## Checkpoint C4 — Hub, Loja e progresso persistente
+
+**Branch de validação:** `dev/checkpoint-04-hub-save-shop` · **Godot 4.7.2**. Pressione **F5** para abrir a nova **hub**.
+
+- **JOGAR:** na primeira vez exibe o tutorial em português antes de iniciar a run. Depois abre o Jardim dos Cubos com as cinco ondas, 2×2, 3×3 e cartas do C3.
+- **LOJA:** Treino da mão (custos 200/500/1200; -4% de cooldown por nível), Bolso do cubista (250/650/1300; +5% de moedas por nível) e Arena estável (300/800/1600; +5 estabilidade máxima e inicial por nível).
+- **MOEDAS:** ganhos por cubos resolvidos são registrados em `user://kubrogue_progress_v1.json` **antes do popup de confirmação**, não apenas no saldo da run. XP e cartas continuam temporários; perder a partida não apaga dinheiro confirmado.
+- **RECORDES:** melhor onda, mais cubos resolvidos numa run e maior combo; tutorial e preferências também ficam salvos.
+- **CONFIGURAÇÕES:** volumes e preferências de partículas/tremor ficam registrados. A implementação dos efeitos sonoros definitivos será realizada no C5.
+- **SEGURANÇA DO SAVE:** IDs impedem créditos duplicados na mesma run. Escrita em arquivo temporário e backup `.bak` para recuperar estado anterior se um arquivo ficar corrompido. Se não conseguir gravar, pausa o combate e permite tentar salvar novamente.
+
+**Executar testes C4:**
+```powershell
+godot --headless --editor --path . --import --quit
+godot --headless --path . --script res://tests/unit/test_c4_progress.gd
+godot --headless --path . --script res://tests/integration/test_c4_hub_game.gd
+```
+
+**Atenção:** não haverá login, internet, AdMob nem compras com dinheiro real. O C4 permanece separado na branch até validação visual e manual; cenas C0–C3 continuam disponíveis por F6.
+
+Detalhes e checklist: [C4 — Hub, loja e salvamento](docs/checkpoints/C4-hub-save-shop.md).

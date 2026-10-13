@@ -124,3 +124,9 @@ Gate: CI verde e teste gráfico no Windows de movimentos dos vários cubos, sele
 ## 13. Checkpoint C3 implementado em branch
 
 O C2 foi aprovado pelo usuário, passou no CI e entrou na `main` pelo PR #3. A branch `dev/checkpoint-03-roguelite` acrescenta cinco ondas, a elite 3×3 verdadeira (26 peças/54 adesivos), XP e cartas de upgrade temporário. `KubRogueC3Director` reaproveita a direção de ondas do C2 por composição/herança, preservando cenas antigas. `KubRogueRunBuild` mantém catálogo de oito cartas, ofertas exclusivas, níveis máximos, efeitos e limiares de XP. A economia de C3 permanece em memória, sem loja/salvamento. Gate: CI do Godot e teste manual com a mão 2D; não integrar até aprovação. [Checklist](checkpoints/C3-roguelite.md).
+
+## 14. C4 — Hub, melhorias, save e tutorial (em validação)
+
+Após aprovação do C3 e merge do PR #4, a branch `dev/checkpoint-04-hub-save-shop` entrega um fluxo novo: **Hub → tutorial no primeiro jogo → cinco ondas → resultado → Hub/Loja**. O saldo persistente é administrado por `KubRogueProgress` e nunca diretamente pela HUD. Transações são feitas em arquivo temporário e backup, com identificadores de cubos únicos em cada run, prevenção de pagamentos duplicados e registro de nível e compras. Três melhorias permanentes afetam cooldown, moedas e estabilidade. Configurações e recordes entram no mesmo arquivo versionado.
+
+Há testes separados de persistência, preço, saldo, recuperação de backup, tutorial e pagamento pela arena, além da suíte C0–C3. **Gate antes de merge:** CI, teste visual da hub e loja em 720p/1080p, replay do tutorial, reinício do jogo com saldo e melhorias preservados, derrota seguida de retorno à hub. Confira [C4](checkpoints/C4-hub-save-shop.md).
