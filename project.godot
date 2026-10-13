@@ -1,10 +1,10 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C1 Mão e Cubos 2x2"
-run/main_scene="res://scenes/c1/hand_puzzle_prototype.tscn"
+config/name="KubRogue — C2 Ondas e Cubos"
+run/main_scene="res://scenes/c2/wave_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C1: playable 2x2 hand-controlled puzzle proof of concept. C0 3x3 inspection remains available."
+config/description="C2: two-wave multi-cube gameplay prototype, 2D cursor and run-scoped currency. C0 and C1 scenes remain available."
 
 [display]
 window/size/viewport_width=1280

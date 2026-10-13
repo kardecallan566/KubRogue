@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado do desenvolvimento:** o **C0 está integrado à main**. O Checkpoint **C1** está na branch `dev/checkpoint-01-hand-2x2`: protótipo jogável com mão 2D, cubo 2×2 real e recompensas **provisórias em memória**. Ainda não há ondas, economia persistente, cartas, hub ou MVP completo.
+> **Estado do desenvolvimento:** C0 e C1 estão integrados na `main`. O **C2** está em `dev/checkpoint-02-waves-economy`: prévia de duas ondas com cubos aprendizes e reforçados, mão 2D, estabilidade, cronômetro, recompensa por resolução e fluxo de vitória/derrota. **Moedas e XP ainda só existem na partida atual**; a loja, salvamento, cartas, chefe e cinco ondas pertencem aos próximos checkpoints.
 
 ## Conceito em uma frase
 
@@ -94,3 +94,24 @@ Documentação e validação manual: [Checkpoint C1](docs/checkpoints/C1-hand-2x
 O 2×2 agora usa espaçamento **físico compacto**: os centros dos cubinhos vizinhos ficam separados por `STEP = 0.338`, com juntas de apenas `STEP - CELL = 0.011`. O domínio matemático continua com coordenadas ±1, mas a geometria usa `_grid_step() = STEP / 2`; o 3×3 C0 preserva a escala antiga. Isso elimina os espaços largos vistos no Windows sem distorcer as peças durante giros.
 
 O antigo modelo de mão 3D foi **retirado do C1** e substituído por `scripts/visual/hand_cursor_2d.gd`: cursor de mão original desenhado em 2D, sem importação externa, na `CanvasLayer` e sem capturar cliques. Sobre a HUD, o ponteiro normal do Windows volta a aparecer; ao sair da cena ele é restaurado. O gramado usa material sem iluminação dinâmica para evitar ficar esbranquiçado na configuração Compatibility.
+
+## Checkpoint C2 — Ondas e economia de partida
+
+**Branch de validação:** `dev/checkpoint-02-waves-economy` · Godot 4.7.2.
+
+A cena de abertura (F5) agora é `scenes/c2/wave_stage.tscn`. Ela apresenta **duas ondas de demonstração**, uma arena gramada aberta, mão 2D e cubos 2×2 reais, com no máximo quatro simultâneos. Cubos **aprendizes** têm 2–4 movimentos; **reforçados** têm 5–8, corpo escuro e anel dourado. Clique ou segure sobre o cubo, resolva suas faces e ganhe moedas e XP da run (**10/1** ou **18/2**).
+
+- A onda possui cronômetro, agendamento gradual de aparições, estabilidade inicial de 100 e penalidade de 25 por cubo **apresentado mas não resolvido** ao expirar o tempo.
+- Cubos ainda na fila de spawn **não** penalizam o jogador; a tela de resultado diferencia "não resolvidos" e "não exibidos".
+- Se restar estabilidade ao fim da onda 1, surge opção de prosseguir para a onda 2. Ao sobreviver às duas ondas, aparece vitória **do protótipo C2**; não é a vitória do MVP completo.
+- Botões **Pausar/Continuar** e **Recomeçar**. A moeda e XP só existem enquanto a run está aberta, sem salvar em disco.
+- C0 e C1 continuam disponíveis nas cenas anteriores, para regressão.
+
+Testes automatizados:
+```powershell
+godot --headless --editor --path . --import --quit
+godot --headless --path . --script res://tests/unit/test_c2_rules.gd
+godot --headless --path . --script res://tests/integration/test_c2_stage.gd
+```
+
+[Documentação detalhada e checklist do C2](docs/checkpoints/C2-waves-economy.md). **Nenhum merge em main até teste visual e aprovação deste checkpoint.**

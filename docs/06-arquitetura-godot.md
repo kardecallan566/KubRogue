@@ -160,3 +160,13 @@ Nada disso substitui `HandController` com controle avançado, `RunDirector`, `Ec
 No domínio, os oito cantos do 2×2 ocupam posições inteiras `(-1,1)` por eixo, necessárias ao motor de giros herdado. Para **renderização**, a distância entre vizinhos deve ser `STEP=0.338`, não `2×STEP`. Por isso `scripts/visual/cube_3x3.gd` oferece o método virtual `_grid_step()` com valor padrão `STEP`, enquanto `scripts/visual/cube_2x2.gd` o sobrescreve com `STEP/2`. `sync_poses()` usa a versão adequada depois de cada rotação, evitando peças distantes novamente. O cubo 3×3 de C0 mantém seu posicionamento.
 
 O `HandCursor2D` é um Control dentro de CanvasLayer, com desenho próprio via CanvasItem, mouse filter IGNORE e posição igual ao ponteiro real menos hotspot. No campo a mão personalizada substitui o cursor visual; na HUD/saída do jogo restaura ponteiro nativo. O `HandController` futuro **não é Node3D**; apenas a interação do cubo pertence ao mundo 3D. O material do gramado é unshaded para não estourar sua cor no renderer Compatibility. Testes de distância pós-giro e apresentação do cursor completam o C1.
+
+## 17. Implementação C2: sistemas separados e regras verificáveis
+
+- `scripts/c2/run_wallet.gd`: créditos em memória por ID único de ator, tipos aprendiz (10 moedas / 1 XP) e reforçado (18 moedas / 2 XP). Uma solução só paga uma vez. **Não salva saldo em disco.**
+- `scripts/c2/wave_director.gd`: duas ondas de demonstração, tempo de 42/55 s, fila de 6/8 cubos, intervalo de 2,1 s e máximo de quatro ativos. Estabilidade 100 e perda de 25 por cubo que **foi apresentado e não resolvido** ao fechar a onda; jamais por spawns pendentes.
+- `scripts/c2/wave_stage.gd`: compõe arena gramada, cursor 2D, seleção por proximidade, ator 3D por ID e anel de foco, giros serializados, informações de tipo/giros, HUD, pausa e overlay de resultado.
+- `scenes/c2/wave_stage.tscn` é a cena principal no C2. C0 e C1 não são alterados.
+- `tests/unit/test_c2_rules.gd` e `tests/integration/test_c2_stage.gd` validam crédito único, tipos, limite de spawn, derrota, progresso e reinício.
+
+A prévia C2 tem **duas ondas**, não é a regra final de cinco ondas: C3 substituirá as tabelas e adicionará habilidades/elite; C4 persistirá as moedas com transação atômica. A mão continua em CanvasLayer; o puzzle continua 3D e não usa HP.

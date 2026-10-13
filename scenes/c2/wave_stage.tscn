@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/c2/wave_stage.gd" id="1_c2"]
+
+[node name="KubRogueC2WaveStage" type="Node3D"]
+script = ExtResource("1_c2")
