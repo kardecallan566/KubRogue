@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado do desenvolvimento:** C0, C1, C2 e C3 estão integrados à `main`. O **C4**, na branch `dev/checkpoint-04-hub-save-shop`, adiciona hub, tutorial, carteira persistente, três melhorias permanentes, recordes e configurações. O jogo ainda não está comercialmente pronto; áudio definitivo, polimento e export pertencem ao C5.
+> **Estado do desenvolvimento:** C0–C4 integrados à `main`. O **C5** está na branch `dev/checkpoint-05-polish-windows`: efeitos sonoros e música originais gerados no Godot, interface revisada, efeitos configuráveis, otimização do cenário e preset de exportação para Windows. **Ainda requer validação visual e build Windows real antes de considerar o MVP distribuível.**
 
 ## Conceito em uma frase
 
@@ -152,3 +152,28 @@ godot --headless --path . --script res://tests/integration/test_c4_hub_game.gd
 **Atenção:** não haverá login, internet, AdMob nem compras com dinheiro real. O C4 permanece separado na branch até validação visual e manual; cenas C0–C3 continuam disponíveis por F6.
 
 Detalhes e checklist: [C4 — Hub, loja e salvamento](docs/checkpoints/C4-hub-save-shop.md).
+
+## Checkpoint C5 — Polimento e preparo da build Windows (branch)
+
+**Branch de validação:** `dev/checkpoint-05-polish-windows`. A cena principal é `scenes/c5/hub_stage.tscn`. Mão 2D, cenário em campo gramado aberto, rotação real de 2×2/3×3, cinco ondas, oito cartas e progresso do C4 continuam intactos. Cenas C0–C4 permanecem disponíveis para regressão via F6.
+
+**Novidades incluídas:** efeitos `turn/solved/coins/level/spawn/elite/wave/error/victory/tap` e música leve em loop, **sintetizados localmente**, sem usar arquivos de terceiros; volumes configuráveis que agora realmente afetam áudio; interface com paleta e botões uniformes, modal da loja rolável; feedback 2D de anéis, partículas e texto, com modo de partículas reduzidas; tremor opcional e desligado por padrão. Os 66 tufos de grama decorativos são combinados em um MultiMesh para reduzir draw calls.
+
+**Para executar no Windows:**
+```powershell
+git fetch origin
+git switch dev/checkpoint-05-polish-windows
+git pull origin dev/checkpoint-05-polish-windows
+godot .
+```
+
+**Exportar executável localmente** (requer templates de exportação **Godot 4.7.2** instalados no editor: Editor → Gerenciar Templates de Exportação):
+```powershell
+godot --headless --editor --path . --import --quit
+New-Item -ItemType Directory -Force builds/windows | Out-Null
+godot --headless --path . --export-release "Windows Desktop" builds/windows/KubRogue.exe
+```
+
+A pasta `builds/windows` deve conter `KubRogue.exe` e `KubRogue.pck`; mantenha os dois arquivos juntos. O `.exe` não é instalador nem build assinada. Alternativamente, o workflow [C5 — Windows test build](.github/workflows/windows-export.yml), acionado manualmente em GitHub Actions, poderá gerar um ZIP de teste após importar os templates oficiais. **Não afirmar que o ZIP foi gerado antes de executar esse workflow.**
+
+Manual e lista de testes: [Checkpoint C5](docs/checkpoints/C5-polish-windows.md). Não integrar à main antes de sua aprovação no Windows.

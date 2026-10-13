@@ -1,4 +1,4 @@
-name: KubRogue C0-C4 - Godot 4.7.2 validation
+name: KubRogue C0-C5 - Godot 4.7.2 validation
 
 on:
   push:
@@ -80,9 +80,23 @@ jobs:
       - name: C4 hub, tutorial and persistent in-game coins
         run: timeout 120s godot --headless --path . --script res://tests/integration/test_c4_hub_game.gd
 
-      - name: Boot C4 hub scene
+      - name: C5 original PCM audio, live volume and lightweight visuals
+        run: timeout 90s godot --headless --path . --script res://tests/unit/test_c5_audio_visual.gd
+
+      - name: C5 hub, fast field and real rewards
+        run: timeout 120s godot --headless --path . --script res://tests/integration/test_c5_game.gd
+
+      - name: Windows Desktop export preset validation
+        shell: bash
+        run: |
+          test -f export_presets.cfg
+          grep -Fq 'name="Windows Desktop"' export_presets.cfg
+          grep -Fq 'platform="Windows Desktop"' export_presets.cfg
+          test -f .github/workflows/windows-export.yml
+
+      - name: Boot C5 hub scene
         shell: bash
         run: |
           set -eo pipefail
           godot --headless --path . --quit-after 40 2>&1 | tee /tmp/c0-boot.log
-          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:|C2.*FAIL:|C3.*FAIL:|C4.*FAIL:' /tmp/c0-boot.log; then exit 1; fi
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:|C2.*FAIL:|C3.*FAIL:|C4.*FAIL:|C5.*FAIL:' /tmp/c0-boot.log; then exit 1; fi
