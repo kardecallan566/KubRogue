@@ -71,7 +71,11 @@ func _run() -> void:
         await game.solve_actor_move(id)
         attempts += 1
     check(not game.actors.has(id), "real 2x2 still resolves")
-    check(progress.balance() == 10, "single durable 10-coin credit")
+    # The selected card can be Bolsa encantada (+15%) so 10 is not always
+    # the correct amount. Persist the authoritative awarded value exactly once.
+    check(game.director.wallet.solved == 1 and progress.balance() >= 10
+        and progress.balance() == game.director.wallet.coins,
+        "single durable reward equals logical run reward, including skill bonuses")
     check(game.effects.total_events >= 2, "visual spawn, turn and solve events emitted")
     check(game.pending_credits.is_empty(), "no unsaved reward")
     game.queue_free()

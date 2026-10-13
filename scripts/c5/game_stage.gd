@@ -466,7 +466,7 @@ func _return_hub() -> void:
         return
     progress.update_record(director.wave_index + 1, director.wallet.solved, best_combo_in_run)
     Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-    get_tree().change_scene_to_file("res://scenes/c4/hub_stage.tscn")
+    get_tree().change_scene_to_file("res://scenes/c5/hub_stage.tscn")
 
 func _retry_credits() -> void:
     if pending_credits.is_empty():
