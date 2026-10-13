@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado atual:** Checkpoint C0 de inspeção técnica implementado em `dev/checkpoint-00-kubos-cube`. Já existe um projeto Godot com cubo 3×3×3 e controles de demonstração, mas **ainda não há gameplay de ondas, mão jogável, economia ou MVP**. Os números de balanceamento continuam hipóteses.
+> **Estado do desenvolvimento:** o **C0 está integrado à main**. O Checkpoint **C1** está na branch `dev/checkpoint-01-hand-2x2`: protótipo jogável com mão 2D, cubo 2×2 real e recompensas **provisórias em memória**. Ainda não há ondas, economia persistente, cartas, hub ou MVP completo.
 
 ## Conceito em uma frase
 
@@ -12,11 +12,11 @@
 
 - **Referência de sensação:** ação com mouse, ondas, upgrades e partidas repetíveis inspiradas por [King of Pickaxe](https://store.steampowered.com/app/4264240/King_of_Pickaxe/). Identidade, mecânicas de resolução, arte, interface, efeitos, nomes e conteúdo devem ser originais.
 - **Resolução arcade, não simulador de speedcubing:** um comando da mão aplica um movimento legal que aproxima o cubo do estado resolvido. No MVP, o jogo utiliza a inversão de um embaralhamento controlado — não promete um solucionador geral nem exige que o usuário conheça algoritmos de cubo mágico.
-- **Mapa e visual:** gramado pastel contínuo, câmera quase superior ortográfica e fixa no MVP; cubos e mão 3D destacados. Sem palco circular ou paredes visíveis.
+- **Mapa e visual:** gramado pastel contínuo, câmera quase superior ortográfica e fixa no MVP; cubos 3D e cursor de mão 2D destacados. Sem palco circular ou paredes visíveis.
 - **Loop:** solucionar cubos -> ganhar moedas e XP -> escolher cartas durante a run em pausa segura -> superar ondas -> comprar melhorias permanentes -> recomeçar.
 - **Primeiro destino:** PC Windows, mouse e teclado, Godot 4.x + GDScript, com meta de 60 FPS na configuração-alvo de desenvolvimento. Outras plataformas vêm depois.
 - **MVP:** 5 ondas, cubo 2x2 comum, 2x2 reforçado e elite 3x3; mão, moedas, XP, 8 habilidades, 3 melhorias permanentes, interface, áudio, salvamento local e fluxo completo de vitória/derrota.
-- **Modelo 3D existente:** estrutura procedural 3×3×3 localizada e adaptada do repositório privado [Kubos](https://github.com/kardecallan566/Kubos), com 26 cubinhos, 54 adesivos e rotação por camada. O MVP 2×2 continua futuro.
+- **Modelos 3D existentes:** cubo 3×3×3 procedural adaptado de [Kubos](https://github.com/kardecallan566/Kubos), com 26 cubinhos e 54 adesivos; C1 adiciona um **2×2 real** com oito cubinhos, 24 adesivos e o mesmo motor de rotação por camada.
 
 ## Documentação de planejamento
 
@@ -41,7 +41,7 @@
 
 Validar o modelo 3D e o campo aberto -> protótipo de rotação -> validar o prazer de resolver cubos com a mão -> construir uma onda jogável -> conectar progressão de uma partida -> completar cinco ondas -> integrar economia persistente -> acabamento e testes.
 
-O **próximo teste obrigatório (C1)** é provar que resolver um cubo com uma mão visível é divertido e legível. Não investir em uma loja extensa ou dezenas de variantes antes dessa prova.
+O **teste obrigatório do C1** é comprovar no Godot, com janela gráfica, que resolver cubos movendo uma mão estilizada é confortável, satisfatório e legível. Não investir em uma loja extensa ou dezenas de variantes antes dessa prova.
 
 ## Fonte técnica e referência
 
@@ -51,14 +51,46 @@ O **próximo teste obrigatório (C1)** é provar que resolver um cubo com uma m�
 
 Nenhuma implementação, modelo ou código de terceiros é copiado pela documentação.
 
-## Checkpoint C0 — Inspeção técnica 3D (implementado nesta branch)
+## Checkpoint C0 — Inspeção técnica 3D (integrado à main)
 
 O C0 reutiliza exclusivamente o núcleo procedural do [Kubos](https://github.com/kardecallan566/Kubos), sem copiar os sistemas econômicos ou o jogo. **Não é um MVP** nem um combate jogável: é uma cena de validação do modelo.
 
-- **Abrir:** use Godot **4.7.2**, abra `project.godot` e execute F5. A cena `scenes/c0/cube_inspection.tscn` aparece com gramado aberto, câmera ortográfica fixa e cubo 3×3×3.
+- **Abrir C0:** use Godot **4.7.2**, abra `project.godot` e execute diretamente `scenes/c0/cube_inspection.tscn` com F6. A cena contém gramado aberto, câmera ortográfica fixa e cubo 3×3×3.
 - **Painel:** Embaralhar (seed determinística), Resolver próximo giro, Resolver todos, Reiniciar.
 - **Tests:** `godot --headless --editor --path . --import --quit`; depois `godot --headless --path . --script res://tests/unit/test_cube_state.gd` e `godot --headless --path . --script res://tests/integration/test_c0_cube.gd`.
 - **Docs:** [Auditoria técnica e origem](docs/checkpoints/C0-kubos-asset-audit.md) e [checklist manual](docs/checkpoints/C0-test-plan.md).
-- **Gate:** inspeção visual real e testes CI precisam passar antes da aprovação/merge e início de C1. A visualização do C0 não inclui mão, seleção, economia, ondas ou 2×2.
+- **Histórico:** o CI do C0 foi aprovado e o checkpoint foi integrado na `main`. A aprovação visual foi dada pelo usuário; o C0 continua disponível para inspeção individual no editor. Não contém mão ou ondas.
 
 O projeto **Kubos não é alterado** por esse trabalho. O KubRogue continua um jogo separado.
+
+## Checkpoint C1 — Primeira interação jogável (branch de teste)
+
+**Branch:** `dev/checkpoint-01-hand-2x2`. **Godot:** 4.7.2.
+
+1. Abra `project.godot` e pressione **F5** para abrir `scenes/c1/hand_puzzle_prototype.tscn`.
+2. Mova o mouse sobre o cubo de oito peças. Uma mão 2D estilizada acompanha o cursor e o alvo ganha um anel de seleção.
+3. **Clique esquerdo** ou **segure o botão esquerdo** para realizar giros válidos da face, com cooldown por tempo real e animação de 90°/180°.
+4. O embaralhamento é reversível e reproduzível por seed; o último giro alinha os adesivos e soma **+10 moedas e +1 XP provisórios** na HUD.
+5. Um novo 2×2 embaralhado aparece para repetir o teste. O botão *Novo cubo* pula para outra seed sem dar recompensa.
+6. Para inspecionar o 3×3 do C0, abra a cena antiga via F6 (ela não foi removida).
+
+**Ainda ausente:** ondas, relógio, progressão de cartas, mão com rig profissional, sons definitivos, moedas persistentes, loja e export final. O protótipo de mão é procedural e leve; sua qualidade visual requer playtest.
+
+**Testes automatizados:**
+
+```powershell
+godot --headless --editor --path . --import --quit
+godot --headless --path . --script res://tests/unit/test_cube_state.gd
+godot --headless --path . --script res://tests/unit/test_cube_state_2x2.gd
+godot --headless --path . --script res://tests/integration/test_c0_cube.gd
+godot --headless --path . --script res://tests/integration/test_c1_cube_2x2.gd
+godot --headless --path . --script res://tests/integration/test_c1_stage.gd
+```
+
+Documentação e validação manual: [Checkpoint C1](docs/checkpoints/C1-hand-2x2.md).
+
+### Correção de layout do cubo e cursor (C1)
+
+O 2×2 agora usa espaçamento **físico compacto**: os centros dos cubinhos vizinhos ficam separados por `STEP = 0.338`, com juntas de apenas `STEP - CELL = 0.011`. O domínio matemático continua com coordenadas ±1, mas a geometria usa `_grid_step() = STEP / 2`; o 3×3 C0 preserva a escala antiga. Isso elimina os espaços largos vistos no Windows sem distorcer as peças durante giros.
+
+O antigo modelo de mão 3D foi **retirado do C1** e substituído por `scripts/visual/hand_cursor_2d.gd`: cursor de mão original desenhado em 2D, sem importação externa, na `CanvasLayer` e sem capturar cliques. Sobre a HUD, o ponteiro normal do Windows volta a aparecer; ao sair da cena ele é restaurado. O gramado usa material sem iluminação dinâmica para evitar ficar esbranquiçado na configuração Compatibility.

@@ -36,7 +36,7 @@ Esses caminhos são um **contrato de organização**; não criar pastas vazias o
 | **AppRoot** | iniciar serviços, carregar save, alternar menu/run | calcular movimentos do cubo |
 | **HubMenu** | navegar, mostrar dinheiro, chamar loja | alterar moeda diretamente |
 | **GameArena** | coordenar campo gramado contínuo, câmera ortográfica fixa, HUD e atores | guardar saldo persistente |
-| **HandController (Node3D)** | ler input, converter cursor para mundo, selecionar alvo e pedir giro | gerar/editar solução lógica |
+| **HandController (Node)** | ler input, converter cursor para o plano XZ, selecionar alvo e pedir giro; apresentar um cursor 2D separado em CanvasLayer | gerar/editar solução lógica |
 | **CubeActor (Node3D)** | ciclo spawn->ativo->rotação->conclusão, sinais e recompensa solicitada | armazenar dados globais |
 | **CubeView3D (Node3D)** | apresentar peças e animar giro validado | decidir vitória pelo brilho/material |
 | **WaveDirector (Node)** | agenda de spawn em anel, timer, elite com slot reservado, penalidade só por cubos spawnados | penalizar spawns que nunca apareceram |
@@ -143,3 +143,20 @@ Testes de save, idempotência e carta terminal são obrigatórios; a especifica�
 ## 14. Implementação atual vs proposta
 
 **Atuais no C0:** `project.godot`, `scenes/c0/cube_inspection.tscn`, `scripts/c0/cube_inspection.gd`, `scripts/puzzle/cube_state.gd`, `scripts/visual/cube_3x3.gd`, `scripts/visual/rounded_box_mesh.gd`, testes e workflow. **Apenas propostos:** `HandController`, `WaveDirector`, `EconomyService`, 2×2, hub, cartas e persistência. Não classificar código futuro como implementado. [Auditoria de origem](checkpoints/C0-kubos-asset-audit.md).
+
+## 15. Checkpoint C1 — núcleo jogável em implementação
+
+- **Domain:** `scripts/puzzle/cube_state_2x2.gd`, subclasse do motor discreto 3×3; oito cantos, 24 adesivos. Reutiliza `move/scramble/reversed_history` e substitui `is_valid/is_solved`.
+- **Render:** `scripts/visual/cube_2x2.gd` herda o adaptador visual do C0, que agora oferece `_new_puzzle()` para injetar 2×2 ou 3×3 sem duplicar geometria/pivôs.
+- **Mão:** `scripts/visual/hand_cursor_2d.gd`, cursor vetorial 2D autoral em CanvasLayer que ignora cliques e usa hotspot real. O script de mão 3D foi retirado do C1.
+- **Stage:** `scripts/c1/hand_puzzle_prototype.gd`, projeta cursor pelo raio da Camera3D fixa para localizar alvos, desenha mão em screen-space, verifica distância e bloqueio de HUD, aplica cooldown e recompensa apenas após `is_solved`. Nenhuma recompensa é persistida no C1.
+- **Cena:** `scenes/c1/hand_puzzle_prototype.tscn` usa Jardim dos Cubos e é a main scene nesta branch; a inspeção C0 continua no projeto.
+- **CI:** import headless, domínio C0/C1, modelos 3×3/2×2, teste de estágio e boot.
+
+Nada disso substitui `HandController` com controle avançado, `RunDirector`, `EconomyService` ou quadros de onda previstos nos checkpoints posteriores. Ver [documento C1](checkpoints/C1-hand-2x2.md).
+
+## 16. Correção da malha do 2×2 e input 2D
+
+No domínio, os oito cantos do 2×2 ocupam posições inteiras `(-1,1)` por eixo, necessárias ao motor de giros herdado. Para **renderização**, a distância entre vizinhos deve ser `STEP=0.338`, não `2×STEP`. Por isso `scripts/visual/cube_3x3.gd` oferece o método virtual `_grid_step()` com valor padrão `STEP`, enquanto `scripts/visual/cube_2x2.gd` o sobrescreve com `STEP/2`. `sync_poses()` usa a versão adequada depois de cada rotação, evitando peças distantes novamente. O cubo 3×3 de C0 mantém seu posicionamento.
+
+O `HandCursor2D` é um Control dentro de CanvasLayer, com desenho próprio via CanvasItem, mouse filter IGNORE e posição igual ao ponteiro real menos hotspot. No campo a mão personalizada substitui o cursor visual; na HUD/saída do jogo restaura ponteiro nativo. O `HandController` futuro **não é Node3D**; apenas a interação do cubo pertence ao mundo 3D. O material do gramado é unshaded para não estourar sua cor no renderer Compatibility. Testes de distância pós-giro e apresentação do cursor completam o C1.

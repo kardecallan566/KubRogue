@@ -106,3 +106,7 @@ Direção completa em [11](11-mapa-campo-aberto-e-camera.md), [12](12-gamefeel-e
 ## 8. Situação dos itens de C0
 
 A cena de **inspeção 3×3** e o código do cubo foram adicionados no checkpoint 00; **isso não marca nenhum requisito de gameplay do MVP como concluído**. O 2×2, mão, combate e cinco ondas continuam com caixas abertas. Ver [C0](checkpoints/C0-kubos-asset-audit.md).
+
+## 9. Especificação consolidada da mão
+
+Após o playtest C1, a mão do jogador é um **cursor desenhado em 2D**, e não uma malha de mão em 3D. Os cubos, o cenário e suas rotações continuam tridimensionais. Essa separação evita ocultação das faces e deixa a seleção do mouse precisa. O teste visual do MVP também deve rejeitar peças 2×2 separadas com grandes espaços; sua junta é mínima no estado normal e após rotações.

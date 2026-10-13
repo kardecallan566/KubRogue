@@ -20,7 +20,7 @@ const STICKER_SIZE := 0.283
 const STICKER_DEPTH := 0.014
 const BODY_RADIUS := 0.023
 
-var puzzle: Puzzle
+var puzzle
 var cubies: Dictionary = {}
 var body_nodes: Array[MeshInstance3D] = []
 var sticker_nodes: Array[MeshInstance3D] = []
@@ -30,8 +30,11 @@ var sticker_mesh: ArrayMesh
 var movement_busy := false
 var solution_plan: Array[Dictionary] = []
 
+func _new_puzzle():
+    return Puzzle.new()
+
 func _ready() -> void:
-    puzzle = Puzzle.new()
+    puzzle = _new_puzzle()
     assembly = Node3D.new()
     assembly.name = "CubeAssembly"
     add_child(assembly)
@@ -81,6 +84,11 @@ func _build_geometry() -> void:
             piece.add_child(sticker)
             sticker_nodes.append(sticker)
 
+## The 2x2 uses only corner coordinates -1/+1.
+## Its physical spacing differs from the 3x3 domain's unit grid.
+func _grid_step() -> float:
+    return STEP
+
 func sync_poses() -> void:
     if puzzle == null:
         return
@@ -89,7 +97,7 @@ func sync_poses() -> void:
         var p: Vector3i = piece["position"]
         var axes: Array = piece["axes"]
         var root: Node3D = cubies[id]
-        root.position = Vector3(p) * STEP
+        root.position = Vector3(p) * _grid_step()
         root.basis = Basis(
             Vector3(axes[0]), Vector3(axes[1]), Vector3(axes[2])
         ).orthonormalized()
@@ -104,14 +112,14 @@ func moves_remaining() -> int:
 func reset_cube() -> void:
     if movement_busy:
         return
-    puzzle = Puzzle.new()
+    puzzle = _new_puzzle()
     solution_plan.clear()
     sync_poses()
 
 func scramble_now(count: int = 9, seed_value: int = 42) -> void:
     if movement_busy:
         return
-    puzzle = Puzzle.new()
+    puzzle = _new_puzzle()
     var commands: Array[Dictionary] = puzzle.scramble(maxi(2, count), seed_value)
     for command in commands:
         puzzle.move(String(command["face"]), int(command["turns"]), true)

@@ -1,4 +1,4 @@
-name: KubRogue C0 - Godot 4.7.2 validation
+name: KubRogue C0-C1 - Godot 4.7.2 validation
 
 on:
   push:
@@ -43,9 +43,18 @@ jobs:
       - name: Cubie geometry and layer animation integration
         run: timeout 90s godot --headless --path . --script res://tests/integration/test_c0_cube.gd
 
-      - name: Boot C0 inspection scene
+      - name: C1 2x2 integer domain invariants
+        run: timeout 90s godot --headless --path . --script res://tests/unit/test_cube_state_2x2.gd
+
+      - name: C1 visual cubie geometry and animated layer rotations
+        run: timeout 90s godot --headless --path . --script res://tests/integration/test_c1_cube_2x2.gd
+
+      - name: C1 stage loop and provisional reward idempotence
+        run: timeout 90s godot --headless --path . --script res://tests/integration/test_c1_stage.gd
+
+      - name: Boot C1 scene
         shell: bash
         run: |
           set -eo pipefail
           godot --headless --path . --quit-after 40 2>&1 | tee /tmp/c0-boot.log
-          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:' /tmp/c0-boot.log; then exit 1; fi
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:' /tmp/c0-boot.log; then exit 1; fi

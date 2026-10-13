@@ -1,10 +1,10 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C0 Inspeção do Cubo"
-run/main_scene="res://scenes/c0/cube_inspection.tscn"
+config/name="KubRogue — C1 Mão e Cubos 2x2"
+run/main_scene="res://scenes/c1/hand_puzzle_prototype.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C0: technical inspection of the adapted procedural 3x3x3 cube from Kubos. Not a gameplay MVP."
+config/description="C1: playable 2x2 hand-controlled puzzle proof of concept. C0 3x3 inspection remains available."
 
 [display]
 window/size/viewport_width=1280
