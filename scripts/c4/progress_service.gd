@@ -87,9 +87,17 @@ func _sanitize(raw: Dictionary) -> Dictionary:
     var paid: Variant = raw.get("paid_ids", [])
     if paid is Array:
         for item in paid:
-            if item is int and item > 0 and item < 10000 and normalized["paid_ids"].size() < 1000:
-                if not normalized["paid_ids"].has(item):
-                    normalized["paid_ids"].append(item)
+            # Godot JSON.parse() converts JSON numbers to float, even if the
+            # IDs were originally integers. Accept only exact positive integers.
+            if not (item is int or item is float):
+                continue
+            var id := int(item)
+            if id <= 0 or id >= 10000 or float(id) != float(item):
+                continue
+            if normalized["paid_ids"].size() >= 1000:
+                break
+            if not normalized["paid_ids"].has(id):
+                normalized["paid_ids"].append(id)
     return normalized
 
 func _commit(next_data: Dictionary) -> bool:
