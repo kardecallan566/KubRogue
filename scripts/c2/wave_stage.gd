@@ -355,12 +355,13 @@ func _find_target(point: Vector3) -> int:
 func _process(delta: float) -> void:
     if director == null:
         return
-    animation_clock += delta
     action_cooldown = maxf(0.0, action_cooldown - delta)
     var mouse := get_viewport().get_mouse_position()
     var inside := get_viewport().get_visible_rect().has_point(mouse)
     var on_ui := _pointer_on_ui()
     var playing := director.phase == WaveRules.Phase.RUNNING and not paused
+    if playing:
+        animation_clock += delta
     if is_instance_valid(hand):
         hand.follow_pointer(mouse)
         hand.visible = inside and not on_ui and playing
@@ -371,7 +372,7 @@ func _process(delta: float) -> void:
     for id in actors:
         var item: Dictionary = actors[id]
         var root: Node3D = item["root"]
-        if item["kind"] == "reinforced":
+        if playing and item["kind"] == "reinforced":
             var home: Vector2 = item["home"]
             root.position.x = home.x + sin(animation_clock * 0.8 + float(id)) * 0.10
             root.position.z = home.y + cos(animation_clock * 0.6 + float(id)) * 0.10

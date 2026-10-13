@@ -69,6 +69,21 @@ func _run() -> void:
     check(stage.director.wave_index == 1 and stage.director.phase == Director.Phase.RUNNING,
         "continue starts next wave")
 
+    # Paused play must freeze timer, spawn progression AND decorative actor motion.
+    var pause_id: int = int(stage.actors.keys()[0])
+    var pause_actor: Node3D = stage.actors[pause_id]["root"]
+    var pause_position: Vector3 = pause_actor.position
+    var pause_time: float = stage.director.time_left
+    var pause_spawn: float = stage.director.spawn_clock
+    stage._toggle_pause()
+    check(stage.paused, "pause activated")
+    stage._process(1.5)
+    check(is_equal_approx(stage.director.time_left, pause_time), "timer frozen during pause")
+    check(is_equal_approx(stage.director.spawn_clock, pause_spawn), "spawn clock frozen")
+    check(pause_actor.position.distance_to(pause_position) < 0.0001, "actor motion frozen")
+    stage._toggle_pause()
+    check(not stage.paused, "resume activated")
+
     stage.restart_run()
     check(stage.director.wallet.coins == 0 and stage.director.stability == 100,
         "restart creates clean run")
