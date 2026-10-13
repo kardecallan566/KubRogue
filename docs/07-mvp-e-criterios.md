@@ -12,17 +12,17 @@ O MVP não significa “jogo comercial pronto”, mas uma fatia vertical que dem
 
 - [ ] Projeto Godot 4.x abre sem erros críticos; entrada pela cena principal configurada.
 - [ ] Menu/hub: Jogar, Loja, Configurações, Sair, resumo da carteira.
-- [ ] Uma arena 3D com câmera fixa confortável e mão 3D controlada por mouse.
+- [ ] **Jardim dos Cubos:** campo gramado 3D visualmente contínuo e autoral, **sem plataforma circular ou muros**, Camera3D ortográfica quase superior **fixa** e mão controlada por mouse.
 - [ ] Cubos físicos visíveis compostos por camadas rotacionáveis, com estado lógico real.
 - [ ] 2x2 aprendiz: cores embaralhadas, rotações válidas e solução visual inequívoca.
 - [ ] 2x2 reforçado: maior número de movimentos e comportamento visual distinto.
 - [ ] Elite 3x3: malha compatível com rotações de camadas e animação final.
 - [ ] Clique único ou segurar aplica movimentos corretos no alvo, respeitando cooldown.
 - [ ] Contador de movimentos, moedas previstas, foco/realce e cancelamento seguro de input.
-- [ ] Cinco ondas sequenciais; spawn, relógio, expiração, estabilidade e transição.
+- [ ] Cinco ondas sequenciais; spawn periférico visível, slot reservado para elite 3x3 até o segundo 20 da onda 5, relógio, expiração, estabilidade apenas por cubos efetivamente apresentados e transição.
 - [ ] Vitória com elite resolvida; derrota por estabilidade zerada ou elite não resolvida no tempo final.
 - [ ] Moedas + XP atribuídos **somente** por cubo finalizado.
-- [ ] Cartas: oito habilidades com níveis e seleção de uma em três.
+- [ ] Cartas: oito habilidades com níveis, oferta de 1 em 3 **durante a run após resolver**, teto de cinco ofertas XP 5/12/21/32/45, nenhuma carta após vitória/derrota.
 - [ ] Loja com três melhorias permanentes e persistência local.
 - [ ] Tutorial contextual de primeira jogada e reabertura no menu.
 - [ ] HUD completo, efeitos/sons mínimos e telas de fim/reinício.
@@ -52,15 +52,15 @@ O MVP não significa “jogo comercial pronto”, mas uma fatia vertical que dem
 
 ## 4. Sequência concreta de aceitação
 
-**T1 — Visibilidade:** iniciar a build, chegar na arena, identificar mão e cubo 2x2 embaralhado.
+**T1 — Mapa e visibilidade:** iniciar build e identificar mão e 2x2 sobre **gramado contínuo** sem borda de arena, câmera top-down fixa e spawns fora da HUD.
 
 **T2 — Resolução legítima:** inspecionar a sequência de movimentos; após cada clique o modelo do puzzle fica consistente com o render, última jogada deixa seis faces uniformes.
 
 **T3 — Pagamento correto:** resolver 1 aprendiz -> +10 moedas e +1 XP (sem bônus); tocar novamente no cubo já resolvido -> nenhum novo pagamento.
 
-**T4 — Ofertas:** alcançar 5 XP -> oferta de 3 cartas entre ondas; selecionar uma -> efeito visível e estatística alterada na próxima onda.
+**T4 — Ofertas:** alcançar 5 XP resolvendo cubos -> oferecer 3 cartas **durante a onda após giro seguro**, pausar mundo; selecionar -> efeito imediato; ao terminar partida não mostrar cartas.
 
-**T5 — Falha:** deixar 4 cubos não resolvidos no total (sem recuperação) -> estabilidade de 100 chega a zero, mostra derrota, moedas prévias mantidas.
+**T5 — Falha:** deixar 4 cubos **apresentados** não resolvidos ao encerrar ondas (sem recuperação) -> estabilidade 100 chega a zero, derrota e moedas prévias preservadas. Cubos nunca spawnados não penalizam.
 
 **T6 — Vitória:** completar as ondas, resolver elite 3x3 na onda 5 -> tela de vitória com estatísticas e opção de rejogar.
 
@@ -90,3 +90,15 @@ Estas metas são critérios de experiência, **não fatos medidos atualmente**.
 ## 6. Aprovação e mudança de escopo
 
 Completar cada checkpoint com evidências: captura curta, checklist, versão do Godot, logs/testes e mudanças. Se o protótipo da mão não for divertido, **refinar o gesto e o feedback antes de construir a loja**. Funcionalidades acima do MVP entram no backlog e não bloqueiam a primeira versão.
+
+## 7. Critérios adicionais de mapa e experiência
+
+- [ ] Campo aberto gramado cobre 100% da área atrás da câmera sem borda visível, inclusive 16:10.
+- [ ] Piso com manchas arredondadas e tufos pequenos esparsos **originais**; nenhuma cerca, obstáculo alto ou plataforma de arena.
+- [ ] Com 4 cubos simultâneos, todos são selecionáveis, legíveis e não se sobrepõem à mão/HUD.
+- [ ] A elite surge até 20 s da onda 5 mesmo se há três cubos comuns ativos.
+- [ ] UI de carta pausa timer/spawner e retorna sem pular o tempo.
+- [ ] Audio de giro, solução e moedas identificáveis com opção de volume/redução visual.
+- [ ] Não pagar moeda anunciada sem salvar; idempotência conferida por teste.
+
+Direção completa em [11](11-mapa-campo-aberto-e-camera.md), [12](12-gamefeel-eventos-visuais-e-detalhamento.md) e problemas da auditoria em [13](13-auditoria-de-consistencia.md).

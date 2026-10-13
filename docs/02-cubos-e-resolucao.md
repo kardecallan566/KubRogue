@@ -34,7 +34,7 @@ Para NxN, construir cubinhos visíveis e adesivos coloridos nas faces externas. 
 Ao girar face/camada:
 1. Validar movimento no modelo;
 2. Identificar cubinhos da camada (eixo, índice, direção, quartos-de-volta);
-3. Conectá-los temporariamente a pivô central da camada;
+3. Conectá-los temporariamente a um pivô central de camada, preservando transformações locais sem capturar cubinhos de outras camadas;
 4. Animar 90° ou 180° com easing curto, sem deformar malhas;
 5. Atualizar posições/orientações discretas, reparentar e normalizar transformações;
 6. Confirmar fim da animação e testar estado resolvido.
@@ -48,7 +48,7 @@ Evitar erros cumulativos de ponto flutuante: **snap** no grid e ângulos de múl
 2. Usar gerador pseudoaleatório com seed persistida dentro da run para compor uma sequência de movimentos legais.
 3. Registrar a sequência completa e aplicá-la ao estado, sem disparar efeitos de vitória.
 4. Evitar sequências triviais (por exemplo, cancelar imediatamente o movimento anterior ou misturar a mesma face em sequência de forma redundante).
-5. A sequência de solução é a sequência de embaralhamento invertida, com direções inversas.
+5. A solução inverte o embaralhamento **na ordem e no sentido**; giro de 180° é a própria inversa.
 6. Cada comando da mão consome um item do plano após a animação efetiva.
 7. Se a última ação levou todas as faces a estado uniforme, emitir evento único de conclusão.
 
@@ -90,3 +90,7 @@ A documentação técnica oficial confirma glTF 2.0 e .glb como formatos de impo
 - Transições entre cenas não deixam cubinhos órfãos ou girando sem dono.
 - Contador chega a zero **quando** os adesivos confirmam o estado resolvido, sem falso positivo.
 - O cubo 3x3 de elite realmente usa camadas 3x3; não basta trocar o tamanho de um 2x2.
+
+## 10. Sincronização rigorosa do puzzle
+
+Uma instância registra ID único, seed, tipo e cursor de solução. `CubePuzzleModel` é a fonte da verdade e bloqueia entrada enquanto `ROTATING`; ao fim do giro, aplica snap na grade, atualiza orientação/adesivos e testa se todas as faces estão uniformes. Não confundir leve rotação ambiental do ator com giro de camadas. Ao resolver antes do plano inverso terminar, descartar giros excedentes. Nunca conceder prêmio por efeito visual, input ou animação interrompida. No mapa, somente `CubeActor` ativo pode ser alvo; gramado e plantas não são clicáveis. Ver [12](12-gamefeel-eventos-visuais-e-detalhamento.md).

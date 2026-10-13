@@ -2,7 +2,7 @@
 
 ## 1. Loop principal (segundo a segundo)
 
-1. Cubos embaralhados surgem em posições seguras da arena com aviso visual breve.
+1. Cubos embaralhados surgem no anel periférico visível do campo gramado, em posições seguras, com aviso visual breve.
 2. Jogador move o mouse; a mão 3D segue a posição projetada sobre o plano da arena.
 3. Ao pairar sobre um cubo, surge realce de alvo, indicação curta de movimentos faltantes e sua recompensa.
 4. Clique esquerdo realiza **uma ação de resolução**; segurar repete no intervalo de cooldown da mão. Uma ação resolve exatamente um movimento lógico legal, salvo efeitos explicitamente sinalizados.
@@ -27,8 +27,8 @@ Evitar exigir movimentos bruscos do mouse ou repetição muito rápida. Clique e
 
 ## 3. Direção e sensação de movimento
 
-- Arena em plano XZ, câmera fixa com projeção ortográfica e inclinação suave; cenas 3D em uma composição 2.5D.
-- Mouse em tela é convertido por raycast/plano da arena em coordenadas de mundo; posição da mão suavizada com limite para não gerar atraso incômodo.
+- Campo gramado aberto no plano XZ, câmera ortográfica **fixa** 15–25° afastada da vertical, com leitura top-down 2.5D.
+- Cursor é projetado em plano XZ usando a câmera fixa; a mão fica limitada à área útil invisível. Suavização curta sem atraso no clique. Não seguir cursor com câmera no MVP.
 - Mão flutua levemente acima dos cubos, mostra pose de apontar ao selecionar e gesto de girar ao executar.
 - Concluir giro no alvo ativo antes de aceitar um novo comando; fila máxima de **uma ação antecipada**, cancelada ao sair do alvo.
 - Feedback de input em até um frame visual; nenhuma ação pode iniciar em mais de um cubo simultaneamente.
@@ -39,21 +39,21 @@ Evitar exigir movimentos bruscos do mouse ou repetição muito rápida. Clique e
 - O jogador inicia na hub com carteira persistente; pressionar **Jogar** inicia partida do zero.
 - Meta: superar **cinco ondas** no mesmo cenário.
 - Cada onda possui uma lista determinada de cubos a aparecer e um limite de tempo (parâmetros no doc. 10).
-- Máximo de cubos simultâneos ativos: **4** no MVP; novos spawns aguardam vaga. Se o relógio chegar a zero, os cubos ativos e os ainda previstos que não apareceram contam como não resolvidos — importante para impedir exploração por bloquear spawns.
-- **Estabilidade da arena:** começa em 100; cada cubo não resolvido ao fim de uma onda reduz 25. A derrota ocorre se estabilidade <= 0; um timer esgotado não encerra automaticamente a run se ainda houver estabilidade.
-- Entre ondas, o jogador recebe tela breve com resultados, cartas pendentes, e botão de continuar; a pausa congela timers e física relevante.
+- No máximo **4 cubos ativos**; comuns aguardam vaga. Ao fim do timer, apenas cubos **que apareceram e não foram resolvidos** penalizam estabilidade. Pendentes de spawn não geram penalidade. Na onda 5, reservar um slot para a elite.
+- **Estabilidade do campo:** começa em 100; cada cubo **spawnado e não resolvido** ao fim da onda reduz 25. Pendentes ainda não apresentados não penalizam. Derrota ao chegar a zero; ondas 1–4 podem avançar com tempo esgotado e estabilidade positiva.
+- Ao alcançar limiar de XP, exibir oferta de carta **no momento seguro após a resolução, durante a run**, com timer/spawns pausados. Entre ondas, o jogador vê resumo e botão de continuar; não acumular cartas inúteis até o final.
 - Vitória: concluir a onda 5 e resolver a elite 3x3 antes do encerramento da run. Se o tempo da onda 5 expirar sem concluir a elite, a run é considerada derrota mesmo que reste estabilidade.
 - Recompensa em moedas é concedida **no instante em que um cubo é resolvido**, incluída na carteira persistente. Nunca remover moedas já ganhas por morrer; prevenir pagamento duplicado.
 - Pontuação/recorde pode contar cubos, velocidade e estabilidade, mas não substitui a moeda.
 
 ## 5. Pacing e surgimento
 
-- Spawn gradual, em locais dentro da área jogável, sem sobreposição, longe da mão na criação e sem invadir HUD.
+- Spawn gradual pelo anel de entrada visível do campo, sem sobreposição, fora da HUD e longe da mão; nenhuma borda de plataforma aparece.
 - Cubos comuns se movimentam muito lentamente ou oscilam em sua posição, sem física caótica.
 - Reforçados se deslocam um pouco mais e precisam de mais movimentos.
-- Elite 3x3 aparece apenas na onda final, com introdução marcante e mais tempo para a resolução.
+- A elite 3x3 aparece **até o segundo 20** da onda 5, com slot de spawn reservado e animação marcante; nunca ficar bloqueada atrás de quatro comuns.
 - Aviso de proximidade do fim do tempo em 10 s, visual e sonoro discreto.
-- Cubos em animação final não devem ser contabilizados como não resolvidos; concluir a transição antes de avançar de onda.
+- Um cubo cujo giro lógico concluiu antes do fim é resolvido mesmo que os efeitos visuais continuem. Finalizar ação em andamento antes de fechar a onda.
 
 ## 6. Falha, risco e priorização
 
@@ -63,7 +63,7 @@ Não adicionar dano de contato, projéteis ou corações nesta primeira versão:
 
 ## 7. Fluxo de telas
 
-**Inicialização -> Menu principal/hub -> Tutorial contextual na primeira run -> Arena -> Resumo de onda -> Seleção de habilidade (quando XP atingir limiar) -> Próxima onda -> Vitória/Derrota -> Resumo da run -> Hub/Loja.**
+**Inicialização -> Hub -> Tutorial -> Campo -> [cubos resolvidos -> cartas por XP durante run, com pausa] -> Resumo de onda -> Próxima onda -> Vitória/Derrota -> Resumo da run -> Hub/Loja.**
 
 - Hub: Jogar, Melhorias permanentes, Configurações, Sair, total de moedas e recorde.
 - Arena: mão, cubos, ondas, relógio, estabilidade, moedas obtidas na run, XP/nível e indicador do alvo.
@@ -89,6 +89,14 @@ Mensagens podem ser dispensadas, mas ações tutorializadas devem funcionar de v
 - Ao sair durante a animação, salvar somente moedas já confirmadas, sem reaplicar recompensa.
 - Cooldown não deve variar por FPS; update com delta.
 - Nunca gerar cubo inicialmente resolvido por acidente (ou contar como resolvido gratuitamente).
-- Se terminar a onda com cubos no spawn pendente, contabilizar pendências conforme regra.
+- Se terminar a onda com spawns ainda não apresentados, contar `spawns_nao_apresentados` apenas para diagnóstico, sem penalizar nem pagar.
 - Se um buff altera cooldown durante animação, aplicar ao próximo comando.
 - Em PC sem modelo 3D disponível, usar placeholder honesto; não declarar integração completa.
+
+## 10. Ordem canônica da solução e pausa
+
+Confirmar giro e estado SOLVED -> persistir pagamento único -> creditar XP e registrar oferta -> verificar vitória/derrota e andamento da onda -> cancelar ofertas de run finalizada -> se ainda ativa, pausar gameplay e abrir escolha -> continuar com timer preservado. A oferta não depende de transição de onda. Não cobrar por cubos que nunca surgiram. Ver [13](13-auditoria-de-consistencia.md).
+
+## 11. Campo de ação
+
+**Jardim dos Cubos:** gramado contínuo com pequenas manchas, tufos discretos e câmera ortográfica fixa quase superior. Sem plataforma circular, paredes ou obstáculos. A área lógica é limitada, mas nenhuma borda física é visível. Ver [11](11-mapa-campo-aberto-e-camera.md).

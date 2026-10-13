@@ -14,8 +14,9 @@
 
 - project.godot
 - scenes/bootstrap/ (inicialização)
-- scenes/ui/ (hub, loja, pausa, resultado, oferta de cartas)
-- scenes/gameplay/ (arena, mão, cubo, VFX)
+- scenes/ui/ (hub, loja, pausa, resultado e ofertas durante a run que congelam timer/spawner)
+- scenes/world/ (campo gramado, câmera ortográfica fixa, spawn e vegetação)
+- scenes/gameplay/ (diretor do campo, mão, cubo, VFX)
 - scripts/core/ (estado global, eventos, save, configuração)
 - scripts/puzzle/ (modelo do cubo, movimentos, embaralhamento e solução inversa)
 - scripts/gameplay/ (atores, spawn, ondas, run, targeting)
@@ -34,11 +35,11 @@ Esses caminhos são um **contrato de organização**; não criar pastas vazias o
 |---|---|---|
 | **AppRoot** | iniciar serviços, carregar save, alternar menu/run | calcular movimentos do cubo |
 | **HubMenu** | navegar, mostrar dinheiro, chamar loja | alterar moeda diretamente |
-| **GameArena** | coordenar espaço, câmera, HUD e instâncias | guardar saldo persistente |
+| **GameArena** | coordenar campo gramado contínuo, câmera ortográfica fixa, HUD e atores | guardar saldo persistente |
 | **HandController (Node3D)** | ler input, converter cursor para mundo, selecionar alvo e pedir giro | gerar/editar solução lógica |
 | **CubeActor (Node3D)** | ciclo spawn->ativo->rotação->conclusão, sinais e recompensa solicitada | armazenar dados globais |
 | **CubeView3D (Node3D)** | apresentar peças e animar giro validado | decidir vitória pelo brilho/material |
-| **WaveDirector (Node)** | tabela de spawns, timer, pendências e término | conceder duas recompensas |
+| **WaveDirector (Node)** | agenda de spawn em anel, timer, elite com slot reservado, penalidade só por cubos spawnados | penalizar spawns que nunca apareceram |
 | **RunDirector (Node)** | transição de ondas, estabilidade, vitória/derrota, sessão | executar compras meta |
 | **HUD (Control)** | exibição reativa de estado | ser fonte de dados econômicos |
 | **OfferPanel (Control)** | escolha 1/3 de cartas | gerar efeitos fora do catálogo |
@@ -51,11 +52,11 @@ Esses caminhos são um **contrato de organização**; não criar pastas vazias o
 - **SolutionPlan:** sequência reversa conhecida; nunca se apresentar como solver de solução mínima.
 - **CubeCatalog:** dados por tipo, incluindo N, movimentos, moedas, XP, peso de spawn e prefab.
 - **WaveCatalog:** lista de tipos, tempos, quotas, elite e total de spawns, determinísticos por seed.
-- **TargetingService:** 2.5D mouse->plano, filtros de estado, prioridade do alvo sob cursor, evitar cobrir UI.
+- **TargetingService:** mouse->plano XZ usando câmera fixa, limites invisíveis, filtros de estado, apenas atores válidos, impedindo input sobre UI/vegetação.
 - **EconomyService:** única API para creditar moedas resolvidas e comprar upgrades; valida IDs de pagamento únicos.
 - **ProgressionService:** XP, níveis, ofertas pendentes, níveis de cartas e limites.
 - **MetaService:** níveis permanentes, cálculo de bônus iniciais da run.
-- **SaveService:** esquema, leitura, verificação, snapshot e escrita segura.
+- **SaveService:** esquema, leitura, verificação, snapshot e escrita **atômica antes de exibir moedas confirmadas**.
 - **AudioService / SettingsService:** volumes, acessibilidade e persistência.
 
 Evitar Autoload para cada objeto. Usar Autoload somente para serviços de vida longa (save/economia/configurações) e instâncias locais para run e puzzle.
@@ -105,7 +106,7 @@ A documentação oficial Godot recomenda glTF 2.0/.glb; veja https://docs.godote
 ## 9. Save e idempotência
 
 - Save local versionado com chaves explícitas; valores numéricos inteiros, não negativos.
-- Receita por cubo ganha ID de transação único dentro da run e marcador de crédito confirmado.
+- Receita por cubo ganha ID de transação único dentro da run e marcador de crédito confirmado; persistir pagamento atômico **antes** do popup de moedas.
 - Compra de upgrade valida saldo + nível e salva alteração como única operação coerente.
 - Ao encerrar run antecipadamente, não ressuscitar cubos antigos nem conceder moeda por cena fechada.
 - **Não** incluir login, backend, ranking global, anúncios, analytics invasivo ou rede no MVP.
@@ -122,3 +123,19 @@ Alvo de teste inicial: resolução 1280x720 e 1920x1080, 60 FPS no PC de desenvo
 - Smoke test de inicializar projeto e abrir arena.
 - Relatórios de erro com seed, onda, cubo e transação (sem dados pessoais).
 - Gatilho de integração no GitHub após existir projeto executável; não publicar badge verde sem pipeline real.
+
+## 12. Implementação do mapa aberto no Godot
+
+Cena planejada `FieldWorld.tscn` com `MeshInstance3D` plano grande, material de gramado original, `WorldEnvironment`, `DirectionalLight3D`, `Camera3D` ortográfica **fixa** e `MultiMeshInstance3D` opcional para tufos sem colisão. O mundo excede a câmera para esconder a borda do chão, porém `FieldBounds` limita logicamente o alvo/mão; não há streaming infinito nem paredes. `SpawnPlanner` usa anel periférico **visível**, valida distância da mão/cubos/UI e reserva quarto slot para a elite na onda 5. Veja [11](11-mapa-campo-aberto-e-camera.md).
+
+Converter cursor com `Camera3D.project_ray_origin()` e `Camera3D.project_ray_normal()` no plano XZ, validando interseção não paralela; a HUD recebe e bloqueia cliques antes de cubos. A câmera não segue a posição calculada com o próprio cursor, impedindo loop de deriva.
+
+## 13. Prioridade canônica de eventos
+
+1. Completar giro e validar estado lógico SOLVED.
+2. Persistir moeda única e atualizar XP, registrar oferta pendente.
+3. Verificar condição terminal de onda/run (vitória/derrota tem prioridade).
+4. Se continuar jogando, mostrar oferta de carta na próxima pausa segura e congelar timer/spawn/ação.
+5. Retomar do estado congelado após escolha, sem adicionar ticks de timer.
+
+Testes de save, idempotência e carta terminal são obrigatórios; a especificação documental não substitui teste real no editor. Ver [13](13-auditoria-de-consistencia.md).

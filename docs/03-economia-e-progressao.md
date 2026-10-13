@@ -28,13 +28,14 @@ Limiar de XP acumulado dentro de uma run, **proposta inicial**:
 - Nível 3: 12 XP
 - Nível 4: 21 XP
 - Nível 5: 32 XP
-- Nível 6+: fora do escopo obrigatório ou limiar adicional de 45 XP, conforme observação em playtest.
+- Nível 6: 45 XP
+- **Teto do MVP:** cinco ofertas por run, sem novos níveis de carta a partir de XP adicional.
 
 Quando cruzar limiar:
 1. registrar level-up pendente;
 2. **não interromper uma rotação em andamento**;
-3. mostrar oferta de 3 cartas na próxima transição segura entre ondas;
-4. selecionar uma, aplicar ao inventário da run e limpar pendência;
+3. após a solução confirmada, **se a run não terminou**, abrir oferta de 3 cartas em pausa segura durante a onda;
+4. escolher uma, aplicar e limpar pendência; se a run terminou, descartar a oferta sem mostrar cartas;
 5. se múltiplos níveis forem acumulados, enfileirar as ofertas sem duplicar pagamento.
 
 XP reinicia na partida seguinte. Cartas escolhidas pertencem apenas à run, não são consumíveis nem itens comprados.
@@ -53,7 +54,7 @@ A compra só pode ocorrer na hub, fora de uma run. Validar saldo, nível máximo
 
 ## 5. Exemplo de primeira experiência
 
-- Jogador resolve 5 cubos comuns: +50 moedas e +5 XP; no fim da onda, escolhe a primeira carta.
+- Jogador resolve 5 cubos comuns: +50 moedas e +5 XP; após confirmar o último cubo, recebe a primeira escolha de carta **na run**, mesmo antes de fechar a onda.
 - Mais tarde resolve um reforçado: +18 moedas e +2 XP.
 - Ao finalizar ou perder a partida, mantém o saldo acumulado por cada cubo concluído.
 - Depois de algumas runs, pode comprar Treino da mão I por 200 moedas e sentir melhora desde o início seguinte.
@@ -72,10 +73,14 @@ Exemplo didático: números reais da run variam com suas ondas, bônus e sucesso
 
 Salvar localmente: versão de esquema, saldo de moedas, níveis meta, melhor onda, maior número de cubos resolvidos, recorde de combo, configurações e flag de tutorial.
 
-Uma run **não** precisa ser retomável no MVP. Ao fechar durante a arena, manter moedas já creditadas e melhorias meta; limpar estado transitório da run. Salvar créditos de modo atômico e com checkpoint frequente (por evento ou pequeno debounce que não permita perder moedas legitimamente concedidas). Arquivo temporário + renomeação validada é recomendável para reduzir corrupção.
+Uma run **não** precisa ser retomável no MVP. Ao fechar durante a arena, manter moedas já creditadas e melhorias meta; limpar estado transitório da run. Persistir cada crédito de moedas confirmado **atomicamente antes de exibir o novo saldo**, sem debounce que permita perder dinheiro já anunciado. Arquivo temporário + renomeação validada é recomendável para reduzir corrupção.
 
 Não confiar em saldo exibido pela UI: centralizar transações no gerenciador da economia. Número inteiro não negativo; ao carregar valores inválidos, recuperar com fallback seguro. Evitar que um save anterior seja sobrescrito por formato incompatível.
 
 ## 8. Critérios de equilíbrio
 
 Comparar: moedas por minuto, upgrades comprados nas 3 primeiras runs, taxa de vitória sem meta, impacto de cada carta e variação entre runs. Ajustar custo e recompensa **apenas** depois do protótipo completar o fluxo. Tabelas propostas estão consolidadas no [documento 10](10-balanceamento-inicial.md).
+
+## 9. Auditoria matemática e política de oferta
+
+Na run limpa do [doc. 10](10-balanceamento-inicial.md), **612 moedas-base** = 28×10+14×18+1×80; **62 XP** = 28×1+14×2+1×6. Limiar cumulativo **5/12/21/32/45 XP**, máximo 5 escolhas enquanto a run estiver ativa. Se a resolução da elite terminar o jogo, a XP recebida não abre uma carta inútil. Bonificações de dinheiro não multiplicam a XP; a loja só muda valores persistidos.

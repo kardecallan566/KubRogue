@@ -35,7 +35,7 @@ Probabilidades são **estimativas de projeto**, não medições.
 - Input em cubo durante fim de onda não concede moedas duas vezes.
 - Segurar clique inicia uma sequência regulada por cooldown, não pelo FPS; comparar a 30, 60 e 144 FPS.
 - Ao sumir um cubo, ponteiro deixa de selecioná-lo.
-- Resumo de onda com pendentes não permite que cubos não spawnados escapem da penalidade.
+- Resumo de onda distingue spawns **não apresentados** (sem penalidade) de cubos **spawnados não resolvidos** (com penalidade), evitando punição injusta.
 - Carta com giro duplo nunca avança para cubo já resolvido.
 - Loja rejeita compra sem saldo ou acima do nível máximo.
 - Save preserva saldo, configurações e nível de meta ao reiniciar.
@@ -75,3 +75,16 @@ MVP é offline; não coleta contas nem dados pessoais. Salvar somente progresso,
 ## 8. Definition of Done técnica
 
 Concluir uma tarefa só quando: regra escrita -> caso de teste -> implementação -> execução real -> revisão visual -> log/evidência -> sem regressões óbvias. Se faltar arquivo/asset, marcar bloqueado. Não afirmar que o MVP está pronto enquanto nenhum executável do Godot tiver sido testado.
+
+## 9. Testes adicionais de mapa e oferta
+
+- O gramado cobre a câmera toda, sem bordas, muros, texturas de terceiros ou chão quadriculado; 720p/1080p/16:10.
+- O cursor projetado por câmera fixa coincide com a mão sem deriva, inclusive quando o mouse permanece parado.
+- 4 cubos não se sobrepõem a outras hitboxes ou HUD; decorativos não interceptam raycast.
+- Na onda 5, três cubos comuns podem estar ativos e a elite **ainda assim** aparece até o segundo 20.
+- Na expiração com spawns pendentes, somente cubos realmente apresentados retiram 25 de estabilidade cada.
+- Cartas oferecem 1/3 opções ao atingir XP 5/12/21/32/45 **antes** do estado terminal; nenhuma carta aparece em victory/defeat.
+- Transação de moeda é durável antes da HUD confirmar pagamento, inclusive em caso de encerramento no mesmo frame.
+- Material 3D real é auditado quando enviado (licença, peças, pivôs, giro). Não presumir que já está no GitHub.
+
+Plano original completo em [11](11-mapa-campo-aberto-e-camera.md), [12](12-gamefeel-eventos-visuais-e-detalhamento.md) e [13](13-auditoria-de-consistencia.md).

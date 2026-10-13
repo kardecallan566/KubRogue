@@ -6,15 +6,19 @@
 
 **Tom:** lúdico, satisfatório, colorido, com feedback forte mas sem poluição de partículas.
 
-## 2. Arena MVP
+## 2. Mapa principal: Jardim dos Cubos
 
-- Plataforma baixa circular ou retangular com borda visível e plano central para spawn.
-- Superfície fosca levemente texturizada (lona/mesa ateliê), padrões geométricos suaves só nas áreas vazias.
-- Fundo com poucos objetos ornamentais desfocados — recipientes de cubos, papel com esquemas geométricos, luminárias — fora da área de ação.
-- Iluminação de três pontos simplificada, sombra suave sob os cubos para profundidade, occlusion moderada; evitar pós-processamento caro.
-- Câmera ortográfica 3D inclinada aproximadamente 20–35° para mostrar frente, topo e lateral dos cubos; validar se as rotações de cada face ficam legíveis.
-- Zonas jogáveis marcadas discretamente; respeitar espaço reservado à HUD nos quatro cantos e faixa inferior.
-- Transição visual de iluminação e música ao chegar na onda 5, sem recriar todo o cenário para o MVP.
+O cenário segue o **princípio espacial de King of Pickaxe**: campo gramado aberto, tons verde-pastel, manchas suaves, poucos tufos pequenos e **muito espaço negativo** para destacar os cubos. A arte é autoral, nunca extraída da referência.
+
+- **Sem plataforma circular**, borda, muro, cerca, labirinto, árvores altas ou tile-grid.
+- Piso 3D fosco que **extrapola a tela**, porém área útil invisível limitada ao enquadramento. Não prometer mundo infinito.
+- Câmera **ortográfica fixa**, próxima da vertical (15–25° fora do topo), com volume suficiente para ver camadas 3D.
+- Cubos surgem em anel periférico visível, com distância segura da mão, HUD e outros cubos. Antes da elite da onda 5, reservar o quarto slot.
+- Sombras de contato suaves, vegetação sem colisão e manchas de cor original; luz muda discretamente nas ondas, sem troca de mapa.
+- Interface periférica legível e feedback concentrado na mão/cubos, não no cenário.
+- Avaliar 720p, 1080p, 16:10, densidade da folhagem e FPS com 4 atores.
+
+Especificação integral e critérios de teste: [11 — Mapa aberto](11-mapa-campo-aberto-e-camera.md).
 
 ## 3. Cubos
 
@@ -100,3 +104,7 @@ Escalar fontes e layout para 1280x720 e 1920x1080 sem sobreposição. HUD usa co
 - Mão não cobre integralmente o cubo.
 - Todos os valores relevantes permanecem legíveis com muitos efeitos.
 - Nunca reaproveitar modelos, gráficos, sons, screenshots ou logotipos de King of Pickaxe.
+
+## 11. Microinterações obrigatórias
+
+Cada giro tem gesto da mão, rotação **válida de camada**, snap e som de plástico; solução revela faces uniformes antes da recompensa em moedas/XP separadas. As oito habilidades sinalizam efeitos sem esconder cores dos cubos. O roteiro visual, auditivo e de câmera está em [12 — Gamefeel](12-gamefeel-eventos-visuais-e-detalhamento.md).

@@ -2,7 +2,7 @@
 
 ## 1. Princípio
 
-O jogador deve sentir que a mão se transforma durante uma run. A cada nível, oferece-se **1 dentre 3 cartas sorteadas** do catálogo. Cada carta altera um sistema real, tem descrição numérica visível, ícone distinto e resultado testável. Não copiar nomes, textos, arte ou efeitos exatos de King of Pickaxe; a inspiração se limita a sistema de escolhas e combinações.
+O jogador deve sentir que a mão se transforma durante uma run. Ao cruzar um limiar de XP numa run ativa, oferece-se **1 entre 3 cartas sorteadas**, assim que o giro terminar e a simulação puder pausar. Cada carta altera um sistema real, tem descrição numérica visível, ícone distinto e resultado testável. Não copiar nomes, textos, arte ou efeitos exatos de King of Pickaxe; a inspiração se limita a sistema de escolhas e combinações.
 
 ## 2. Catálogo inicial — oito habilidades
 
@@ -21,11 +21,11 @@ O jogador deve sentir que a mão se transforma durante uma run. A cada nível, o
 
 ## 3. Regras de aplicação
 
-- Oferecer 3 cartas **distintas** por oferta.
+- Oferecer 3 cartas **distintas** por oferta; no máximo cinco ofertas por run (XP 5/12/21/32/45).
 - Cartas no nível máximo não entram nas próximas ofertas.
 - Pool de ofertas e aleatoriedade precisam de seed, garantindo repetibilidade em depuração.
 - Se restarem menos de 3 elegíveis, ofertar o que existir e uma opção alternativa claramente definida (ex.: moedas de bônus pequenas) — nunca inventar uma carta vazia.
-- Não interromper animação ativa; cartas aparecem entre ondas.
+- Não interromper animação ativa; cartas são oferecidas **durante a run após uma resolução segura**, não apenas entre ondas; nunca após o fim.
 - Ao escolher uma carta já adquirida, aumentar nível até 3 e atualizar descrição do próximo nível.
 - Exibir lista de habilidades ativas, nível e efeitos no HUD via painel expandível.
 - Ao iniciar nova run, todas as cartas voltam ao nível zero.
@@ -65,3 +65,7 @@ Três cartas com: nome, ícone, nível atual -> próximo, número concreto (“-
 ## 8. Fora do MVP
 
 Relíquias permanentes equipáveis, mãos elementais, sinergias ocultas complexas, dezenas de raridades, árvores de talentos, rerolls pagos, evolução visual procedural complexa e leaderboard. Tais ideias entram após demonstrar que oito cartas já dão decisões interessantes.
+
+## 9. Feedback exclusivo das habilidades
+
+Pulso ágil: rastro de gesto; Dedo certeiro: dois giros reais identificáveis; Luva magnética: anel de foco maior; Bolsa encantada: brilho de pagamento; Ritmo de mestre: contador de combo; Fôlego extra: relógio aumenta uma vez por onda; Olhar de cubista: menos giros nos reforçados futuros; Mão paciente: estabilidade restaurada após penalização. Nenhuma habilidade deve confundir adesivos ou esconder o gramado. Exibição de carta pausa ondas e spawn. Ver [12](12-gamefeel-eventos-visuais-e-detalhamento.md).

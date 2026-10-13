@@ -2,7 +2,7 @@
 
 ## 1. Pitch
 
-**KubRogue** é um roguelite arcade sobre uma mão que corre contra ondas de cubos embaralhados. Em vez de acertar ou quebrar inimigos, o jogador os **organiza**: toca cubos, aciona rotações fisicamente reconhecíveis de suas camadas e recebe uma recompensa quando suas faces voltam ao estado uniforme. As moedas alimentam uma pequena loja permanente; a experiência libera escolhas de poderes exclusivos da partida.
+**KubRogue** é um roguelite arcade sobre uma mão que corre contra ondas de cubos embaralhados. Em vez de acertar ou quebrar inimigos, o jogador os **organiza** num campo gramado aberto visto de cima: toca cubos, aciona rotações fisicamente reconhecíveis de suas camadas e recebe uma recompensa quando suas faces voltam ao estado uniforme. As moedas alimentam uma pequena loja permanente; a experiência libera escolhas de poderes exclusivos da partida.
 
 **Fantasia principal:** começar resolvendo cubos simples e terminar uma partida com a mão mais rápida, efeitos de combo e capacidade de lidar com vários cubos sob pressão — sempre visualizando as peças se alinharem.
 
@@ -13,7 +13,7 @@
 3. **Dificuldade progressiva perceptível.** Mais movimentos, mais cubos simultâneos, variantes e pressão de tempo; não só números maiores.
 4. **Escolhas roguelite reais.** O jogador seleciona uma habilidade entre três alternativas e combina efeitos ao longo da partida.
 5. **Recompensa clara.** Dinheiro só entra quando o cubo está realmente resolvido. O ganho deve ser legível, com contagem, sons e feedback de combo.
-6. **3D legível e otimizado.** Cada cubo deve parecer brinquedo físico com adesivos coloridos, sombras limpas, rotação por camadas e silhueta clara.
+6. **3D legível e otimizado.** Cada cubo parece brinquedo com adesivos coloridos, sombra, rotações reais e silhueta clara; a grama ao fundo é simples e leve.
 7. **Produção controlável.** Construir uma versão simples e completa antes de multiplicar tipos de cubo, cenários e sistemas.
 
 ## 3. Público e experiência
@@ -62,6 +62,10 @@ O projeto deve ser demonstrável sem explicação verbal do desenvolvedor.
 
 **Decidido para o planejamento:** cursor como controle principal, resolução arcade assistida, cinco ondas, moeda persistente e habilidades temporárias.
 
-**Hipóteses que exigem playtest:** tamanho da arena, duração das ondas, contagem de movimentos, ritmo dos cliques, proporção 2x2/3x3, preços e qualidade da câmera. Consulte o documento 10; números não são promessas imutáveis.
+**Hipóteses que exigem playtest:** tamanho da área útil invisível do gramado, duração das ondas, contagem de movimentos, ritmo dos cliques, proporção 2x2/3x3, preços e qualidade da câmera. Consulte o documento 10; números não são promessas imutáveis.
 
 **Dependências de material não recebido:** geometria, rig, formato, permissão de uso e capacidade de girar camadas do modelo 3D já existente. Não presumir compatibilidade nem importar dados inexistentes.
+
+## 9. Visão espacial obrigatória
+
+**Jardim dos Cubos:** campo aberto verde suave, solo sem bordas visíveis, tufos pequenos e manchas discretas. A câmera ortográfica fica quase de cima e **fixa no MVP**, enquanto a mão acompanha o cursor. Terreno grande dá sensação de continuidade, porém a área jogável tem limites lógicos invisíveis, sem mapa infinito procedural. Sem plataforma circular, muro ou grid de pisos. Inspiração no princípio de espaço livre de King of Pickaxe, com texturas e arte originais. Ver [11](11-mapa-campo-aberto-e-camera.md).

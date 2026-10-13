@@ -30,9 +30,9 @@
 | 5 | 90 s | 5 | 4 | 1 | 10 |
 | **Total** | **325 s** | **28** | **14** | **1** | **43** |
 
-Uma onda termina antecipadamente quando **todos os cubos previstos para ela** foram resolvidos (ou expirados), e não simplesmente porque a arena está vazia antes de concluir a programação de spawns.
+Uma onda termina antecipadamente **apenas quando toda a quota prevista foi spawnada e os cubos apresentados foram resolvidos**; arena vazia com quota ainda aguardando spawn não conclui a onda. Caso o relógio acabe, spawns pendentes nunca apresentados ficam registrados como `nao_apresentados` e não penalizam.
 
-Spawns: preferencialmente sequenciais com intervalo variável, até 4 ativos. Não postergar cubos restantes além do limite sem contabilizá-los como perdidos. A elite da onda 5 deve aparecer com janela suficiente para resolvê-la; hipótese: após aproximadamente 30 s ou quando 5 dos cubos anteriores tiverem sido concluídos, o que acontecer primeiro. A ordem não deve tornar vitória impossível em seeds rápidas ou lentas.
+Spawns: sequenciais, na **faixa periférica visível do Jardim dos Cubos**, com até 4 cubos ativos. Quotas pendentes aguardam vaga; **nunca penalizar cubos que não apareceram**. Na onda 5, manter **no máximo três cubos comuns** antes da chegada da elite e fazê-la surgir **obrigatoriamente até o segundo 20** de tempo decorrido (janela de 70 s). Após entrada da elite, usar quatro vagas totais. O spawn deve respeitar HUD, distância da mão e visibilidade.
 
 ## 3. Tipos de cubo
 
@@ -48,7 +48,7 @@ Total teórico sem bônus de uma run que resolve todos os cubos:
 - **Moedas:** 28×10 + 14×18 + 1×80 = **612**.
 - **XP:** 28×1 + 14×2 + 1×6 = **62**.
 - A run pode pagar menos por cubos não resolvidos ou mais com bônus.
-- Os limiares de XP 5/12/21/32 garantem, na run limpa, ofertas após as primeiras quatro ondas, mas os gatilhos podem variar se cubos expirarem.
+- Os limiares cumulativos **5/12/21/32/45 XP** permitem até 5 ofertas **durante a run após resoluções seguras**, pausando timer/spawns. Não há cartas pós-vitória/derrota nem XP 60 como novo limiar neste MVP.
 
 ## 4. Ações e limites
 
@@ -80,6 +80,17 @@ Registrar por onda: duração real, cubos aparecidos/resolvidos/expirados, giros
 
 - Vitória: ao encerrar a onda 5 com **elite resolvida e estabilidade maior que zero**.
 - Derrota: estabilidade chega a zero em qualquer onda; ou na onda 5 a elite não está resolvida quando tempo encerra.
-- Estabilidade reduzida ao fim da onda pelos cubos previstos que não foram resolvidos, inclusive spawns pendentes.
+- Estabilidade reduzida ao fim da onda **apenas** por cubos efetivamente spawnados e não resolvidos (25 cada). Spawns pendentes nunca exibidos não reduzem estabilidade e são contabilizados separadamente.
 - Cubos completados **antes** do encerramento confirmado creditam moedas/XP, mesmo se a run for derrotada.
 - Transições devem aguardar ações visuais já confirmadas, evitando perder um cubo que concluiu no limite.
+
+## 9. Mapa e especificação numérica auxiliar v1
+
+- Bioma único MVP: **Jardim dos Cubos**, campo gramado pastel, topo 3D, manchas/folhas pequenas e esparsas, **sem palco circular nem borda visível**.
+- Câmera ortográfica **fixa**, aproximadamente 15–25° desviada da vertical; piso grande extrapola viewport; mundo não possui scrolling/infinito no MVP.
+- Retângulo útil lógico (proposta inicial) ~18×10 unidades no plano XZ, recalibrado por aspect ratio e safe area de UI. A posição de spawn fica dentro do enquadramento, perto das margens.
+- Intervalo de sinalização de spawn **0,25–0,45 s**; não bloquear giro de outro cubo durante esse efeito.
+- Slot da elite reservado na onda 5; spawn forçado até t=20 s, independentemente da fila comum (e sempre visível).
+- A escolha de habilidade é exibida após movimento completo e verificação de vitória/derrota, com gameplay congelado; limite de cinco ofertas por run.
+
+Mapa autoral detalhado em [11](11-mapa-campo-aberto-e-camera.md); sensação de resolução em [12](12-gamefeel-eventos-visuais-e-detalhamento.md). Todas essas cifras são valores para protótipo, não resultados de testes.

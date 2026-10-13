@@ -12,7 +12,7 @@ Manter **main** sempre legível. Para o código, trabalhar por branches curtas d
 
 ### C0 — Pré-produção e prova do asset
 
-**Entregas:** ler documentação, registrar versão real do Godot, identificar o modelo 3D disponível, formato/licença, peças e materiais; criar inspeção/protótipo apenas quando começar implementação. Definir métrica de câmera, escala e material.
+**Entregas:** ler documentação, registrar versão real do Godot, identificar o modelo 3D disponível, formato/licença, peças e materiais; criar inspeção/protótipo apenas quando começar implementação. Definir Camera3D ortográfica fixa de visão superior, área útil invisível, terreno gramado contínuo e escala de cubos/mão.
 
 **Aceite:** equipe entende se o modelo permite giros de faces. Se não, há um fallback procedural decidido, sem bloquear produto.
 
@@ -20,7 +20,7 @@ Manter **main** sempre legível. Para o código, trabalhar por branches curtas d
 
 ### C1 — Núcleo da solução 3D (primeira fatia jogável)
 
-**Entregas:** projeto abre; câmera, arena provisória, mão visível que segue mouse; um cubo 2x2 com peças e cores; embaralhamento determinístico; clique/segurar gira camada corretamente; solução emite sinal, recompensa provisória visível.
+**Entregas:** projeto abre; câmera top-down fixa, **campo verde aberto sem borda**, mão visível que segue mouse; um cubo 2x2 com peças e cores; embaralhamento determinístico; clique/segurar gira camada corretamente; solução emite sinal, recompensa provisória visível.
 
 **Aceite:** uma pessoa resolve 10 cubos seguidos sem perder sincronização de estado ou entrada. Movimento de uma camada é convincente e rápido. Sem menus complexos nem meta loja.
 
@@ -34,7 +34,7 @@ Manter **main** sempre legível. Para o código, trabalhar por branches curtas d
 
 ### C3 — Progressão roguelite numa run
 
-**Entregas:** níveis por XP, ofertas 1/3, oito cartas com efeitos reais, sinergias, combo, cinco ondas com dados balanceáveis e modelo 3x3 elite.
+**Entregas:** níveis por XP 5/12/21/32/45, ofertas 1/3 **durante a run**, oito cartas com efeitos reais, sinergias, combo, cinco ondas com dados balanceáveis e modelo 3x3 elite.
 
 **Aceite:** duas runs podem produzir builds distintas; cartas alteram números, feedback e escolhas. Vitória e derrota atingíveis; elite gira camadas próprias.
 
@@ -63,7 +63,7 @@ C0 precede uma integração definitiva do modelo. C1 deve ser aprovado antes de 
 | P0 | Apresentação 3D por camadas | Estado visual sempre igual lógico | C1 |
 | P0 | Mão, foco e clique/segurar | Alvo único, cooldown estável | C1 |
 | P0 | Resolução e pagamento idempotente | Uma solução = um crédito | C2 |
-| P0 | Spawn e tempo de onda | Sem deadlock, pendentes contam | C2 |
+| P0 | Spawn periférico e timer | Sem deadlock, só spawns apresentados penalizam; reservar elite | C2 |
 | P0 | Estabilidade e derrota | Perdas reproduzíveis | C2 |
 | P0 | XP, cartas e efeitos | Todos os 8 efeitos testados | C3 |
 | P0 | Elite 3x3 + conclusão de run | Vitória reproduzível | C3 |
@@ -92,3 +92,9 @@ Para cada entrega, guardar número de build/commit, resumo das mudanças, como e
 ## 7. Risco de aumento de escopo
 
 O principal risco é substituir o loop de resolver com dezenas de sistemas adicionais. Exigir resposta positiva a três perguntas antes de novas features: **a mão é gostosa de controlar? Os cubos se resolvem de verdade? O jogador quer tentar outra run?**
+
+## 8. Verificações de planejamento adicionais
+
+**C0:** confirmar captura/referência de campo gramado e importar o modelo existente só quando disponibilizado. **C1:** validar mapa top-down + input em 720p/1080p e o giro real 2x2 antes de prosseguir. **C2:** testar spawn visível e regra de só penalizar alvos apresentados. **C3:** validar pausa de cartas em meio à onda, elite com vaga reservada e cinco ofertas úteis. **C4:** garantir moeda persistida antes do efeito de pagamento e menu coeso com visual de gramado/oficina. **C5:** comparar visuais com referências para verificar **originalidade**, não semelhança pixel a pixel.
+
+A especificação de mundo está no [11](11-mapa-campo-aberto-e-camera.md) e o microfeedback no [12](12-gamefeel-eventos-visuais-e-detalhamento.md).
