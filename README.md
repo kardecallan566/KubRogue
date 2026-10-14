@@ -221,3 +221,27 @@ godot .
 ```
 
 Abra `DESAFIO DO DIA`, escolha uma carta ou use `TROCAR AS 3 CARTAS` e confira seu resultado ao voltar à hub. Veja o [checklist C6](docs/checkpoints/C6-daily-challenge.md). O C6 só entrará na main após CI verde e sua aprovação no Windows.
+
+## C7 — Cubos Especiais (branch de teste)
+
+**Branch:** `dev/checkpoint-07-special-cubes`. O C6 já foi aprovado e integrado na `main` (PR #7). O C7 é a primeira expansão de adversários para evitar que as partidas tenham sempre os mesmos cubos.
+
+- **Cubo Dourado (2×2):** aparece nas ondas 2–5. Tem estrutura dourada, halo brilhante e marcador visual. Exige **3–5 giros**, recompensa **32 moedas + 2 XP**.
+- **Cubo Blindado (2×2):** aparece nas ondas 3–5. Tem corpo roxo escuro, halo e identificação especial. Exige **8–11 giros**, recompensa **30 moedas + 3 XP**.
+- Os tipos antigos mantêm recompensas originais: **Aprendiz 10/1**, **Reforçado 18/2**, **Elite 3×3 80/6**. A quinta onda mantém sua elite obrigatória, e os novos cubos ocupam posições de cubos comuns, sem aumentar a lotação.
+- **Integração real:** ambos são quebra-cabeças 2×2 verdadeiros, com giros legais, dinheiro concedido uma única vez por solução, bônus de skills e upgrades permanentes, animações, partículas e efeitos sonoros. A habilidade **Olhar de cubista** também reduz giros exigidos dos Blindados futuros.
+- **Desafio diário:** continua com seed UTC e condições repetíveis; novas variantes surgem nos mesmos slots, sem criar instabilidade na comparação de runs. O jogo mantém o mapa gramado aberto e a mão 2D aberta/fechada.
+- **Não há mudança de save:** mesma carteira e arquivo diário, sem migração.
+
+```powershell
+git fetch origin
+git switch dev/checkpoint-07-special-cubes
+git pull origin dev/checkpoint-07-special-cubes
+godot .
+```
+
+Para aprovação, testar a aparência dos Dourados e Blindados, a solução real de ambos, tempo de onda, efeitos, pagamentos e permanência do C6, além do ZIP Windows do Actions. Checklist em [C7 — Cubos Especiais](docs/checkpoints/C7-special-cubes.md).
+
+### Expansão C7 — Cubos 4×4×4 e 5×5×5 reais
+
+Na mesma branch do C7, os cubos **Mestre 4×4** (onda 4, +68 moedas/+5 XP) e **Titã 5×5** (onda 5, +110 moedas/+8 XP) passam a ser adversários reais. Ambos usam peças de superfície e adesivos completos, suportam rotação de camadas internas, histórico de movimentos e resolução animada pelo inverso do embaralhamento. Substituem slots existentes, sem retirar a elite 3×3 nem modificar saves. Os testes do Godot conferem 56/98 cubies, 96/150 adesivos, invariantes matemáticos, giros e pagamento único. Consulte [o checklist atualizado](docs/checkpoints/C7-special-cubes.md).
