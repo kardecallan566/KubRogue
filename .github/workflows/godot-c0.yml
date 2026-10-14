@@ -121,6 +121,12 @@ jobs:
       - name: C7 real gold/armored 2x2 and persistent wallet
         run: timeout 120s godot --headless --path . --script res://tests/integration/test_c7_game.gd
 
+      - name: C7 true 4x4 and 5x5 integer slices and animated geometry
+        run: timeout 120s godot --headless --path . --script res://tests/unit/test_c7_nxn.gd
+
+      - name: C7 large cube payouts and real 4x4/5x5 resolutions
+        run: timeout 150s godot --headless --path . --script res://tests/integration/test_c7_large_cubes.gd
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |

@@ -10,6 +10,16 @@ const FEATURES := {
         "body": Color("#464063"), "edge": Color("#b7a4ee"),
         "ring": Color("#c1a6f2"), "title": "◆ BLINDADO",
         "glow": Color("#ab89eb")
+    },
+    "master4": {
+        "body": Color("#254c62"), "edge": Color("#8de6f5"),
+        "ring": Color("#88d9ef"), "title": "✦ MESTRE 4×4",
+        "glow": Color("#63c9f0")
+    },
+    "master5": {
+        "body": Color("#3f325b"), "edge": Color("#f4acd5"),
+        "ring": Color("#f1bce0"), "title": "✧ TITÃ 5×5",
+        "glow": Color("#e7a2e4")
     }
 }
 
@@ -33,8 +43,8 @@ static func apply(actor_root: Node3D, cube, kind: String) -> Node3D:
     var ring := MeshInstance3D.new()
     ring.name = "SpecialHalo"
     var torus := TorusMesh.new()
-    torus.inner_radius = 0.94
-    torus.outer_radius = 1.015
+    torus.inner_radius = 1.02 if kind == "master5" else (0.98 if kind == "master4" else 0.94)
+    torus.outer_radius = torus.inner_radius + 0.075
     ring.mesh = torus
     ring.position.y = 0.075
     var ring_material := StandardMaterial3D.new()
@@ -51,7 +61,7 @@ static func apply(actor_root: Node3D, cube, kind: String) -> Node3D:
     sign.text = String(entry["title"])
     sign.font_size = 27
     sign.pixel_size = 0.008
-    sign.position = Vector3(0, 1.24, 0)
+    sign.position = Vector3(0, 1.38 if kind == "master5" else 1.24, 0)
     sign.billboard = BaseMaterial3D.BILLBOARD_ENABLED
     sign.modulate = entry["edge"]
     sign.outline_modulate = Color("#1a2532")
@@ -64,7 +74,7 @@ static func apply(actor_root: Node3D, cube, kind: String) -> Node3D:
     mesh.radius = 0.12
     mesh.height = 0.23
     top.mesh = mesh
-    top.position = Vector3(0, 1.56, 0)
+    top.position = Vector3(0, 1.68 if kind == "master5" else 1.56, 0)
     top.material_override = ring_material
     decorations.add_child(top)
     return decorations

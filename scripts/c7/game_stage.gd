@@ -15,6 +15,7 @@ const Build = preload("res://scripts/c6/run_build.gd")
 const BossVisual = preload("res://scripts/visual/cube_3x3.gd")
 const CubeBase = preload("res://scripts/visual/cube_3x3.gd")
 const CubeVisual = preload("res://scripts/visual/cube_2x2.gd")
+const LargeCubeVisual = preload("res://scripts/visual/cube_nxn.gd")
 const HandCursor = preload("res://scripts/c5/hand_cursor_sprite.gd")
 const ACTION_INTERVAL := 0.34
 const ROTATION_DURATION := 0.26
@@ -574,7 +575,7 @@ func restart_run() -> void:
     animation_clock = 0.0
     action_cooldown = 0.0
     paused = not save_ready
-    message_label.text = "Dourado +32 · Blindado +30 · Elite +80." if save_ready else (
+    message_label.text = "Dourado 32 · Blindado 30 · Mestre 4×4 68 · Titã 5×5 110." if save_ready else (
         "Salvamento indisponível: não é seguro começar a partida.")
     _set_summary_visible(false)
     _spawn_one_if_possible()
@@ -623,11 +624,23 @@ func _spawn_one_if_possible() -> void:
     root.name = "CubeActor_%d_%s" % [id, kind]
     root.position = Vector3(p.x, 0.0, p.y)
     add_child(root)
-    var cube: CubeBase = BossVisual.new() if kind == "elite" else CubeVisual.new()
-    cube.name = "Cube2x2"
-    var scale_size := 1.49 if kind == "elite" else (1.78 if kind == "reinforced" else 1.65)
+    var cube: CubeBase
+    if kind == "master4":
+        cube = LargeCubeVisual.new(4)
+    elif kind == "master5":
+        cube = LargeCubeVisual.new(5)
+    elif kind == "elite":
+        cube = BossVisual.new()
+    else:
+        cube = CubeVisual.new()
+    cube.name = "Cube%d" % (5 if kind == "master5" else (4 if kind == "master4" else (3 if kind == "elite" else 2)))
+    var scale_size := 1.85 if kind == "master5" else (1.72 if kind == "master4" else (
+        1.49 if kind == "elite" else (1.78 if kind == "reinforced" else 1.65)))
     cube.scale = Vector3.ONE * scale_size
-    cube.position.y = (cube.CELL + cube.STEP * (2.0 if kind == "elite" else 1.0)) * scale_size * 0.5
+    if kind == "master4" or kind == "master5":
+        cube.position.y = float(cube.call("visual_height")) * scale_size * 0.5
+    else:
+        cube.position.y = (cube.CELL + cube.STEP * (2.0 if kind == "elite" else 1.0)) * scale_size * 0.5
     root.add_child(cube)
     # Two distinct challenges, no HP: 2-4 legal inverses vs 5-8.
     var depth := director.scramble_depth(kind, id, build.reinforced_reduction())
@@ -662,7 +675,7 @@ func _spawn_one_if_possible() -> void:
         "kind": kind, "home": Vector2(p.x, p.y),
         "awarded": false, "accent": accent
     }
-    _sound("elite" if kind == "elite" or kind == "armored" else ("coins" if kind == "golden" else "spawn"))
+    _sound("elite" if kind in ["elite", "armored", "master4", "master5"] else ("coins" if kind == "golden" else "spawn"))
     var spawn_title := ""
     if kind == "elite":
         spawn_title = "ELITE 3×3!"
@@ -670,8 +683,12 @@ func _spawn_one_if_possible() -> void:
         spawn_title = "✦ CUBO DOURADO!"
     elif kind == "armored":
         spawn_title = "◆ CUBO BLINDADO!"
+    elif kind == "master4":
+        spawn_title = "✦ MESTRE 4×4!"
+    elif kind == "master5":
+        spawn_title = "✧ TITÃ 5×5!"
     _spark(root.position + Vector3(0, cube.position.y, 0),
-        "elite" if kind == "elite" or kind == "armored" else ("coins" if kind == "golden" else "turn"),
+        "elite" if kind in ["elite", "armored", "master4", "master5"] else ("coins" if kind == "golden" else "turn"),
         spawn_title)
     _update_hud()
 

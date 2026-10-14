@@ -142,3 +142,7 @@ Após testes e aprovação gráfica do C5, PR #6 integrado na `main`. A primeira
 ## 17. C7 — Cubos especiais em ondas do Jardim
 
 O C6 foi testado e aprovado no Windows, com merge do PR #7 na main. A branch `dev/checkpoint-07-special-cubes` incrementa o bestiário usando **dois novos cubos 2×2**: Dourado (paga mais) e Blindado (demanda mais giros e concede mais XP), com decalques e materiais legíveis sem modificar cores dos adesivos. O total de inimigos, duração das cinco ondas e contrato de elite 3×3 não mudam. Novos scripts separam regras do diretor C7, carteira C7 e cosméticos; C0–C6 continuam disponíveis. CI testa a lógica, resolução com cubo 3D e salvamento transacional, em seguida build Windows. [Plano](checkpoints/C7-special-cubes.md).
+
+## 18. Expansão C7 — 4×4 e 5×5 como alvos avançados
+
+No mesmo PR do C7, adicionar estado genérico NxN para dimensões 4 e 5, com giros internos, modelo de cubies compactos e adesivos, histórico reversível e animação física por pivot. Um Mestre 4×4 na quarta onda e um Titã 5×5 na quinta substituem alvos sem multiplicar spawns nem afetar a elite 3×3. Pagamentos individuais só após solução. CI valida reversão de camadas internas, integridade geométrica e saldo persistente, além da exportação Windows.

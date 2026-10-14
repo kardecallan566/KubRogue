@@ -102,7 +102,7 @@ func _build_ui() -> void:
     var gap := HSeparator.new()
     gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
     column.add_child(gap)
-    feedback_label = _label(column, "✦ NOVOS CUBOS: DOURADO E BLINDADO ✦", 13)
+    feedback_label = _label(column, "✦ DOURADO · BLINDADO · MESTRE 4×4 · TITÃ 5×5 ✦", 13)
     feedback_label.name = "Muted"
     feedback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     var main_actions := VBoxContainer.new()

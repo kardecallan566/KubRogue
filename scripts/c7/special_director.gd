@@ -4,15 +4,17 @@ const SpecialWallet = preload("res://scripts/c7/special_wallet.gd")
 const SPECIAL_WAVES := {
     1: {1:"golden"},
     2: {2:"armored", 6:"golden"},
-    3: {3:"golden", 8:"armored"},
-    4: {1:"golden", 5:"armored"}
+    3: {3:"golden", 8:"armored", 10:"master4"},
+    4: {1:"golden", 5:"armored", 7:"master5"}
 }
 const KIND_INFO := {
     "apprentice": {"label":"Aprendiz", "depth_min":2, "depth_max":4, "coins":10, "xp":1},
     "reinforced": {"label":"Reforçado", "depth_min":5, "depth_max":8, "coins":18, "xp":2},
     "golden": {"label":"Dourado", "depth_min":3, "depth_max":5, "coins":32, "xp":2},
     "armored": {"label":"Blindado", "depth_min":8, "depth_max":11, "coins":30, "xp":3},
-    "elite": {"label":"Elite 3×3", "depth_min":6, "depth_max":12, "coins":80, "xp":6}
+    "elite": {"label":"Elite 3×3", "depth_min":6, "depth_max":12, "coins":80, "xp":6},
+    "master4": {"label":"Mestre 4×4×4", "depth_min":7, "depth_max":10, "coins":68, "xp":5},
+    "master5": {"label":"Titã 5×5×5", "depth_min":9, "depth_max":13, "coins":110, "xp":8}
 }
 
 func _init(upgrades = null) -> void:
@@ -35,6 +37,6 @@ func scramble_depth(kind: String, actor_id: int, reduction: int = 0) -> int:
     var upper: int = int(info["depth_max"])
     var span := upper - lower + 1
     var turns := lower + (actor_id % span)
-    if kind == "reinforced" or kind == "armored":
+    if kind == "reinforced" or kind == "armored" or kind == "master4" or kind == "master5":
         return maxi(2, turns - reduction)
     return turns

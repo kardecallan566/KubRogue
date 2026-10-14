@@ -2,7 +2,9 @@ extends "res://scripts/c2/run_wallet.gd"
 ## C7: two new payout tiers without changing the established C2/C3 values.
 const EXTRA_REWARDS := {
     "golden": {"coins": 32, "xp": 2},
-    "armored": {"coins": 30, "xp": 3}
+    "armored": {"coins": 30, "xp": 3},
+    "master4": {"coins": 68, "xp": 5},
+    "master5": {"coins": 110, "xp": 8}
 }
 
 func award(cube_id: int, kind: String, bonus_fraction: float = 0.0) -> Dictionary:

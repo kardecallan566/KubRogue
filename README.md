@@ -241,3 +241,7 @@ godot .
 ```
 
 Para aprovação, testar a aparência dos Dourados e Blindados, a solução real de ambos, tempo de onda, efeitos, pagamentos e permanência do C6, além do ZIP Windows do Actions. Checklist em [C7 — Cubos Especiais](docs/checkpoints/C7-special-cubes.md).
+
+### Expansão C7 — Cubos 4×4×4 e 5×5×5 reais
+
+Na mesma branch do C7, os cubos **Mestre 4×4** (onda 4, +68 moedas/+5 XP) e **Titã 5×5** (onda 5, +110 moedas/+8 XP) passam a ser adversários reais. Ambos usam peças de superfície e adesivos completos, suportam rotação de camadas internas, histórico de movimentos e resolução animada pelo inverso do embaralhamento. Substituem slots existentes, sem retirar a elite 3×3 nem modificar saves. Os testes do Godot conferem 56/98 cubies, 96/150 adesivos, invariantes matemáticos, giros e pagamento único. Consulte [o checklist atualizado](docs/checkpoints/C7-special-cubes.md).
