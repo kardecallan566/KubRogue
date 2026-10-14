@@ -30,9 +30,9 @@ func _run() -> void:
     check(hub.collection_label.text.contains("0 / 7"), "locked journal shown in hub")
     hub._show_bestiary()
     check(hub.dialog_center.visible, "bestiary modal opens")
-    check(hub.dialog_box.find_children("Species_*", "PanelContainer").size() == 7,
+    check(hub.dialog_box.find_children("Species_*", "PanelContainer", true, false).size() == 7,
         "bestiary shows seven gallery cards")
-    check(hub.dialog_box.find_children("Contract_*", "PanelContainer").size() == 3,
+    check(hub.dialog_box.find_children("Contract_*", "PanelContainer", true, false).size() == 3,
         "three contract definitions are visible")
     hub.queue_free()
     await process_frame
