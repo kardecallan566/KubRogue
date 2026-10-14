@@ -34,7 +34,8 @@ func _run() -> void:
     check(a.skip() and a.decided and not a.skip(),"skip is safe and one-time")
     var d: Director = Director.new()
     d.start_run()
-    check(d.begin_next_wave(), "first wave starts")
+    check(d.wave_index == 0 and d.phase == Director.Phase.RUNNING,\
+        "first wave automatically starts on reset")
     for id in ["blitz","refuge","gilded","clock"]:
         var rt: Routes = Routes.new()
         rt.begin_run(88)
