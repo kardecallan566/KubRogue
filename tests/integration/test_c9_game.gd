@@ -76,9 +76,17 @@ func _run() -> void:
     check(game.route_status.visible,"active route visible in gameplay HUD")
     check(game.director.waves[4]["types"].size()==9 and game.director.waves.size()==5,
         "fifth wave and mandatory 3x3 elite still intact")
+    # An event may replace a spawn slot; restart must restore the original
+    # C7 wave table even if the previous run followed Trilha Dourada.
+    var pristine: Array = Director.new().waves[1]["types"].duplicate()
+    game.director.waves[1]["types"][0] = "golden"
     game.restart_run()
+    check(game.director.waves[1]["types"] == pristine,
+        "Golden Route never contaminates the following run")
     check(game.routes.offer_wave == -1 and not game.routes.decided,
         "new run resets event choices")
+    check(game.routes.prepare(0) == offer,
+        "daily challenge offers same two routes after restart")
     check(game.journal.run_active and game.workshop.spent==0,
         "contracts and run-only workshop still reset")
     game.queue_free()

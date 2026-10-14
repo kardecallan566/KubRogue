@@ -964,6 +964,9 @@ func restart_run() -> void:
         effects.pulses.clear()
     shake_timer = 0.0
     camera.position = camera_home
+    # Recreate the director so temporary Golden Route substitutions cannot
+    # leak into the next run; then seed the build AFTER the C3 constructor.
+    director = WaveRules.new(build)
     build.reset(run_seed)
     workshop.begin_run()
     routes.begin_run(run_seed)
