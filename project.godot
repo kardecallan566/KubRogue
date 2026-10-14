@@ -1,14 +1,15 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C5 Jardim dos Cubos"
-run/main_scene="res://scenes/c5/hub_stage.tscn"
+config/name="KubRogue — C6 Desafio do Dia"
+run/main_scene="res://scenes/c6/hub_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C5: original synthesized audio, responsive hub, game feel and Windows export. Earlier stages remain available."
+config/description="C6: daily offline challenge with deterministic UTC seed, saved daily records and one skill reroll. C0-C5 remain available."
 
 [autoload]
 KubeSession="*res://scripts/c4/progress_service.gd"
 KubeAudio="*res://scripts/c5/audio_director.gd"
+KubeChallenge="*res://scripts/c6/challenge_service.gd"
 
 [display]
 window/size/viewport_width=1280
