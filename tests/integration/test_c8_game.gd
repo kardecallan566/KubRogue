@@ -2,6 +2,7 @@ extends SceneTree
 const Hub = preload("res://scripts/c8/hub_stage.gd")
 const Game = preload("res://scripts/c8/game_stage.gd")
 const Store = preload("res://scripts/c4/save_store.gd")
+const Journal = preload("res://scripts/c8/journal_service.gd")
 var failures := 0
 func _initialize() -> void:
     call_deferred("_run")
@@ -64,7 +65,7 @@ func _run() -> void:
     check(game.contract_label.text.contains("1/3"), "HUD updates contract success")
     game.queue_free()
     await process_frame
-    var stored: Journal = preload("res://scripts/c8/journal_service.gd").new()
+    var stored: Journal = Journal.new()
     stored.configure(Store.new(journal_path))
     check(stored.solved_count("apprentice") == 4, "collections survive restart")
     check(Store.new(money).read_json().get("coins", -1) == progress.balance(),
