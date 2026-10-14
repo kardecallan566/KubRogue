@@ -201,3 +201,23 @@ Após testar a primeira versão arcade, a hub, a HUD e o seletor de habilidades 
 - **Estilo:** botões continuam coloridos e táteis, mas têm bevel/sombra discretos em `StyleBoxFlat` em vez de imagens enormes esticadas; painel claro, hierarquia tipográfica e melhor espaçamento.
 
 Os testes C5 foram atualizados para verificar os cards, os estados de botões, o congelamento do cronômetro e a nova HUD, além das regressões C0–C4. A branch C5 continua separada da main até validação visual.
+
+## Checkpoint C6 — Desafio Diário e uma troca de cartas
+
+**Branch para teste:** `dev/checkpoint-06-daily-challenge`. C5 aprovado já está na main, via PR #6. Esta branch utiliza Godot **4.7.2**, mantém todas as cenas C0–C5 e deixa o **C6 como cena principal**.
+
+- **Modo Normal:** cinco ondas, recompensas permanentes e melhorias anteriores. A cada nova run, uma seed diferente gera os embaralhamentos e ofertas das habilidades; a seed fica visível na HUD.
+- **Desafio do Dia (offline):** acessível na hub; congela a data em **UTC** no momento da seleção e deriva uma seed determinística daquela data, igual em Windows/Linux e para qualquer jogador. Uma nova tentativa no mesmo dia tem a **mesma seed**; muda à meia-noite UTC.
+- **Recordes pessoais do dia:** tentativas, vitórias, maior onda e mais cubos resolvidos, registrados em `user://kubrogue_daily_v1.json` com backup `.bak`, **isolados** do save das moedas do C4/C5. Pode jogar quantas vezes quiser no dia; sem backend/placar online.
+- **Troca de cartas:** uma única vez por partida, na tela de escolha de habilidade. Substitui o trio por habilidades válidas diferentes, quando disponíveis, sem gastar XP. Depois de usá-la, o botão fica desabilitado até a próxima run. As oito cartas, níveis, bônus e suas regras continuam inalterados.
+- **Sem impacto no saldo:** moedas e melhorias permanentes continuam usando o sistema aprovado; nenhum reset nem migração da carteira atual. Desafio diário permite comprar melhorias e ganhar moedas normalmente, então os recordes são **pessoais, não uma competição balanceada entre contas**.
+
+**Testar no Windows:**
+```powershell
+git fetch origin
+git switch dev/checkpoint-06-daily-challenge
+git pull origin dev/checkpoint-06-daily-challenge
+godot .
+```
+
+Abra `DESAFIO DO DIA`, escolha uma carta ou use `TROCAR AS 3 CARTAS` e confira seu resultado ao voltar à hub. Veja o [checklist C6](docs/checkpoints/C6-daily-challenge.md). O C6 só entrará na main após CI verde e sua aprovação no Windows.

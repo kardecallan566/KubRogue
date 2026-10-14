@@ -134,3 +134,7 @@ Há testes separados de persistência, preço, saldo, recuperação de backup, t
 ## 15. C5 — Efeitos, áudio original, acessibilidade e Windows
 
 Após aprovação do usuário, o C4 entrou na `main` pelo PR #5. O C5 mantém esse gameplay estável e adiciona polimento via cenas próprias (hub/arena), `KubeAudio` autoload gerando som PCM em memória, partículas leves em `CanvasLayer` obedecendo a configuração de redução de partículas, shake opcional, `MultiMesh` para grama, modais roláveis e estilo visual consistente. `export_presets.cfg` configura Windows Desktop GL Compatibility, e um workflow `workflow_dispatch` produz pacote Windows para teste manual com templates oficiais da mesma versão. O pacote **não é declarado pronto sem export real e teste no Windows**. [Checklist C5](checkpoints/C5-polish-windows.md).
+
+## 16. C6 — Primeiro pós-MVP: desafio diário offline e reroll
+
+Após testes e aprovação gráfica do C5, PR #6 integrado na `main`. A primeira expansão pós-MVP fica em `dev/checkpoint-06-daily-challenge`. Mantém o Jardim dos Cubos, a mão 2D aberta/fechada, cinco ondas, economia e UI. Adiciona modo diário de seed UTC reproduzível, recordes locais em arquivo separado e exatamente um reroll de 3 cartas por run. Não inclui serviços externos, pagamentos ou tabelas públicas. [Critérios](checkpoints/C6-daily-challenge.md). Requer CI C0–C6 e avaliação de fluidez do jogador.
