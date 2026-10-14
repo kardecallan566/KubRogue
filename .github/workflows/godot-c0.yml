@@ -1,4 +1,4 @@
-name: KubRogue C0-C8 - Godot 4.7.2 validation
+name: KubRogue C0-C9 - Godot 4.7.2 validation
 
 on:
   push:
@@ -69,6 +69,13 @@ jobs:
           set -eo pipefail
           timeout 75s godot --headless --path . --script res://tests/integration/test_c8_cold_start.gd 2>&1 | tee /tmp/c8-cold.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 COLD FAIL:' /tmp/c8-cold.log; then exit 1; fi
+
+      - name: C9 first run and route overlay before Godot editor import
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/integration/test_c9_cold_start.gd 2>&1 | tee /tmp/c9-cold.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C9 COLD FAIL:' /tmp/c9-cold.log; then exit 1; fi
 
       - name: Import project and compile scripts
         shell: bash
@@ -177,6 +184,20 @@ jobs:
           timeout 120s godot --headless --path . --script res://tests/integration/test_c8_ux.gd 2>&1 | tee /tmp/c82-ux.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 UX FAIL:' /tmp/c82-ux.log; then exit 1; fi
 
+      - name: C9 fixed-seed two-route offerings and one-wave invariants
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_c9_routes.gd 2>&1 | tee /tmp/c9-routes.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C9 UNIT FAIL:' /tmp/c9-routes.log; then exit 1; fi
+
+      - name: C9 playable route selection, C8 workshop and preserved boss
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 120s godot --headless --path . --script res://tests/integration/test_c9_game.gd 2>&1 | tee /tmp/c9-game.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C9 STAGE FAIL:' /tmp/c9-game.log; then exit 1; fi
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |
@@ -185,7 +206,7 @@ jobs:
           grep -Fq 'platform="Windows Desktop"' export_presets.cfg
           test -f .github/workflows/windows-export.yml
 
-      - name: Boot C8 hub scene
+      - name: Boot C9 hub scene
         shell: bash
         run: |
           set -eo pipefail

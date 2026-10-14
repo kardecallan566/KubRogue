@@ -272,3 +272,18 @@ A antiga loja permanente sai do fluxo do C8; moedas adquiridas e melhorias antig
 **JOGAR** apresenta dois cards largos e compactos para Modo Normal e Desafio do Dia. O **BESTIÁRIO** usa uma galeria 2-colunas com prévias isométricas desenhadas dentro do Godot e campos sem cortes.
 
 Após concluir uma onda (enquanto a partida estiver viva), o resumo exibe **OFICINA DO CUBISTA**. Os quatro upgrades usam moedas adquiridas **na run atual** e o saldo salvo da carteira. As compras são gravadas antes de ativar o upgrade e duram até o fim daquela partida: +10 segundos nas próximas ondas, +12 de estabilidade imediata, +10% de moedas por cubo ou giros 6% mais rápidos. Volte ao resumo para escolher a próxima onda. A loja não existe no menu inicial, e as habilidades por XP continuam separadas.
+
+## Checkpoint C9 — Rotas do Jardim (em testes)
+
+O C8.2 foi aprovado e integrado na `main` pelo PR #9. A nova branch `dev/checkpoint-09-garden-routes` acrescenta **duas escolhas de rota com riscos e recompensas** entre as ondas 1–4. Cada rota muda apenas a onda seguinte (tempo, estabilidade, bônus de moedas ou o tipo de um cubo existente). Se preferir, escolha **SEGUIR SEM EVENTO**; nenhuma rota é obrigatória.
+
+Os desafios diários usam a mesma seed UTC para determinar **quais duas rotas são oferecidas**, enquanto o modo Normal varia. Os efeitos não alteram os arquivos de save, a carteira e a Oficina já aprovada, nem o chefe 3×3 da onda 5. As ofertas ficam numa tela visual separada do resumo; o menu inicial mantém só quatro botões.
+
+```powershell
+git fetch origin
+git switch dev/checkpoint-09-garden-routes
+git pull origin dev/checkpoint-09-garden-routes
+godot .
+```
+
+Confira [o checklist C9](docs/checkpoints/C9-garden-routes.md). O PR não será integrado antes dos testes Godot e da sua avaliação no Windows.

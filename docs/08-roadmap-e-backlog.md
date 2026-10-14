@@ -150,3 +150,7 @@ No mesmo PR do C7, adicionar estado genérico NxN para dimensões 4 e 5, com gir
 ## 19. C8 — Bestiário e objetivos que reforçam o loop
 
 Após merge do C7 na main, o C8 coleciona os sete tipos de cubos efetivamente resolvidos, salva contagens num arquivo independente e cria três contratos **por run**. A recompensa do contrato faz parte do crédito idempotente da solução que o completou; não existe botão de reclamar moedas nem endpoint adicional. Interface compacta na hub e HUD, sem alterar o campo gramado, o modelo NxNxN e as cinco ondas. [Checklist detalhado](checkpoints/C8-bestiary-contracts.md). CI deve reproduzir partidas reais, idempotência, abertura limpa e exportação Windows, seguido de aprovação visual do usuário.
+
+## 20. C9 — Rotas do Jardim: eventos com risco e recompensa
+
+Após a aprovação do C8.2 (PR #9 integrado à main), experimentar o C9 com um encontro opcional entre ondas: **duas cartas de rotas determinísticas por seed de run e índice da onda**, com uma escolha ou skip. Quatro alternativas possíveis mudam só a onda imediatamente posterior: Relâmpago (-tempo/+moedas), Refúgio (+estabilidade/-tempo), Dourada (substituir um Aprendiz por Dourado), Torre (+tempo/-estabilidade). A Oficina e o Bestiário existentes não são modificados; a elite 3×3 da onda final permanece obrigatória. A moeda é creditada pelo processo atômico original. Testes C0–C9, exportação Windows e validação visual obrigatórios. [Checklist C9](checkpoints/C9-garden-routes.md).
