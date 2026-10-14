@@ -1,4 +1,4 @@
-name: Audit - Windows test build
+name: C12 - Windows test build
 
 on:
   push:
@@ -10,6 +10,7 @@ on:
       - dev/checkpoint-09-garden-routes
       - dev/checkpoint-10-combo-fever
       - dev/checkpoint-11-regression-audit
+      - dev/checkpoint-12-garden-medals
   workflow_dispatch:
 
 permissions:
@@ -55,7 +56,7 @@ jobs:
         run: cd builds/windows && zip -9 KubRogue-Windows-x86_64.zip KubRogue.exe KubRogue.pck
       - uses: actions/upload-artifact@v4
         with:
-          name: KubRogue-Audit-Windows-x86_64
+          name: KubRogue-C12-Windows-x86_64
           path: builds/windows/KubRogue-Windows-x86_64.zip
           if-no-files-found: error
           retention-days: 14

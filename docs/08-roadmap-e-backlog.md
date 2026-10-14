@@ -158,3 +158,7 @@ Após a aprovação do C8.2 (PR #9 integrado à main), experimentar o C9 com um 
 ## 21. C10 — Combo Fever e feedback de progressão
 
 Após aprovação do C9 (PR #10 integrado na main), C10 combina um motor de combo/fever testável e HUD dedicada, com a meta de tornar as resoluções mais satisfatórias sem poluir menus. A cada quatro soluções em sequência (máximo 12s entre acertos) ativa FEVER: bônus de +20% em moedas do cubo dentro do multiplicador existente, duração 9s e +1s por cubo durante a janela (máximo 6s por onda). O relógio funciona somente em combate ativo; pausa e modais não o consomem. Devolve efeitos de ouro e som original da camada C5. Economias C4/C8, Rotas C9 e saves ficam intactos. CI C0–C10, exportação Windows e teste visual obrigatórios. [Checklist](checkpoints/C10-combo-fever.md).
+
+## 22. C12 — Medalhas e Maestrias do Jardim
+
+Após a revisão C0–C10 (PR #12 integrado), premiar progressão persistente sem criar nova carteira, novas moedas ou mais botões na hub. C12 acrescenta 12 medalhas baseadas nos contadores de descobertas do Bestiário e no combo máximo já salvo, com retroatividade para jogadores das versões C8–C10. A mesma tela BESTIÁRIO passa a separar CUBOS, MEDALHAS e CONTRATOS em abas, sem lista infinita. Cada espécie tem maestria Bronze/Prata/Ouro em 5/20/50 resoluções. Um aviso temporário aparece quando uma nova medalha é desbloqueada. Tests C0–C12, Windows build e aprovação visual antes do merge. [C12](checkpoints/C12-garden-medals.md).

@@ -17,6 +17,8 @@ var challenge: ChallengeScript
 var journal: JournalScript
 var medals: MedalRules
 var medals_label: Label
+var bestiary_pages: Array[VBoxContainer] = []
+var bestiary_tabs: Array[Button] = []
 var collection_label: Label
 var daily_label: Label
 var wallet_label: Label
@@ -296,9 +298,19 @@ func _finish_tutorial_and_play() -> void:
         return
     _open_game()
 
+func _select_bestiary_tab(index: int) -> void:
+    for i in range(bestiary_pages.size()):
+        bestiary_pages[i].visible = i == index
+        bestiary_tabs[i].text = ("◈ " if i == index else "") + ["CUBOS","MEDALHAS","CONTRATOS"][i]
+        bestiary_tabs[i].disabled = i == index
+    if modal_scroll != null:
+        modal_scroll.scroll_vertical = 0
+
 func _show_bestiary() -> void:
     _clear_modal()
     _set_modal_dimensions(860,510)
+    bestiary_pages.clear()
+    bestiary_tabs.clear()
     var heading := _label(dialog_box,"◈  BESTIÁRIO DO JARDIM",25)
     heading.name = "Title"
     if not journal.last_error.is_empty():
@@ -311,12 +323,27 @@ func _show_bestiary() -> void:
         total_solved += journal.solved_count(String(entry["id"]))
     _label(dialog_box,"%d / 7 DESCOBERTOS     ◆     %d CUBOS RESOLVIDOS" % [
         discovered,total_solved],16)
+    var tabs := HBoxContainer.new()
+    tabs.name = "BestiaryTabs"
+    tabs.add_theme_constant_override("separation",8)
+    dialog_box.add_child(tabs)
+    for i in range(3):
+        var tab := _button(tabs,["CUBOS","MEDALHAS","CONTRATOS"][i],
+            _select_bestiary_tab.bind(i),230)
+        tab.name = "BestiaryTab_%d" % i
+        tab.set_meta("arcade_variant","teal" if i == 0 else "blue")
+        bestiary_tabs.append(tab)
+        var page := VBoxContainer.new()
+        page.name = ["CubosPage","MedalhasPage","ContratosPage"][i]
+        page.add_theme_constant_override("separation",12)
+        dialog_box.add_child(page)
+        bestiary_pages.append(page)
     var gallery := GridContainer.new()
     gallery.name = "SpeciesGallery"
     gallery.columns = 2
     gallery.add_theme_constant_override("h_separation",12)
     gallery.add_theme_constant_override("v_separation",12)
-    dialog_box.add_child(gallery)
+    bestiary_pages[0].add_child(gallery)
     var shades := {
         "golden":Color("#ddaa41"), "armored":Color("#9e8bda"),
         "elite":Color("#bf82cb"), "master4":Color("#78cddd"),
@@ -328,7 +355,7 @@ func _show_bestiary() -> void:
         var known := amount > 0
         var panel := PanelContainer.new()
         panel.name = "Species_%s" % kind
-        panel.custom_minimum_size = Vector2(371,154)
+        panel.custom_minimum_size = Vector2(371,188)
         panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
         panel.set_meta("skill_category",
             "Moedas" if known and String(entry["rarity"]) in ["RARO","LENDÁRIO"] else "Controle")
@@ -371,18 +398,18 @@ func _show_bestiary() -> void:
             _label(fields,
                 "PROGRESSO  %d / %d" % [mini(amount,next_count),next_count]
                 if mastery_level < 3 else "MAESTRIA MÁXIMA",11)
-    _build_medals_gallery()
+    _build_medals_gallery(bestiary_pages[1])
     var divider := HSeparator.new()
-    dialog_box.add_child(divider)
-    var contracts_title := _label(dialog_box,"CONTRATOS DA PARTIDA",21)
+    bestiary_pages[2].add_child(divider)
+    var contracts_title := _label(bestiary_pages[2],"CONTRATOS DA PARTIDA",21)
     contracts_title.name = "Title"
-    _label(dialog_box,"Bônus recebidos ao concluir desafios. Nada para resgatar manualmente.",13)
+    _label(bestiary_pages[2],"Bônus recebidos ao concluir desafios. Nada para resgatar manualmente.",13)
     var goals := GridContainer.new()
     goals.name = "ContractGallery"
     goals.columns = 2
     goals.add_theme_constant_override("h_separation",10)
     goals.add_theme_constant_override("v_separation",10)
-    dialog_box.add_child(goals)
+    bestiary_pages[2].add_child(goals)
     for goal in journal.CONTRACTS:
         var card := PanelContainer.new()
         card.name = "Contract_%s" % String(goal["id"])
@@ -396,19 +423,20 @@ func _show_bestiary() -> void:
             String(goal["title"]),int(goal["reward"])],16)
         _label(body,String(goal["detail"]),13)
     _button(dialog_box,"VOLTAR",_close_modal,210)
+    _select_bestiary_tab(0)
     _open_modal()
 
-func _build_medals_gallery() -> void:
+func _build_medals_gallery(parent: Node) -> void:
     var heading := HBoxContainer.new()
     heading.name = "MedalsHeading"
-    dialog_box.add_child(heading)
+    parent.add_child(heading)
     var title := _label(heading,"✦  MEDALHAS DO JARDIM",21)
     title.name = "Title"
     title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     var count := _label(heading,"%d / %d" % [
         medals.trophy_count(journal,session),MedalRules.MEDALS.size()],16)
     count.name = "Counter"
-    var explanation := _label(dialog_box,
+    var explanation := _label(parent,
         "Desbloqueios permanentes pelas suas resoluções e pelo melhor combo. Não consomem moedas.",13)
     explanation.name = "Muted"
     var gallery := GridContainer.new()
@@ -416,7 +444,7 @@ func _build_medals_gallery() -> void:
     gallery.columns = 2
     gallery.add_theme_constant_override("h_separation",12)
     gallery.add_theme_constant_override("v_separation",10)
-    dialog_box.add_child(gallery)
+    parent.add_child(gallery)
     for medal in MedalRules.MEDALS:
         var unlocked: bool = medals.unlocked(medal,journal,session)
         var current: int = medals.progress(medal,journal,session)
