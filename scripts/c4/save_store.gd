@@ -8,21 +8,29 @@ var path: String
 func _init(save_path: String = "user://kubrogue_progress_v1.json") -> void:
     path = save_path
 
+func _read_document(source: String) -> Dictionary:
+    if not FileAccess.file_exists(source):
+        return {}
+    var file := FileAccess.open(source, FileAccess.READ)
+    if file == null:
+        return {}
+    if file.get_length() <= 0 or file.get_length() > MAX_BYTES:
+        file.close()
+        return {}
+    var content := file.get_as_text()
+    file.close()
+    var parser := JSON.new()
+    if parser.parse(content) != OK or not (parser.data is Dictionary):
+        return {}
+    return parser.data
+
 func read_json() -> Dictionary:
+    # Prefer the last successful primary; recover from the previous backup
+    # when a crash or disk problem left the primary invalid.
     for source in [path, path + ".bak"]:
-        if not FileAccess.file_exists(source):
-            continue
-        var f := FileAccess.open(source, FileAccess.READ)
-        if f == null:
-            continue
-        if f.get_length() <= 0 or f.get_length() > MAX_BYTES:
-            f.close()
-            continue
-        var raw := f.get_as_text()
-        f.close()
-        var parser := JSON.new()
-        if parser.parse(raw) == OK and parser.data is Dictionary:
-            return parser.data
+        var payload: Dictionary = _read_document(source)
+        if not payload.is_empty():
+            return payload
     return {}
 
 func write_json(payload: Dictionary) -> bool:
@@ -36,8 +44,9 @@ func write_json(payload: Dictionary) -> bool:
     f.store_string(serialized)
     f.flush()
     f.close()
-    if FileAccess.file_exists(path):
-        # A last-known-good backup makes interrupted writes recoverable.
+    if FileAccess.file_exists(path) and not _read_document(path).is_empty():
+        # Never replace a valid backup with a corrupt/truncated primary.
+        # A recovered save must preserve the previous last-known-good file.
         if DirAccess.copy_absolute(ProjectSettings.globalize_path(path),
                 ProjectSettings.globalize_path(path + ".bak")) != OK:
             DirAccess.remove_absolute(ProjectSettings.globalize_path(temp))
