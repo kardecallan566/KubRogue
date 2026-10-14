@@ -27,7 +27,7 @@ func _run() -> void:
             check(puzzle.is_valid() and not puzzle.is_solved(),
                 "%d: inner layer %s rotates logically" % [n, face])
             puzzle.move(face, -1, 1, false)
-            check(puzzle.snapshot() == original, "%d: inner slice inverse" % [n, face])
+            check(puzzle.snapshot() == original, "%d: inner slice inverse" % n)
         var moves: Array[Dictionary] = puzzle.scramble(16, 4395)
         var repeat: Array[Dictionary] = State.new(n).scramble(16, 4395)
         check(moves == repeat, "%d: seeded scramble deterministic" % n)

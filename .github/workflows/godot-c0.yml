@@ -122,10 +122,18 @@ jobs:
         run: timeout 120s godot --headless --path . --script res://tests/integration/test_c7_game.gd
 
       - name: C7 true 4x4 and 5x5 integer slices and animated geometry
-        run: timeout 120s godot --headless --path . --script res://tests/unit/test_c7_nxn.gd
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 120s godot --headless --path . --script res://tests/unit/test_c7_nxn.gd 2>&1 | tee /tmp/c7-nxn.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C7 NXN FAIL:' /tmp/c7-nxn.log; then exit 1; fi
 
       - name: C7 large cube payouts and real 4x4/5x5 resolutions
-        run: timeout 150s godot --headless --path . --script res://tests/integration/test_c7_large_cubes.gd
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 150s godot --headless --path . --script res://tests/integration/test_c7_large_cubes.gd 2>&1 | tee /tmp/c7-large.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C7 LARGE FAIL:' /tmp/c7-large.log; then exit 1; fi
 
       - name: Windows Desktop export preset validation
         shell: bash
