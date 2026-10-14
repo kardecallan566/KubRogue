@@ -1,0 +1,55 @@
+name: C5 - Windows test build (manual)
+
+on:
+  push:
+    branches:
+      - dev/checkpoint-05-polish-windows
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Godot 4.7.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 -o godot.zip \
+            https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          echo "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4  godot.zip" | sha256sum -c -
+          unzip -q godot.zip
+          chmod +x Godot_v4.7.2-stable_linux.x86_64
+          sudo mv Godot_v4.7.2-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Install official Windows export template
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 -o templates.tpz \
+            https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz
+          mkdir -p "$HOME/.local/share/godot/export_templates/4.7.2.stable"
+          unzip -j -q templates.tpz 'templates/windows_release_x86_64.exe' \
+            -d "$HOME/.local/share/godot/export_templates/4.7.2.stable"
+          test -s "$HOME/.local/share/godot/export_templates/4.7.2.stable/windows_release_x86_64.exe"
+      - name: Import assets
+        run: godot --headless --editor --path . --import --quit
+      - name: Export x86_64 Windows executable and data
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p builds/windows
+          godot --headless --path . --export-release "Windows Desktop" builds/windows/KubRogue.exe
+          test -s builds/windows/KubRogue.exe
+          test -s builds/windows/KubRogue.pck
+      - name: Package the standalone test build
+        run: cd builds/windows && zip -9 KubRogue-Windows-x86_64.zip KubRogue.exe KubRogue.pck
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KubRogue-C5-Windows-x86_64
+          path: builds/windows/KubRogue-Windows-x86_64.zip
+          if-no-files-found: error
+          retention-days: 14
