@@ -1,4 +1,4 @@
-name: C7 - Windows test build
+name: C8 - Windows test build
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - dev/checkpoint-05-polish-windows
       - dev/checkpoint-06-daily-challenge
       - dev/checkpoint-07-special-cubes
+      - dev/checkpoint-08-bestiary-contracts
   workflow_dispatch:
 
 permissions:
@@ -51,7 +52,7 @@ jobs:
         run: cd builds/windows && zip -9 KubRogue-Windows-x86_64.zip KubRogue.exe KubRogue.pck
       - uses: actions/upload-artifact@v4
         with:
-          name: KubRogue-C7-Windows-x86_64
+          name: KubRogue-C8-Windows-x86_64
           path: builds/windows/KubRogue-Windows-x86_64.zip
           if-no-files-found: error
           retention-days: 14

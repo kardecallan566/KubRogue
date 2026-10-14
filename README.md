@@ -245,3 +245,18 @@ Para aprovação, testar a aparência dos Dourados e Blindados, a solução real
 ### Expansão C7 — Cubos 4×4×4 e 5×5×5 reais
 
 Na mesma branch do C7, os cubos **Mestre 4×4** (onda 4, +68 moedas/+5 XP) e **Titã 5×5** (onda 5, +110 moedas/+8 XP) passam a ser adversários reais. Ambos usam peças de superfície e adesivos completos, suportam rotação de camadas internas, histórico de movimentos e resolução animada pelo inverso do embaralhamento. Substituem slots existentes, sem retirar a elite 3×3 nem modificar saves. Os testes do Godot conferem 56/98 cubies, 96/150 adesivos, invariantes matemáticos, giros e pagamento único. Consulte [o checklist atualizado](docs/checkpoints/C7-special-cubes.md).
+
+## C8 — Bestiário e contratos do Jardim (em testes)
+
+Após aprovação do C7 e merge do PR #8, a branch **`dev/checkpoint-08-bestiary-contracts`** adiciona coleção persistente das **7 espécies reais de cubos** e três contratos com bônus de moedas por partida. A hub oferece o botão `BESTIÁRIO DO JARDIM`; espécies inicialmente bloqueadas são reveladas ao resolver cubos e persistem entre sessões.
+
+**Contratos:** 4 cubos (+20), 2 especiais (+35), um 4×4/5×5 (+60). As moedas extras são incluídas na transação original de cada cubo, preservando o C4. Nenhum save anterior é migrado; Bestiário usa `user://kubrogue_journal_v1.json`, independente de moedas, desafios diários e upgrades. O modo normal e o diário continuam funcionais, com cinco ondas.
+
+```powershell
+git fetch origin
+git switch dev/checkpoint-08-bestiary-contracts
+git pull origin dev/checkpoint-08-bestiary-contracts
+godot .
+```
+
+[Critérios e roteiro C8](docs/checkpoints/C8-bestiary-contracts.md). C8 aguarda CI, build Windows e **sua validação** antes de entrar na main.

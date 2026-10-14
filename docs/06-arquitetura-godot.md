@@ -191,3 +191,7 @@ Autoload `KubeChallenge` vem após `KubeSession` e `KubeAudio`; oferece `select_
 ## 21. C7 — Diretor e variantes 2×2
 
 `special_director.gd` estende C3, injeta Dourados e Blindados em slots da tabela de ondas C3 (não insere spawns adicionais, preserva reserva da elite 3×3). `special_wallet.gd` estende o wallet C2, substituindo o payout apenas dos novos tipos e mantendo proteção contra pagamentos duplicados. `special_visuals.gd` aplica material nas peças estruturais dos 2×2 e acrescenta halo e marcador, sem alterar adesivos/giro/lógica do cubo. O estágio C7 usa o diretor e itens de C6 sem sobrepor scripts de checkpoints anteriores. Não há alterações no schema dos saves.
+
+## 22. C8 — KubeJournal e contratos atômicos
+
+Autoload `KubeJournal` `scripts/c8/journal_service.gd` guarda dados persistentes de bestiário no `user://kubrogue_journal_v1.json`, separados da carteira e do modo diário. Na arena, `register_solve(kind, cube_id)` aplica alterações temporárias aos objetivos e devolve o bônus da conclusão; `director.resolve_cube` valida a solução antes disso. **O valor do bônus é acrescentado antes da chamada singular `KubeSession.credit_cube`**, e o pagamento segue a proteção idempotente e a recuperação de pendências do C4. O Bestiário só registra `record_cube` após confirmação do crédito, com tokens `run_number:cube_id` (últimos 512) para deduplicação. Escrita do Bestiário falha de maneira independente da carteira, mantendo tentativas pendentes em memória. A C8 mantém cenas C7 intactas e adiciona `scenes/c8/{hub_stage,game_stage}.tscn`.
