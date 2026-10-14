@@ -300,3 +300,9 @@ godot .
 ```
 
 Os testes C0–C10 e a build Windows são gates obrigatórios. Veja [o roteiro de validação C10](docs/checkpoints/C10-combo-fever.md).
+
+## Auditoria transversal pós-C10 (branch de revisão)
+
+A branch `dev/checkpoint-11-regression-audit` mantém o gameplay aprovado do C10 e endurece a **integridade do salvamento**: não substitui backups íntegros por arquivos corrompidos, não sobrescreve versões de save desconhecidas e verifica datas reais no Desafio Diário (incluindo bissextos). Quatro novos testes automatizados verificam esses casos na carteira, Bestiário e recordes diários. O C0–C10 continua sob regressão total. **Nenhuma migração/apagamento de save existente é executada.**
+
+Confira o [relatório completo e as lacunas de teste manual](docs/checkpoints/C11-regression-audit.md) e valide no Windows antes de aprovar o PR.

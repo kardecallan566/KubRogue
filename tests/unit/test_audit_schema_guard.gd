@@ -40,6 +40,18 @@ func _run() -> void:
     check(not FileAccess.file_exists(path+".bak"),
         "blocked operation never creates backup of invalid migration")
     _clean(path)
+    var broken := FileAccess.open(path, FileAccess.WRITE)
+    check(broken != null,"invalid primary fixture created")
+    if broken != null:
+        broken.store_string("{no valid save")
+        broken.close()
+    var unreadable: String = FileAccess.get_file_as_string(path)
+    wallet.configure(Store.new(path))
+    check(not wallet.save_writable and wallet.last_error.contains("ilegível"),
+        "corrupted documents cannot be silently replaced with new defaults")
+    check(not wallet.begin_run() and FileAccess.get_file_as_string(path)==unreadable,
+        "unreadable primary remains byte-for-byte untouched")
+    _clean(path)
     var classic: Dictionary = {
         "schema_version":1,"coins":123,"paid_ids":[],"run_number":5
     }

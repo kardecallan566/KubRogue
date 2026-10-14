@@ -64,3 +64,7 @@ Antes de fechar um checkpoint, verificar se as decisões continuam alinhadas: ca
 ## 7. Atualização C0 — prova de asset em código
 
 O repositório privado Kubos foi examinado; o suposto “modelo 3D” é procedural GDScript (26 cubinhos e 54 plaquinhas), não .glb. A branch C0 de KubRogue agora tem adaptação 3×3, cena de inspeção e testes. O risco de **modelo não disponível** foi mitigado no 3×3, mas o risco de **2×2** e de controle arcade da mão permanece. A validação gráfica e o CI não podem ser presumidos aprovados apenas pelo commit. [Detalhes e rastreabilidade](checkpoints/C0-kubos-asset-audit.md).
+
+## 8. Auditoria transversal de código C0–C10 (14/10/2026)
+
+A observação de 13/10/2026 sobre ainda não haver código descreve **somente a fase documental daquele dia** e não o estado atual do repositório. O projeto evoluiu até o C10, com cenas e testes reais. A nova auditoria transversal de implementação foi documentada em [C11 — Revisão de regressões](checkpoints/C11-regression-audit.md), com correções de recuperação de backup, preservação de saves incompatíveis e validação gregoriana da data UTC. Nenhuma verificação automatizada substitui testes gráficos e de FPS no Windows.

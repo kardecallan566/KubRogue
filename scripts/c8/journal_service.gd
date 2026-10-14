@@ -25,6 +25,7 @@ var counts: Dictionary = {}
 var seen: Array[String] = []
 var pending_observations: Dictionary = {}
 var last_error := ""
+var journal_writable := true
 var run_id := 0
 var run_active := false
 var run_solved := 0
@@ -51,9 +52,16 @@ func configure(adapter: Store) -> void:
     seen.clear()
     pending_observations.clear()
     last_error = ""
+    journal_writable = true
     for item in CATALOG:
         counts[String(item["id"])] = 0
     var raw: Dictionary = store.read_json()
+    if raw.is_empty() and (FileAccess.file_exists(store.path) or FileAccess.file_exists(store.path + ".bak")):
+        journal_writable = false
+        last_error = "Bestiário ilegível: o arquivo original será preservado."
+    elif not raw.is_empty() and int(raw.get("version", 0)) != VERSION:
+        journal_writable = false
+        last_error = "Bestiário com versão incompatível: dados preservados."
     if int(raw.get("version", 0)) == VERSION:
         var saved: Variant = raw.get("counts", {})
         if saved is Dictionary:
@@ -156,6 +164,8 @@ func record_cube(kind: String, identity: int, cube_id: int) -> bool:
 func flush_observations() -> bool:
     if pending_observations.is_empty():
         return true
+    if not journal_writable:
+        return false
     var proposed_counts := counts.duplicate(true)
     var proposed_seen: Array[String] = seen.duplicate()
     for token in pending_observations:

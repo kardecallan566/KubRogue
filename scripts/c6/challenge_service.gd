@@ -14,6 +14,7 @@ var serial := 0
 var recorded_serial := -1
 var run_started := false
 var last_error := ""
+var record_writable := true
 
 func _ready() -> void:
     if store == null:
@@ -23,7 +24,14 @@ func configure(adapter: Store) -> void:
     store = adapter
     records.clear()
     last_error = ""
+    record_writable = true
     var raw: Dictionary = store.read_json()
+    if raw.is_empty() and (FileAccess.file_exists(store.path) or FileAccess.file_exists(store.path + ".bak")):
+        record_writable = false
+        last_error = "Recordes diários ilegíveis: arquivo original preservado."
+    elif not raw.is_empty() and int(raw.get("version", 0)) != SAVE_SCHEMA:
+        record_writable = false
+        last_error = "Recordes diários de uma versão incompatível: arquivo preservado."
     var entries: Variant = raw.get("days", {})
     if entries is Dictionary and int(raw.get("version", 0)) == SAVE_SCHEMA:
         var keys: Array = entries.keys()
@@ -104,6 +112,8 @@ func record_result(wave: int, cubes: int, victory: bool) -> bool:
     if active_mode != "daily":
         recorded_serial = serial
         return true
+    if not record_writable:
+        return false
     var current: Dictionary = records.get(active_date, {
         "attempts":0, "wins":0, "best_wave":0, "best_cubes":0
     }).duplicate(true)

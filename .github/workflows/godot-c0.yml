@@ -1,4 +1,4 @@
-name: KubRogue C0-C10 - Godot 4.7.2 validation
+name: KubRogue C0-C10 + Audit - Godot 4.7.2 validation
 
 on:
   push:
@@ -219,6 +219,34 @@ jobs:
           timeout 120s godot --headless --path . --script res://tests/integration/test_c10_game.gd 2>&1 | tee /tmp/c10-game.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C10 STAGE FAIL:' /tmp/c10-game.log; then exit 1; fi
 
+      - name: Audit - backup survives repeated primary-file corruption
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_audit_save_recovery.gd 2>&1 | tee /tmp/audit-save.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|AUDIT SAVE FAIL:' /tmp/audit-save.log; then exit 1; fi
+
+      - name: Audit - corrupt, unknown-schema and valid C4 wallet behavior
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_audit_schema_guard.gd 2>&1 | tee /tmp/audit-schema.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|AUDIT SCHEMA FAIL:' /tmp/audit-schema.log; then exit 1; fi
+
+      - name: Audit - Gregorian UTC dates and deterministic daily seed
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_audit_calendar.gd 2>&1 | tee /tmp/audit-calendar.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|AUDIT CALENDAR FAIL:' /tmp/audit-calendar.log; then exit 1; fi
+
+      - name: Audit - isolated daily and Bestiary saves are never silently overwritten
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_audit_isolated_saves.gd 2>&1 | tee /tmp/audit-isolated.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|AUDIT ISOLATED SAVE FAIL:' /tmp/audit-isolated.log; then exit 1; fi
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |
@@ -227,9 +255,9 @@ jobs:
           grep -Fq 'platform="Windows Desktop"' export_presets.cfg
           test -f .github/workflows/windows-export.yml
 
-      - name: Boot C10 hub scene
+      - name: Boot stable C10 hub scene (audit)
         shell: bash
         run: |
           set -eo pipefail
           godot --headless --path . --quit-after 40 2>&1 | tee /tmp/c0-boot.log
-          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:|C2.*FAIL:|C3.*FAIL:|C4.*FAIL:|C5.*FAIL:|C6.*FAIL:|C7.*FAIL:|C8.*FAIL:' /tmp/c0-boot.log; then exit 1; fi
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:|C2.*FAIL:|C3.*FAIL:|C4.*FAIL:|C5.*FAIL:|C6.*FAIL:|C7.*FAIL:|C8.*FAIL:|C9.*FAIL:|C10.*FAIL:' /tmp/c0-boot.log; then exit 1; fi
