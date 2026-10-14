@@ -1,10 +1,10 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C9 Rotas do Jardim"
-run/main_scene="res://scenes/c9/hub_stage.tscn"
+config/name="KubRogue — C10 Combo Fever"
+run/main_scene="res://scenes/c10/hub_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C9: reproducible between-wave Garden Routes with risk/reward, compatible with C8 workshop, bestiary and daily."
+config/description="C10: arcade Combo Fever with streak HUD, transient coin bonus and safe pause while preserving C9 routes and C8 economy."
 
 [autoload]
 KubeSession="*res://scripts/c4/progress_service.gd"

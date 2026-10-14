@@ -1,4 +1,4 @@
-name: KubRogue C0-C9 - Godot 4.7.2 validation
+name: KubRogue C0-C10 - Godot 4.7.2 validation
 
 on:
   push:
@@ -76,6 +76,13 @@ jobs:
           set -eo pipefail
           timeout 90s godot --headless --path . --script res://tests/integration/test_c9_cold_start.gd 2>&1 | tee /tmp/c9-cold.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C9 COLD FAIL:' /tmp/c9-cold.log; then exit 1; fi
+
+      - name: C10 fresh clone boots Fever HUD and legacy saves
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/integration/test_c10_cold_start.gd 2>&1 | tee /tmp/c10-cold.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C10 COLD FAIL:' /tmp/c10-cold.log; then exit 1; fi
 
       - name: Import project and compile scripts
         shell: bash
@@ -198,6 +205,20 @@ jobs:
           timeout 120s godot --headless --path . --script res://tests/integration/test_c9_game.gd 2>&1 | tee /tmp/c9-game.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C9 STAGE FAIL:' /tmp/c9-game.log; then exit 1; fi
 
+      - name: C10 streak thresholds, cooldown and bonus caps
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_c10_fever.gd 2>&1 | tee /tmp/c10-unit.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C10 UNIT FAIL:' /tmp/c10-unit.log; then exit 1; fi
+
+      - name: C10 real cubes trigger Fever, contract and saved coins
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 120s godot --headless --path . --script res://tests/integration/test_c10_game.gd 2>&1 | tee /tmp/c10-game.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C10 STAGE FAIL:' /tmp/c10-game.log; then exit 1; fi
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |
@@ -206,7 +227,7 @@ jobs:
           grep -Fq 'platform="Windows Desktop"' export_presets.cfg
           test -f .github/workflows/windows-export.yml
 
-      - name: Boot C9 hub scene
+      - name: Boot C10 hub scene
         shell: bash
         run: |
           set -eo pipefail

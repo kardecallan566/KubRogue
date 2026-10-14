@@ -1,4 +1,4 @@
-name: C9 - Windows test build
+name: C10 - Windows test build
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
       - dev/checkpoint-07-special-cubes
       - dev/checkpoint-08-bestiary-contracts
       - dev/checkpoint-09-garden-routes
+      - dev/checkpoint-10-combo-fever
   workflow_dispatch:
 
 permissions:
@@ -53,7 +54,7 @@ jobs:
         run: cd builds/windows && zip -9 KubRogue-Windows-x86_64.zip KubRogue.exe KubRogue.pck
       - uses: actions/upload-artifact@v4
         with:
-          name: KubRogue-C9-Windows-x86_64
+          name: KubRogue-C10-Windows-x86_64
           path: builds/windows/KubRogue-Windows-x86_64.zip
           if-no-files-found: error
           retention-days: 14
