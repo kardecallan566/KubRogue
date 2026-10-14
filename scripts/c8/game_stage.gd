@@ -5,7 +5,8 @@ const SpecialVisuals = preload("res://scripts/c7/special_visuals.gd")
 const ChallengeScript = preload("res://scripts/c6/challenge_service.gd")
 const Feedback = preload("res://scripts/c5/feedback_layer.gd")
 const VisualTheme = preload("res://scripts/c5/ui_skin.gd")
-const SkillCard = preload("res://scripts/c5/skill_card.gd")
+const SkillCard = preload("res://scripts/c8/skill_card.gd")
+const SkillBadge = preload("res://scripts/c8/skill_badge.gd")
 ## Explicit script dependency so 'godot .' works with a fresh .godot/ cache.
 ## The autoload is still registered as /root/KubeSession in project.godot.
 const ProgressScript = preload("res://scripts/c4/progress_service.gd")
@@ -81,6 +82,10 @@ var summary_title: Label
 var summary_body: Label
 var summary_button: Button
 var pause_button: Button
+var skill_slots: GridContainer
+var skill_info_label: Label
+var _skill_signature := ""
+var _inspected_skill := ""
 
 const SPAWN_POINTS := [
     Vector2(-4.4, -2.0), Vector2(-3.1, 1.7),
@@ -206,7 +211,7 @@ func _build_hud() -> void:
     hud_panel = PanelContainer.new()
     hud_panel.name = "WaveHUD"
     hud_panel.position = Vector2(16.0, 16.0)
-    hud_panel.custom_minimum_size = Vector2(326.0, 0.0)
+    hud_panel.custom_minimum_size = Vector2(338.0, 0.0)
     hud_panel.mouse_filter = Control.MOUSE_FILTER_STOP
     overlay.add_child(hud_panel)
     var content := VBoxContainer.new()
@@ -215,10 +220,10 @@ func _build_hud() -> void:
 
     var heading := HBoxContainer.new()
     content.add_child(heading)
-    title_label = _add_label(heading, "KUBROGUE", 21)
+    title_label = _add_label(heading, "◈ KUBROGUE", 21)
     title_label.name = "Title"
     title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    var version := _add_label(heading, "JARDIM DOS CUBOS", 11)
+    var version := _add_label(heading, "◆ CUBE ARENA", 11)
     version.name = "Muted"
     version.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     mode_label = _add_label(content, "MODO NORMAL", 12)
@@ -255,19 +260,36 @@ func _build_hud() -> void:
     stats_label.autowrap_mode = TextServer.AUTOWRAP_WORD
     bank_label = _add_label(content, "", 17)
     bank_label.name = "Counter"
-    contract_label = _add_label(content, "CONTRATOS 0/3", 13)
+    contract_label = _add_label(content, "◆ CONTRATOS 0/3", 13)
     contract_label.name = "Muted"
     contract_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 
-    var contextual := VBoxContainer.new()
-    contextual.add_theme_constant_override("separation", 3)
-    content.add_child(contextual)
-    target_label = _add_label(contextual, "", 13)
+    var skills_head := HBoxContainer.new()
+    skills_head.add_theme_constant_override("separation", 7)
+    content.add_child(skills_head)
+    var skills_title := _add_label(skills_head, "✦ HABILIDADES", 14)
+    skills_title.name = "Title"
+    skills_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    var skill_help := _add_label(skills_head, "ⓘ TOQUE PARA DETALHES", 11)
+    skill_help.name = "Muted"
+    skill_help.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    skill_slots = GridContainer.new()
+    skill_slots.name = "ActiveSkillIcons"
+    skill_slots.columns = 4
+    skill_slots.add_theme_constant_override("h_separation", 7)
+    skill_slots.add_theme_constant_override("v_separation", 6)
+    content.add_child(skill_slots)
+    skill_info_label = _add_label(content, "Ganhe XP para desbloquear habilidades.", 12)
+    skill_info_label.name = "SkillInfo"
+    skill_info_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+    skill_info_label.custom_minimum_size.y = 23
+    target_label = _add_label(content, "", 13)
+    target_label.name = "Muted"
     target_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-    message_label = _add_label(contextual, "Resolva os cubos antes do tempo!", 12)
+    message_label = _add_label(content, "Resolva os cubos antes do tempo!", 12)
     message_label.name = "Muted"
     message_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-    message_label.custom_minimum_size.y = 28
+    message_label.custom_minimum_size.y = 20
 
     var actions := HBoxContainer.new()
     actions.add_theme_constant_override("separation", 6)
@@ -352,6 +374,19 @@ func _build_hud() -> void:
     effects.name = "GameFeelOverlay"
     overlay.add_child(effects)
     VisualTheme.apply(overlay)
+    var frame := StyleBoxFlat.new()
+    frame.bg_color = Color("#f9faf0")
+    frame.border_color = Color("#5ca38c")
+    frame.set_border_width_all(2)
+    frame.set_corner_radius_all(18)
+    frame.content_margin_left = 14
+    frame.content_margin_right = 14
+    frame.content_margin_top = 12
+    frame.content_margin_bottom = 13
+    frame.shadow_color = Color("#193f32", 0.23)
+    frame.shadow_size = 6
+    frame.shadow_offset = Vector2(0,4)
+    hud_panel.add_theme_stylebox_override("panel",frame)
     get_viewport().size_changed.connect(_layout_cards)
 
 func _build_card_overlay(overlay: CanvasLayer) -> void:
@@ -377,7 +412,7 @@ func _build_card_overlay(overlay: CanvasLayer) -> void:
     card_header = _add_label(body, "ESCOLHA UMA HABILIDADE", 24)
     card_header.name = "Title"
     card_header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    card_subtitle = _add_label(body, "UMA MELHORIA PARA ESTA PARTIDA", 13)
+    card_subtitle = _add_label(body, "UMA MELHORIA PARA ESTA PARTIDA  ·  ÍCONES DE CADA PODER", 13)
     card_subtitle.name = "Muted"
     card_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -423,8 +458,8 @@ func _layout_cards() -> void:
     card_grid.custom_minimum_size.x = inner_width
     var each_width := (inner_width - 24.0) / 3.0 if wide else inner_width
     for widget in card_widgets:
-        widget.custom_minimum_size = Vector2(each_width, 215.0 if wide else 170.0)
-    card_scroll.custom_minimum_size = Vector2(inner_width, 246.0 if wide else minf(360.0, maxf(165.0, screen.y - 170.0)))
+        widget.custom_minimum_size = Vector2(each_width, 268.0 if wide else 210.0)
+    card_scroll.custom_minimum_size = Vector2(inner_width, 295.0 if wide else minf(390.0, maxf(170.0, screen.y - 185.0)))
 
 func _show_cards() -> void:
     if director.is_finished() or build.pending <= 0:
@@ -485,6 +520,62 @@ func _choose_card(index: int) -> void:
         advance_after_offers = false
         _start_next_wave()
     _update_hud()
+
+func _show_skill_details(id: String) -> void:
+    var data: Dictionary = build.card_data(id)
+    if data.is_empty():
+        return
+    if _inspected_skill == id:
+        _inspected_skill = ""
+        skill_info_label.text = "ⓘ Clique no ícone de uma habilidade para ver o efeito."
+    else:
+        _inspected_skill = id
+        skill_info_label.text = "%s (NV %d)  ·  %s" % [
+            String(data["name"]),build.rank(id),String(data["description"])
+        ]
+    _sound("tap")
+
+func _refresh_skill_icons() -> void:
+    if skill_slots == null or build == null:
+        return
+    var active: Array[String] = []
+    var signature := ""
+    for entry in build.CARDS:
+        var id: String = entry["id"]
+        var rank: int = build.rank(id)
+        if rank > 0:
+            active.append(id)
+            signature += "%s:%d;" % [id,rank]
+    if signature == _skill_signature:
+        return
+    _skill_signature = signature
+    for child in skill_slots.get_children():
+        skill_slots.remove_child(child)
+        child.queue_free()
+    for id in active:
+        var badge = SkillBadge.new()
+        badge.name = "ActiveSkill_%s" % id
+        skill_slots.add_child(badge)
+        badge.configure(build.card_data(id),build.rank(id))
+        badge.inspect.connect(_show_skill_details)
+    if active.is_empty():
+        var empty := Label.new()
+        empty.name = "NoSkills"
+        empty.text = "SEM PODERES"
+        empty.add_theme_font_size_override("font_size",12)
+        empty.add_theme_color_override("font_color",Color("#6a8377"))
+        skill_slots.add_child(empty)
+        skill_info_label.text = "Ganhe XP para desbloquear habilidades."
+        _inspected_skill = ""
+    elif _inspected_skill.is_empty():
+        skill_info_label.text = "ⓘ Clique no ícone para ver o efeito."
+    else:
+        var latest: Dictionary = build.card_data(_inspected_skill)
+        if not latest.is_empty():
+            skill_info_label.text = "%s (NV %d)  ·  %s" % [
+                String(latest["name"]),build.rank(_inspected_skill),
+                String(latest["description"])
+            ]
 
 func _request_exit() -> void:
     if action_locked:
@@ -990,11 +1081,11 @@ func _update_hud() -> void:
     if wave_bar != null:
         wave_bar.max_value = maxi(1, director.total_expected())
         wave_bar.value = director.wave_resolved
-    stats_label.text = "CUBOS %d/%d   ·   XP %d   ·   NÍVEL %d" % [
+    stats_label.text = "◆ %d/%d CUBOS   ·   XP %d   ·   NV %d" % [
         director.wave_resolved, director.total_expected(), director.wallet.xp, build.xp_level
     ]
     if bank_label != null:
-        bank_label.text = "MOEDAS   %d  ·  +%d na partida" % [progress.balance(), director.wallet.coins]
+        bank_label.text = "✦ %d MOEDAS   ·   +%d RUN" % [progress.balance(), director.wallet.coins]
     if contract_label != null and journal != null:
         var next_goal := ""
         for entry in journal.contract_status():
@@ -1003,9 +1094,10 @@ func _update_hud() -> void:
                     String(entry["title"]), int(entry["progress"]), int(entry["goal"])
                 ]
                 break
-        contract_label.text = "CONTRATOS %d/3" % journal.completed_contracts()
+        contract_label.text = "◆ CONTRATOS %d/3" % journal.completed_contracts()
         if not next_goal.is_empty():
             contract_label.text += "  ·  " + next_goal
+    _refresh_skill_icons()
     if retry_button != null:
         retry_button.disabled = pending_credits.is_empty()
         retry_button.visible = not pending_credits.is_empty()
@@ -1017,7 +1109,9 @@ func _update_hud() -> void:
             cube.moves_remaining()
         ]
     else:
-        target_label.text = "COMBO x%d  ·  %s" % [combo_streak, build.active_description()]
+        target_label.text = "◆ COMBO x%d  ·  %d PODERES" % [
+            combo_streak, skill_slots.get_child_count() if skill_slots != null else 0
+        ]
     if pause_button != null:
         pause_button.text = "CONTINUAR" if paused else "PAUSAR"
 

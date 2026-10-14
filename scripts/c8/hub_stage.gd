@@ -9,7 +9,7 @@ const ProgressScript = preload("res://scripts/c4/progress_service.gd")
 ## C5 UI: palette and scroll have no dependency on imported textures or fonts.
 ## Sound is provided by the KubeAudio autoload and obeys persisted settings.
 ## Original KubRogue hub with a light geometric garden theme.
-## All purchases are delegated to KubeSession; the UI never changes balances.
+## Legacy permanent upgrades are preserved in old saves; C8 no longer offers purchases.\n## Skill upgrades are selected while playing.
 var session: ProgressScript
 var challenge: ChallengeScript
 var journal: JournalScript
@@ -115,26 +115,16 @@ func _build_ui() -> void:
     feedback_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     var main_actions := VBoxContainer.new()
     main_actions.name = "PrimaryActions"
-    main_actions.add_theme_constant_override("separation", 8)
+    main_actions.add_theme_constant_override("separation", 9)
     column.add_child(main_actions)
-    _button(main_actions, "JOGAR  ·  MODO NORMAL", _play, 332)
-    var daily_button := _button(main_actions, "DESAFIO DO DIA", _start_daily, 332)
-    daily_button.set_meta("arcade_variant", "blue")
-    _button(main_actions, "LOJA DE MELHORIAS", _show_shop, 332)
-    var codex_button := _button(main_actions, "BESTIÁRIO DO JARDIM", _show_bestiary, 332)
-    codex_button.set_meta("arcade_variant", "teal")
-
-    var secondary := HBoxContainer.new()
-    secondary.name = "SecondaryActions"
-    secondary.add_theme_constant_override("separation", 8)
-    secondary.alignment = BoxContainer.ALIGNMENT_CENTER
-    column.add_child(secondary)
-    var how_button := _button(secondary, "COMO JOGAR", func(): _show_tutorial(false), 162)
-    how_button.set_meta("compact", true)
-    var settings_button := _button(secondary, "CONFIGURAÇÕES", _show_settings, 162)
-    settings_button.set_meta("compact", true)
-    var exit_button := _button(column, "SAIR", func(): get_tree().quit(), 154)
-    exit_button.set_meta("compact", true)
+    _button(main_actions, "JOGAR", _show_play_modes, 332)
+    var codex := _button(main_actions, "BESTIÁRIO", _show_bestiary, 332)
+    codex.set_meta("arcade_variant", "teal")
+    var config := _button(main_actions, "CONFIGURAÇÕES", _show_settings, 332)
+    config.set_meta("arcade_variant", "blue")
+    var exit := _button(main_actions, "SAIR", func(): get_tree().quit(), 332)
+    exit.set_meta("arcade_variant", "red")
+    exit.set_meta("compact", true)
 
     dialog_dim = ColorRect.new()
     dialog_dim.name = "ModalBackdrop"
@@ -194,6 +184,19 @@ func _close_modal() -> void:
     dialog_dim.visible = false
     dialog_center.visible = false
 
+func _show_play_modes() -> void:
+    _clear_modal()
+    var head := _label(dialog_box, "ESCOLHA SEU DESAFIO", 25)
+    head.name = "Title"
+    _label(dialog_box, "Uma partida, cinco ondas e novas habilidades a cada nível.", 15)
+    _button(dialog_box, "MODO NORMAL", _play, 405)
+    _label(dialog_box, "Novos embaralhamentos e uma build diferente a cada tentativa.", 14)
+    var daily := _button(dialog_box, "DESAFIO DO DIA", _start_daily, 405)
+    daily.set_meta("arcade_variant", "blue")
+    _label(dialog_box, "Seed diária compartilhável e recordes pessoais.", 14)
+    _button(dialog_box, "VOLTAR", _close_modal, 260)
+    _open_modal()
+
 func _play() -> void:
     challenge.select_mode("normal")
     if not bool(session.data.get("tutorial_completed", false)):
@@ -220,7 +223,7 @@ func _show_tutorial(start_after: bool) -> void:
     _label(dialog_box, "1. Leve o cursor em forma de mão sobre um cubo colorido. Clique ou segure para girar camadas de verdade.", 18)
     _label(dialog_box, "2. Cubos resolvidos concedem moedas permanentes e XP da partida. Novos tipos exigem mais giros.", 18)
     _label(dialog_box, "3. A cada nível, escolha uma entre três habilidades. Resolva cinco ondas e a elite 3×3 antes do fim do tempo.", 18)
-    _label(dialog_box, "4. Se cubos apresentados não forem resolvidos, a estabilidade diminui. Na hub, compre melhorias permanentes.", 18)
+    _label(dialog_box, "4. Resolva cinco ondas antes que o tempo acabe. Evolua apenas durante a partida, escolhendo cartas de habilidade.", 18)
     _label(dialog_box, "5. Complete contratos por partida para ganhar moedas extras e descubra novas espécies no Bestiário.", 18)
     if start_after:
         _button(dialog_box, "ENTENDI — COMEÇAR PARTIDA", _finish_tutorial_and_play, 420)
@@ -284,41 +287,6 @@ func _show_bestiary() -> void:
     _button(dialog_box, "VOLTAR", _close_modal, 280)
     _open_modal()
 
-func _show_shop() -> void:
-    _clear_modal()
-    _label(dialog_box, "MELHORIAS PERMANENTES", 25)
-    _label(dialog_box, "Saldo disponível: %d moedas" % session.balance(), 17)
-    for id in ["hand_training", "cubist_pocket", "stable_field"]:
-        var level: int = session.meta_level(id)
-        var cost: int = session.next_cost(id)
-        var shop_card := PanelContainer.new()
-        shop_card.name = "ShopPerk_%s" % id
-        shop_card.set_meta("skill_category", "Moedas" if id == "cubist_pocket" else "Velocidade")
-        dialog_box.add_child(shop_card)
-        var perk_content := VBoxContainer.new()
-        perk_content.add_theme_constant_override("separation", 5)
-        shop_card.add_child(perk_content)
-        var header := HBoxContainer.new()
-        perk_content.add_child(header)
-        var perk_title := _label(header, session.UPGRADE_NAMES[id], 19)
-        perk_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-        _label(header, "NV %d/3" % level, 14)
-        _label(perk_content, session.UPGRADE_DESCRIPTIONS[id], 14)
-        var buy := _button(perk_content,
-            "NÍVEL MÁXIMO" if cost < 0 else "MELHORAR  ·  %d MOEDAS" % cost,
-            _buy_upgrade.bind(id), 340)
-        buy.disabled = cost < 0 or session.balance() < cost
-    if not session.last_error.is_empty():
-        _label(dialog_box, session.last_error, 15)
-    _button(dialog_box, "VOLTAR", _close_modal, 300)
-    _open_modal()
-
-func _buy_upgrade(id: String) -> void:
-    var ok: bool = session.purchase(id)
-    feedback_label.text = "Melhoria adquirida: %s" % session.UPGRADE_NAMES[id] if ok else (
-        session.last_error if not session.last_error.is_empty() else "Saldo insuficiente ou nível máximo.")
-    _show_shop()
-
 func _show_settings() -> void:
     _clear_modal()
     _label(dialog_box, "CONFIGURAÇÕES", 27)
@@ -340,5 +308,6 @@ func _show_settings() -> void:
         check.button_pressed = bool(opts[id])
         check.toggled.connect(func(enabled: bool): session.set_setting(id, enabled))
         dialog_box.add_child(check)
+    _button(dialog_box, "COMO JOGAR  ?", func(): _show_tutorial(false), 420)
     _button(dialog_box, "VOLTAR", _close_modal, 420)
     _open_modal()

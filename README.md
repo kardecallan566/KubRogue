@@ -260,3 +260,9 @@ godot .
 ```
 
 [Critérios e roteiro C8](docs/checkpoints/C8-bestiary-contracts.md). C8 aguarda CI, build Windows e **sua validação** antes de entrar na main.
+
+### C8.1 — Identidade arcade focada, menu compacto e ícones de habilidades
+
+A revisão visual reduz a hub a **Jogar, Bestiário, Configurações e Sair**. Dentro de Jogar, escolha **Normal** ou **Desafio do Dia**. O tutorial permanece acessível em Configurações e na primeira partida.
+
+A antiga loja permanente sai do fluxo do C8; moedas adquiridas e melhorias antigas permanecem preservadas no save, mas **as novas escolhas de melhoria acontecem exclusivamente dentro da partida** ao ganhar XP. As oito habilidades receberam ícones vetoriais próprios, integrados em cartas de seleção e na HUD. Habilidades adquiridas aparecem como botões de ícone com nível e **i**; ao passar o mouse há tooltip, ao clicar a breve descrição surge sem ocupar a tela constantemente. C0–C7 não foram alterados.

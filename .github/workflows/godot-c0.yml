@@ -156,6 +156,13 @@ jobs:
           timeout 150s godot --headless --path . --script res://tests/integration/test_c8_game.gd 2>&1 | tee /tmp/c8-game.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 STAGE FAIL:' /tmp/c8-game.log; then exit 1; fi
 
+      - name: C8 clean main menu and icon-based skill UI
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 120s godot --headless --path . --script res://tests/integration/test_c8_ui.gd 2>&1 | tee /tmp/c8-ui.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 UI FAIL:' /tmp/c8-ui.log; then exit 1; fi
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |

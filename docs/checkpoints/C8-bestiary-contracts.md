@@ -32,3 +32,17 @@ A coleção é armazenada em `user://kubrogue_journal_v1.json` (adaptador `SaveS
 - [ ] CI C0–C8 e build Windows ZIP aprovados. Testar desempenho no Windows antes do merge.
 
 **Fora do C8:** colecionáveis compráveis, conquistas Steam, placar online, monetização e alterações ao formato dos saves anteriores.
+
+## C8.1 — Menu e HUD redesenhados após avaliação visual
+
+Após capturas reais do Godot, o usuário aprovou a nova direção: **menos botões**, **apenas habilidades de partida como upgrades acessíveis**, **HUD iconográfica** e **cartas ilustradas**.
+
+- Hub: somente **JOGAR / BESTIÁRIO / CONFIGURAÇÕES / SAIR**. A escolha entre Normal e Desafio Diário agora fica no modal JOGAR; a ajuda Como Jogar está dentro de Configurações e continua abrindo automaticamente para o primeiro jogador.
+- Loja de melhorias: removida da navegação e das funções invocáveis do C8. **Os bônus permanentes comprados em versões anteriores continuam sendo respeitados**, sem perda de moeda/salvamento; não há novas compras no C8. Para novos jogadores, a evolução ocorre com as cartas selecionadas por XP dentro da partida.
+- Oito ícones originais: `scripts/c8/skill_icon.gd`, desenhados em vetor via `CanvasItem` (sem arquivos PNG nem importação). Ícones diferentes para Pulso ágil, Dedo certeiro, Luva magnética, Bolsa encantada, Ritmo de mestre, Fôlego extra, Olhar de cubista e Mão paciente.
+- Na HUD: grade compacta de habilidades ativas, número do nível por símbolo e um **i** visível. Mouse hover tem tooltip nativo (nome/nível/valor/descrição); ao clicar, a descrição aparece na própria HUD; clicar novamente recolhe. A frase usada é exatamente a descrição curta da carta.
+- Cartas: `scripts/c8/skill_card.gd` tem ícone grande, nome, raridade/categoria, transição de nível, bônus e descrição; substitui apenas a UI do C8, **sem modificar as cartas originais de checkpoints C0–C7**.
+- HUD: agora há agrupamentos de progresso, economia, contratos, poderes e ações; menos texto corrido na linha de combo; moldura verde e realces discretos de uma identidade de puzzle/arena.
+- O C8 ainda usa cinco ondas, bestiário, contratos, XP, reroll, mão 2D, áudio e o 2×2/3×3/4×4/5×5 atuais. Não há mudança em arquivos de save.
+
+**Validação adicional:** abrir menu em 1280×720 e 1920×1080, navegar Jogar→Normal/Diário, Configurações→Como Jogar, fechar modal, obter uma habilidade na partida, conferir ícone grande nas cartas, nível no badge, hover/click para descrição, botão de reroll e reset completo dos ícones ao reiniciar. `tests/integration/test_c8_ui.gd` cobre o fluxo além dos testes C0–C8 anteriores.
