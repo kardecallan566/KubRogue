@@ -3,6 +3,7 @@ class_name KubRogueC8Hub
 const JournalScript = preload("res://scripts/c8/journal_service.gd")
 const ChallengeScript = preload("res://scripts/c6/challenge_service.gd")
 const VisualTheme = preload("res://scripts/c5/ui_skin.gd")
+const CubePreview = preload("res://scripts/c8/species_preview.gd")
 ## Explicit script dependency so 'godot .' works with a fresh .godot/ cache.
 ## The autoload is still registered as /root/KubeSession in project.godot.
 const ProgressScript = preload("res://scripts/c4/progress_service.gd")
@@ -20,6 +21,8 @@ var records_label: Label
 var feedback_label: Label
 var dialog_dim: ColorRect
 var dialog_center: CenterContainer
+var modal_panel: PanelContainer
+var modal_scroll: ScrollContainer
 var dialog_box: VBoxContainer
 
 func _ready() -> void:
@@ -137,10 +140,11 @@ func _build_ui() -> void:
     dialog_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
     dialog_center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     add_child(dialog_center)
-    var modal_panel := PanelContainer.new()
+    modal_panel = PanelContainer.new()
     modal_panel.custom_minimum_size = Vector2(605, 0)
     dialog_center.add_child(modal_panel)
-    var scroll := ScrollContainer.new()
+    modal_scroll = ScrollContainer.new()
+    var scroll := modal_scroll
     scroll.name = "DialogScroll"
     scroll.custom_minimum_size = Vector2(570, 460)
     scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -184,17 +188,55 @@ func _close_modal() -> void:
     dialog_dim.visible = false
     dialog_center.visible = false
 
+func _set_modal_dimensions(panel_width: float, scroll_height: float) -> void:
+    modal_panel.custom_minimum_size = Vector2(panel_width,0)
+    modal_scroll.custom_minimum_size = Vector2(panel_width - 36.0,scroll_height)
+    dialog_box.custom_minimum_size = Vector2(panel_width - 70.0,0)
+
+func _mode_card(parent: Node, icon: String, title: String,
+        subtitle: String, detail: String, action: Callable, color: String) -> void:
+    var card := PanelContainer.new()
+    card.name = "Mode_%s" % ("Daily" if title.contains("DIA") else "Normal")
+    card.custom_minimum_size = Vector2(310,210)
+    card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    card.set_meta("skill_category","Controle" if title.contains("DIA") else "Moedas")
+    parent.add_child(card)
+    var column := VBoxContainer.new()
+    column.add_theme_constant_override("separation",9)
+    card.add_child(column)
+    var mark := _label(column,icon,36)
+    mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var head := _label(column,title,21)
+    head.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var explanation := _label(column,subtitle,14)
+    explanation.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    explanation.custom_minimum_size.y = 42
+    var extra := _label(column,detail,12)
+    extra.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    extra.name = "Muted"
+    var play := _button(column,"JOGAR",action,220)
+    play.set_meta("arcade_variant",color)
+    play.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+
 func _show_play_modes() -> void:
     _clear_modal()
-    var head := _label(dialog_box, "ESCOLHA SEU DESAFIO", 25)
-    head.name = "Title"
-    _label(dialog_box, "Uma partida, cinco ondas e novas habilidades a cada nível.", 15)
-    _button(dialog_box, "MODO NORMAL", _play, 405)
-    _label(dialog_box, "Novos embaralhamentos e uma build diferente a cada tentativa.", 14)
-    var daily := _button(dialog_box, "DESAFIO DO DIA", _start_daily, 405)
-    daily.set_meta("arcade_variant", "blue")
-    _label(dialog_box, "Seed diária compartilhável e recordes pessoais.", 14)
-    _button(dialog_box, "VOLTAR", _close_modal, 260)
+    _set_modal_dimensions(760,306)
+    var headline := _label(dialog_box,"ESCOLHA SEU MODO",25)
+    headline.name = "Title"
+    headline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var subtitle := _label(dialog_box,"O Jardim tem cinco ondas. Como deseja jogar hoje?",14)
+    subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var choices := HBoxContainer.new()
+    choices.name = "ModeCards"
+    choices.add_theme_constant_override("separation",14)
+    dialog_box.add_child(choices)
+    _mode_card(choices,"✦","MODO NORMAL","Cada partida é diferente.",
+        "SEED ALEATÓRIA  ·  5 ONDAS",_play,"gold")
+    var today: String = challenge.utc_day()
+    _mode_card(choices,"◈","DESAFIO DO DIA","Uma seed por dia para superar seu recorde.",
+        today+"  ·  RECORDES LOCAIS",_start_daily,"blue")
+    var back := _button(dialog_box,"VOLTAR",_close_modal,165)
+    back.set_meta("compact",true)
     _open_modal()
 
 func _play() -> void:
@@ -219,6 +261,7 @@ func _open_game() -> void:
 
 func _show_tutorial(start_after: bool) -> void:
     _clear_modal()
+    _set_modal_dimensions(605,420)
     _label(dialog_box, "COMO JOGAR  ·  KUBROGUE", 27)
     _label(dialog_box, "1. Leve o cursor em forma de mão sobre um cubo colorido. Clique ou segure para girar camadas de verdade.", 18)
     _label(dialog_box, "2. Cubos resolvidos concedem moedas permanentes e XP da partida. Novos tipos exigem mais giros.", 18)
@@ -239,56 +282,91 @@ func _finish_tutorial_and_play() -> void:
 
 func _show_bestiary() -> void:
     _clear_modal()
-    var heading := _label(dialog_box, "BESTIÁRIO DO JARDIM", 25)
+    _set_modal_dimensions(860,510)
+    var heading := _label(dialog_box,"◈  BESTIÁRIO DO JARDIM",25)
     heading.name = "Title"
-    _label(dialog_box, "%d de 7 espécies descobertas · Histórico local" % journal.discovery_total(), 15)
-    _label(dialog_box,
-        "Resolva cubos durante as partidas para revelar novas espécies. "
-        + "A coleção é permanente e não gasta moedas.", 14)
+    var discovered: int = journal.discovery_total()
+    var total_solved := 0
     for entry in journal.CATALOG:
-        var kind: String = entry["id"]
-        var count: int = journal.solved_count(kind)
-        var item_panel := PanelContainer.new()
-        item_panel.name = "Species_%s" % kind
-        item_panel.set_meta("skill_category", "Controle" if count == 0 else (
-            "Moedas" if String(entry["rarity"]) == "RARO" else "Velocidade"))
-        dialog_box.add_child(item_panel)
-        var block := VBoxContainer.new()
-        block.add_theme_constant_override("separation", 4)
-        item_panel.add_child(block)
-        var header := HBoxContainer.new()
-        block.add_child(header)
-        var display_name := String(entry["name"]) if count > 0 else "??? · ESPÉCIE DESCONHECIDA"
-        var name := _label(header, display_name, 17)
-        name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-        _label(header, "DESCOBERTO" if count > 0 else "BLOQUEADO", 11)
-        if count > 0:
-            _label(block, "%s  ·  %d×%d×%d  ·  %d MOEDAS BASE" % [
-                String(entry["rarity"]), int(entry["dimension"]),
-                int(entry["dimension"]), int(entry["dimension"]), int(entry["coins"])
-            ], 13)
-            _label(block, String(entry["detail"]) + "  ·  Resolvidos: %d" % count, 13)
-        else:
-            _label(block, "Resolva esta espécie no Jardim para revelar seus detalhes.", 13)
-    _label(dialog_box, "CONTRATOS DE CADA PARTIDA", 21)
-    _label(dialog_box,
-        "Complete estes objetivos durante uma partida. Os bônus são somados "
-        + "ao pagamento do último cubo, sem cobrança e sem resgate manual.", 14)
+        total_solved += journal.solved_count(String(entry["id"]))
+    _label(dialog_box,"%d / 7 DESCOBERTOS     ◆     %d CUBOS RESOLVIDOS" % [
+        discovered,total_solved],16)
+    var gallery := GridContainer.new()
+    gallery.name = "SpeciesGallery"
+    gallery.columns = 2
+    gallery.add_theme_constant_override("h_separation",12)
+    gallery.add_theme_constant_override("v_separation",12)
+    dialog_box.add_child(gallery)
+    var shades := {
+        "golden":Color("#ddaa41"), "armored":Color("#9e8bda"),
+        "elite":Color("#bf82cb"), "master4":Color("#78cddd"),
+        "master5":Color("#e8accd")
+    }
+    for entry in journal.CATALOG:
+        var kind: String = String(entry["id"])
+        var amount: int = journal.solved_count(kind)
+        var known := amount > 0
+        var panel := PanelContainer.new()
+        panel.name = "Species_%s" % kind
+        panel.custom_minimum_size = Vector2(371,154)
+        panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        panel.set_meta("skill_category",
+            "Moedas" if known and String(entry["rarity"]) in ["RARO","LENDÁRIO"] else "Controle")
+        gallery.add_child(panel)
+        var content := HBoxContainer.new()
+        content.add_theme_constant_override("separation",12)
+        panel.add_child(content)
+        var preview := CubePreview.new()
+        preview.name = "Preview"
+        preview.custom_minimum_size = Vector2(110,112)
+        content.add_child(preview)
+        preview.configure(int(entry["dimension"]),known,
+            shades.get(kind,Color("#65bea4")))
+        var fields := VBoxContainer.new()
+        fields.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        fields.add_theme_constant_override("separation",5)
+        content.add_child(fields)
+        var caption := _label(fields,
+            String(entry["name"]) if known else "???  ·  A DESCOBRIR",17)
+        caption.name = "Title"
+        _label(fields,String(entry["rarity"]) if known else "BLOQUEADO",12)
+        _label(fields,"%d×%d×%d  ·  %d MOEDAS" % [
+            int(entry["dimension"]),int(entry["dimension"]),
+            int(entry["dimension"]),int(entry["coins"])
+        ] if known else "ESPÉCIE AINDA OCULTA",12)
+        var description := _label(fields,
+            String(entry["detail"]) if known else "Encontre no Jardim para revelar.",12)
+        description.custom_minimum_size.y = 35
+        _label(fields,"RESOLVIDOS  %d" % amount if known else "NÃO DESCOBERTO",12)
+    var divider := HSeparator.new()
+    dialog_box.add_child(divider)
+    var contracts_title := _label(dialog_box,"CONTRATOS DA PARTIDA",21)
+    contracts_title.name = "Title"
+    _label(dialog_box,"Bônus recebidos ao concluir desafios. Nada para resgatar manualmente.",13)
+    var goals := GridContainer.new()
+    goals.name = "ContractGallery"
+    goals.columns = 2
+    goals.add_theme_constant_override("h_separation",10)
+    goals.add_theme_constant_override("v_separation",10)
+    dialog_box.add_child(goals)
     for goal in journal.CONTRACTS:
-        var goal_panel := PanelContainer.new()
-        goal_panel.name = "Contract_%s" % String(goal["id"])
-        dialog_box.add_child(goal_panel)
+        var card := PanelContainer.new()
+        card.name = "Contract_%s" % String(goal["id"])
+        card.custom_minimum_size = Vector2(360,90)
+        card.set_meta("skill_category","Moedas")
+        goals.add_child(card)
         var body := VBoxContainer.new()
-        goal_panel.add_child(body)
-        _label(body, "%s  ·  +%d MOEDAS" % [
-            String(goal["title"]), int(goal["reward"])
-        ], 17)
-        _label(body, String(goal["detail"]), 14)
-    _button(dialog_box, "VOLTAR", _close_modal, 280)
+        body.add_theme_constant_override("separation",6)
+        card.add_child(body)
+        _label(body,"%s  ·  +%d" % [
+            String(goal["title"]),int(goal["reward"])],16)
+        _label(body,String(goal["detail"]),13)
+    _button(dialog_box,"VOLTAR",_close_modal,210)
     _open_modal()
 
 func _show_settings() -> void:
     _clear_modal()
+    _set_modal_dimensions(605,420)
     _label(dialog_box, "CONFIGURAÇÕES", 27)
     _label(dialog_box, "Áudio sintetizado original com volumes aplicados em tempo real. Partículas reduzidas e tremor opcional funcionam nas partidas.", 15)
     var opts: Dictionary = session.data["settings"]

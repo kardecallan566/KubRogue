@@ -266,3 +266,9 @@ godot .
 A revisão visual reduz a hub a **Jogar, Bestiário, Configurações e Sair**. Dentro de Jogar, escolha **Normal** ou **Desafio do Dia**. O tutorial permanece acessível em Configurações e na primeira partida.
 
 A antiga loja permanente sai do fluxo do C8; moedas adquiridas e melhorias antigas permanecem preservadas no save, mas **as novas escolhas de melhoria acontecem exclusivamente dentro da partida** ao ganhar XP. As oito habilidades receberam ícones vetoriais próprios, integrados em cartas de seleção e na HUD. Habilidades adquiridas aparecem como botões de ícone com nível e **i**; ao passar o mouse há tooltip, ao clicar a breve descrição surge sem ocupar a tela constantemente. C0–C7 não foram alterados.
+
+### C8.2 — Oficina entre ondas e galeria de cubos
+
+**JOGAR** apresenta dois cards largos e compactos para Modo Normal e Desafio do Dia. O **BESTIÁRIO** usa uma galeria 2-colunas com prévias isométricas desenhadas dentro do Godot e campos sem cortes.
+
+Após concluir uma onda (enquanto a partida estiver viva), o resumo exibe **OFICINA DO CUBISTA**. Os quatro upgrades usam moedas adquiridas **na run atual** e o saldo salvo da carteira. As compras são gravadas antes de ativar o upgrade e duram até o fim daquela partida: +10 segundos nas próximas ondas, +12 de estabilidade imediata, +10% de moedas por cubo ou giros 6% mais rápidos. Volte ao resumo para escolher a próxima onda. A loja não existe no menu inicial, e as habilidades por XP continuam separadas.

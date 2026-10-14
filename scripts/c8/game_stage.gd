@@ -7,6 +7,7 @@ const Feedback = preload("res://scripts/c5/feedback_layer.gd")
 const VisualTheme = preload("res://scripts/c5/ui_skin.gd")
 const SkillCard = preload("res://scripts/c8/skill_card.gd")
 const SkillBadge = preload("res://scripts/c8/skill_badge.gd")
+const Workshop = preload("res://scripts/c8/workshop.gd")
 ## Explicit script dependency so 'godot .' works with a fresh .godot/ cache.
 ## The autoload is still registered as /root/KubeSession in project.godot.
 const ProgressScript = preload("res://scripts/c4/progress_service.gd")
@@ -86,6 +87,14 @@ var skill_slots: GridContainer
 var skill_info_label: Label
 var _skill_signature := ""
 var _inspected_skill := ""
+var workshop: Workshop
+var workshop_button: Button
+var workshop_overlay: ColorRect
+var workshop_center: CenterContainer
+var workshop_balance: Label
+var workshop_message: Label
+var workshop_rows: Dictionary = {}
+var workshop_open := false
 
 const SPAWN_POINTS := [
     Vector2(-4.4, -2.0), Vector2(-3.1, 1.7),
@@ -105,6 +114,7 @@ func _ready() -> void:
     _build_hud()
     build = Build.new()
     director = WaveRules.new(build)
+    workshop = Workshop.new()
     camera_home = camera.position
     restart_run()
 
@@ -361,11 +371,20 @@ func _build_hud() -> void:
     summary_button.pressed.connect(_continue_from_summary)
     summary_button.set_meta("arcade_variant", "teal")
     text_box.add_child(summary_button)
+    workshop_button = Button.new()
+    workshop_button.name = "OpenWorkshop"
+    workshop_button.text = "◈  OFICINA DO CUBISTA  ·  GASTAR MOEDAS"
+    workshop_button.set_meta("arcade_variant","gold")
+    workshop_button.custom_minimum_size = Vector2(300,45)
+    workshop_button.pressed.connect(_open_workshop)
+    workshop_button.visible = false
+    text_box.add_child(workshop_button)
     dim.visible = false
     center.visible = false
     dim.set_meta("result_center", center)
     summary_panel.set_meta("dimmer", dim)
 
+    _build_workshop_overlay(overlay)
     _build_card_overlay(overlay)
     hand = HandCursor.new()
     hand.name = "HandCursor2D"
@@ -388,6 +407,131 @@ func _build_hud() -> void:
     frame.shadow_offset = Vector2(0,4)
     hud_panel.add_theme_stylebox_override("panel",frame)
     get_viewport().size_changed.connect(_layout_cards)
+
+func _build_workshop_overlay(overlay: CanvasLayer) -> void:
+    workshop_overlay = ColorRect.new()
+    workshop_overlay.name = "WorkshopBackdrop"
+    workshop_overlay.color = Color(0.07,0.14,0.16,0.72)
+    workshop_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+    workshop_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    overlay.add_child(workshop_overlay)
+    workshop_center = CenterContainer.new()
+    workshop_center.name = "WorkshopCenter"
+    workshop_center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    workshop_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    overlay.add_child(workshop_center)
+    var panel := PanelContainer.new()
+    panel.name = "WorkshopPanel"
+    panel.custom_minimum_size = Vector2(690,0)
+    workshop_center.add_child(panel)
+    var body := VBoxContainer.new()
+    body.add_theme_constant_override("separation",10)
+    panel.add_child(body)
+    var heading := _add_label(body,"◈  OFICINA DO CUBISTA",24)
+    heading.name = "Title"
+    heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    workshop_balance = _add_label(body,"",16)
+    workshop_balance.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var hint := _add_label(body,
+        "Gaste moedas GANHAS NESTA PARTIDA. Melhorias duram até o fim da run.",13)
+    hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var cards := GridContainer.new()
+    cards.name = "WorkshopUpgradeCards"
+    cards.columns = 2
+    cards.add_theme_constant_override("h_separation",12)
+    cards.add_theme_constant_override("v_separation",12)
+    body.add_child(cards)
+    for data in Workshop.CATALOG:
+        var id: String = String(data["id"])
+        var card := PanelContainer.new()
+        card.name = "Upgrade_%s" % id
+        card.custom_minimum_size = Vector2(310,136)
+        card.set_meta("skill_category",
+            "Tempo" if id == "tempo" else ("Moedas" if id == "lucro" else "Velocidade"))
+        cards.add_child(card)
+        var section := VBoxContainer.new()
+        section.add_theme_constant_override("separation",5)
+        card.add_child(section)
+        var label := _add_label(section,"%s  %s" % [String(data["icon"]),String(data["name"])],17)
+        label.name = "Title"
+        var effect := _add_label(section,String(data["detail"]),13)
+        effect.autowrap_mode = TextServer.AUTOWRAP_WORD
+        var button := Button.new()
+        button.name = "Buy_%s" % id
+        button.set_meta("arcade_variant","teal")
+        button.custom_minimum_size = Vector2(242,39)
+        button.pressed.connect(_buy_workshop_upgrade.bind(id))
+        section.add_child(button)
+        workshop_rows[id] = {"button":button,"card":card}
+    workshop_message = _add_label(body,"",13)
+    workshop_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    var back := Button.new()
+    back.name = "CloseWorkshop"
+    back.text = "VOLTAR AO RESUMO"
+    back.set_meta("arcade_variant","blue")
+    back.custom_minimum_size = Vector2(230,42)
+    back.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+    back.pressed.connect(_close_workshop)
+    body.add_child(back)
+    workshop_overlay.visible = false
+    workshop_center.visible = false
+
+func _refresh_workshop() -> void:
+    var available: int = workshop.available(director.wallet.coins,progress.balance())
+    workshop_balance.text = "✦  %d MOEDAS DISPONÍVEIS   ·   %d NO SALDO" % [
+        available,progress.balance()]
+    for item in Workshop.CATALOG:
+        var id: String = String(item["id"])
+        var cost: int = workshop.price(id)
+        var btn: Button = workshop_rows[id]["button"]
+        btn.text = "NV MÁXIMO" if cost < 0 else "NV %d → %d  ·  %d MOEDAS" % [
+            workshop.rank(id),workshop.rank(id)+1,cost]
+        btn.disabled = cost < 0 or cost > available
+
+func _open_workshop() -> void:
+    if director == null or director.phase != WaveRules.Phase.BETWEEN \
+            or action_locked or not pending_credits.is_empty():
+        return
+    _set_summary_visible(false)
+    workshop_open = true
+    workshop_message.text = "Escolha uma melhoria para as próximas ondas."
+    _refresh_workshop()
+    VisualTheme.apply(workshop_center)
+    workshop_overlay.visible = true
+    workshop_center.visible = true
+    Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+    hand.visible = false
+    _sound("tap")
+
+func _buy_workshop_upgrade(id: String) -> void:
+    if not workshop_open or director.phase != WaveRules.Phase.BETWEEN:
+        return
+    if not workshop.buy(id,progress,director.wallet.coins):
+        workshop_message.text = workshop.last_error
+        _sound("error")
+        return
+    if id == "escudo":
+        director.stability = mini(director.stability_cap,
+            director.stability + workshop.heal_amount())
+    workshop_message.text = "%s MELHORADO!  ·  NV %d" % [
+        String(workshop.definition(id)["name"]),workshop.rank(id)]
+    _sound("coins")
+    _refresh_workshop()
+    _update_hud()
+
+func _hide_workshop() -> void:
+    workshop_open = false
+    if workshop_overlay != null:
+        workshop_overlay.visible = false
+    if workshop_center != null:
+        workshop_center.visible = false
+
+func _close_workshop() -> void:
+    if not workshop_open:
+        return
+    _hide_workshop()
+    _set_summary_visible(true)
+    _sound("tap")
 
 func _build_card_overlay(overlay: CanvasLayer) -> void:
     card_overlay = ColorRect.new()
@@ -672,6 +816,8 @@ func restart_run() -> void:
     shake_timer = 0.0
     camera.position = camera_home
     build.reset(run_seed)
+    workshop.begin_run()
+    _hide_workshop()
     director.stability_cap = progress.stability_max()
     director.start_run()
     best_combo_in_run = 0
@@ -931,7 +1077,8 @@ func solve_actor_move(id: int) -> void:
         return
     action_locked = true
     action_cooldown = maxf(0.16,
-        ACTION_INTERVAL * (1.0 - 0.08 * build.rank("pulso_agil") - progress.cooldown_reduction()))
+        ACTION_INTERVAL * (1.0 - 0.08 * build.rank("pulso_agil")
+            - progress.cooldown_reduction() - workshop.cooldown_reduction()))
     var grant_extra_move := build.record_action_bonus_move()
     if is_instance_valid(hand):
         hand.celebrate_gesture()
@@ -950,7 +1097,8 @@ func solve_actor_move(id: int) -> void:
         combo_streak = combo_streak + 1 if animation_clock - last_solve_time <= 12.0 else 1
         last_solve_time = animation_clock
         best_combo_in_run = maxi(best_combo_in_run, combo_streak)
-        director.money_modifier = minf(1.5, build.money_bonus(combo_streak) + progress.coin_bonus())
+        director.money_modifier = minf(1.5, build.money_bonus(combo_streak)
+            + progress.coin_bonus() + workshop.coin_bonus())
         var reward: Dictionary = director.resolve_cube(id)
         if not reward.is_empty():
             item["awarded"] = true
@@ -1028,12 +1176,16 @@ func _finish_wave() -> void:
         summary["stability"], summary["penalty"], summary["coins"], summary["xp"], build.offers_taken
     ]
     summary_button.text = "Próxima onda" if director.phase == WaveRules.Phase.BETWEEN else "Voltar à hub"
+    workshop_button.visible = director.phase == WaveRules.Phase.BETWEEN
     _set_summary_visible(true)
     _update_hud()
 
 func _start_next_wave() -> void:
     if not director.begin_next_wave():
         return
+    _hide_workshop()
+    director.time_left += workshop.next_wave_time()
+    director.wave_start_duration += workshop.next_wave_time()
     message_label.text = "Nova onda! Cubos mais desafiadores surgiram."
     _sound("wave")
     focused_id = -1
@@ -1072,7 +1224,7 @@ func _update_hud() -> void:
     time_label.text = "%02d s%s" % [ceili(director.time_left), "  PAUSA" if paused else ""]
     if time_bar != null:
         var wave_time: float = float(director.definition().get("duration", 45.0))
-        time_bar.max_value = wave_time + build.time_bonus()
+        time_bar.max_value = wave_time + build.time_bonus() + workshop.next_wave_time()
         time_bar.value = director.time_left
     stability_label.text = "ESTABILIDADE   %d / %d" % [director.stability, director.stability_cap]
     if stability_bar != null:
@@ -1085,7 +1237,9 @@ func _update_hud() -> void:
         director.wave_resolved, director.total_expected(), director.wallet.xp, build.xp_level
     ]
     if bank_label != null:
-        bank_label.text = "✦ %d MOEDAS   ·   +%d RUN" % [progress.balance(), director.wallet.coins]
+        bank_label.text = "✦ %d MOEDAS   ·   %d LIVRES NA RUN" % [
+            progress.balance(),workshop.available(director.wallet.coins,progress.balance())
+        ]
     if contract_label != null and journal != null:
         var next_goal := ""
         for entry in journal.contract_status():

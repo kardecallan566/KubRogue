@@ -46,3 +46,15 @@ Após capturas reais do Godot, o usuário aprovou a nova direção: **menos bot�
 - O C8 ainda usa cinco ondas, bestiário, contratos, XP, reroll, mão 2D, áudio e o 2×2/3×3/4×4/5×5 atuais. Não há mudança em arquivos de save.
 
 **Validação adicional:** abrir menu em 1280×720 e 1920×1080, navegar Jogar→Normal/Diário, Configurações→Como Jogar, fechar modal, obter uma habilidade na partida, conferir ícone grande nas cartas, nível no badge, hover/click para descrição, botão de reroll e reset completo dos ícones ao reiniciar. `tests/integration/test_c8_ui.gd` cobre o fluxo além dos testes C0–C8 anteriores.
+
+## C8.2 — Revisão visual da seleção de desafio e Bestiário + Oficina entre ondas
+
+Após novo teste no Windows, o modal JOGAR tinha espaço vazio excessivo e o Bestiário era uma lista estreita com status cortado. A UX C8.2 altera somente cenas C8:
+
+- **Escolha do modo:** modal horizontal compacto e adaptado a 1280×720, dois cards grandes (Normal e Desafio do Dia) com símbolo, título, benefício e botão Jogar; Voltar embaixo. Tutorial continua no primeiro acesso.
+- **Bestiário:** galeria rolável em duas colunas, modal largo, sete cards com miniaturas isométricas próprias desenhadas em `scripts/c8/species_preview.gd`; cada card separa nome, raridade, dimensão, moedas, descrição e resoluções sem status excedendo a largura. Contratos aparecem em cards no mesmo fluxo.
+- **Oficina do Cubista:** no resumo **entre ondas**, botão próprio abre oficina com 4 melhorias temporárias compradas apenas com moedas **ganhas na run atual**, limitadas também ao saldo persistido: `Relógio Extra` +10 segundos nas próximas ondas (30/60), `Coração do Jardim` +12 de estabilidade imediata (25/50/75), `Cubo da Fortuna` +10% moedas por cubo (45/90), `Mão Veloz` -6% intervalo de giro (40/80). Ofertas mostram nível atual, custo e saldo disponível. Loja não aparece durante o combate ou no fim da partida.
+- **Economia transacional:** pagamento usa `KubeSession.spend_coins(amount)`, que primeiro grava a redução de moedas via `SaveStore`, só depois ativa o upgrade. A run usa `workshop.spent` para impedir gastar saldo de outras runs como se fosse dinheiro novo. Compras não são reembolsadas ao recomeçar; melhorias temporárias não sobrevivem ao fechamento. Dados de C4/C5/C6/C7 permanecem válidos.
+- As habilidades obtidas com XP continuam sendo escolhidas nas cartas iconográficas, independentes dos upgrades da Oficina. O jogador pode visitar a Oficina durante a pausa entre ondas e voltar ao resumo para selecionar a próxima etapa.
+
+**Testes:** `tests/unit/test_c8_workshop.gd` verifica saldo, custo, máximos, débito salvo e reinício; `tests/integration/test_c8_ux.gd` verifica os dois cards, a galeria, bloqueio da oficina durante combate, compra, bônus real no cronômetro e reinício. CI C0–C8 continua necessário; antes do merge, conferir também a exportação Windows no próprio computador.

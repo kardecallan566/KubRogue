@@ -134,6 +134,16 @@ func purchase(id: String) -> bool:
     candidate["meta"][id] = meta_level(id) + 1
     return _commit(candidate)
 
+## C8.2 spending is durable; never infer a successful purchase before _commit.
+## Existing coin payouts, purchases and old saves retain their original behavior.
+func spend_coins(amount: int) -> bool:
+    if amount <= 0 or amount > 100000 or balance() < amount:
+        last_error = "Moedas insuficientes para esta melhoria."
+        return false
+    var next_data := data.duplicate(true)
+    next_data["coins"] = balance() - amount
+    return _commit(next_data)
+
 func begin_run() -> bool:
     var candidate := data.duplicate(true)
     candidate["run_number"] = int(candidate["run_number"]) + 1
