@@ -287,3 +287,16 @@ godot .
 ```
 
 Confira [o checklist C9](docs/checkpoints/C9-garden-routes.md). O PR não será integrado antes dos testes Godot e da sua avaliação no Windows.
+
+## C10 — Combo Fever (branch de teste)
+
+O C9 foi aprovado e integrado à `main`; o C10 desenvolve o ritmo arcade dos cubos. Resolva **quatro cubos em sequência (menos de 12s entre soluções)** para ativar **FEVER**, um modo dourado de 9s que dá +20% moedas por cubo e recupera até 6 segundos por onda (1s por resolução). A HUD mostra barra de combo, nível e tempo restante, e ativa celebração com som original. Pausas, cartas, Oficina e Rotas congelam o FEVER; sequência reinicia ao trocar de onda, sem alterar saves.
+
+```powershell
+git fetch origin
+git switch dev/checkpoint-10-combo-fever
+git pull origin dev/checkpoint-10-combo-fever
+godot .
+```
+
+Os testes C0–C10 e a build Windows são gates obrigatórios. Veja [o roteiro de validação C10](docs/checkpoints/C10-combo-fever.md).

@@ -154,3 +154,7 @@ Após merge do C7 na main, o C8 coleciona os sete tipos de cubos efetivamente re
 ## 20. C9 — Rotas do Jardim: eventos com risco e recompensa
 
 Após a aprovação do C8.2 (PR #9 integrado à main), experimentar o C9 com um encontro opcional entre ondas: **duas cartas de rotas determinísticas por seed de run e índice da onda**, com uma escolha ou skip. Quatro alternativas possíveis mudam só a onda imediatamente posterior: Relâmpago (-tempo/+moedas), Refúgio (+estabilidade/-tempo), Dourada (substituir um Aprendiz por Dourado), Torre (+tempo/-estabilidade). A Oficina e o Bestiário existentes não são modificados; a elite 3×3 da onda final permanece obrigatória. A moeda é creditada pelo processo atômico original. Testes C0–C9, exportação Windows e validação visual obrigatórios. [Checklist C9](checkpoints/C9-garden-routes.md).
+
+## 21. C10 — Combo Fever e feedback de progressão
+
+Após aprovação do C9 (PR #10 integrado na main), C10 combina um motor de combo/fever testável e HUD dedicada, com a meta de tornar as resoluções mais satisfatórias sem poluir menus. A cada quatro soluções em sequência (máximo 12s entre acertos) ativa FEVER: bônus de +20% em moedas do cubo dentro do multiplicador existente, duração 9s e +1s por cubo durante a janela (máximo 6s por onda). O relógio funciona somente em combate ativo; pausa e modais não o consomem. Devolve efeitos de ouro e som original da camada C5. Economias C4/C8, Rotas C9 e saves ficam intactos. CI C0–C10, exportação Windows e teste visual obrigatórios. [Checklist](checkpoints/C10-combo-fever.md).
