@@ -57,11 +57,15 @@ func _run() -> void:
             attempts += 1
         check(not game.actors.has(id4), "4x4 can be solved and removed")
         check(progress.balance() == 68, "4x4 granted 68 coins once")
-        # 4x4 grants five XP, opening an actual card-selection pause.
-        # Resolve this choice before asking the game to handle a 5x5.
+        # The final 4x4 of wave 4 may finish the wave before the card modal
+        # appears; XP is then pending while the wave summary is open.
+        # Explicitly complete the valid XP card choice before wave 5.
+        if game.build.pending > 0 and not game.offers_open:
+            game._show_cards()
         if game.offers_open:
             game._choose_card(0)
-        check(not game.offers_open, "XP choice completed before the 5x5 challenge")
+        check(not game.offers_open and game.build.pending == 0,
+            "XP earned from 4x4 is spent before starting 5x5")
 
     var balance_before_5x5: int = progress.balance()
     var id5: int = _seek(game, 4, 7, "master5")
