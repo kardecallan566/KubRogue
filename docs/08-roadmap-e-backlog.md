@@ -138,3 +138,7 @@ Após aprovação do usuário, o C4 entrou na `main` pelo PR #5. O C5 mantém es
 ## 16. C6 — Primeiro pós-MVP: desafio diário offline e reroll
 
 Após testes e aprovação gráfica do C5, PR #6 integrado na `main`. A primeira expansão pós-MVP fica em `dev/checkpoint-06-daily-challenge`. Mantém o Jardim dos Cubos, a mão 2D aberta/fechada, cinco ondas, economia e UI. Adiciona modo diário de seed UTC reproduzível, recordes locais em arquivo separado e exatamente um reroll de 3 cartas por run. Não inclui serviços externos, pagamentos ou tabelas públicas. [Critérios](checkpoints/C6-daily-challenge.md). Requer CI C0–C6 e avaliação de fluidez do jogador.
+
+## 17. C7 — Cubos especiais em ondas do Jardim
+
+O C6 foi testado e aprovado no Windows, com merge do PR #7 na main. A branch `dev/checkpoint-07-special-cubes` incrementa o bestiário usando **dois novos cubos 2×2**: Dourado (paga mais) e Blindado (demanda mais giros e concede mais XP), com decalques e materiais legíveis sem modificar cores dos adesivos. O total de inimigos, duração das cinco ondas e contrato de elite 3×3 não mudam. Novos scripts separam regras do diretor C7, carteira C7 e cosméticos; C0–C6 continuam disponíveis. CI testa a lógica, resolução com cubo 3D e salvamento transacional, em seguida build Windows. [Plano](checkpoints/C7-special-cubes.md).

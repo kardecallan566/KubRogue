@@ -1,4 +1,4 @@
-name: KubRogue C0-C6 - Godot 4.7.2 validation
+name: KubRogue C0-C7 - Godot 4.7.2 validation
 
 on:
   push:
@@ -56,6 +56,13 @@ jobs:
           timeout 75s godot --headless --path . --script res://tests/integration/test_c6_cold_start.gd 2>&1 | tee /tmp/c6-cold.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C6 COLD FAIL:' /tmp/c6-cold.log; then exit 1; fi
 
+      - name: C7 fresh game and PNGs before editor import
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 75s godot --headless --path . --script res://tests/integration/test_c7_cold_start.gd 2>&1 | tee /tmp/c7-cold.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C7 COLD FAIL:' /tmp/c7-cold.log; then exit 1; fi
+
       - name: Import project and compile scripts
         shell: bash
         run: |
@@ -108,6 +115,12 @@ jobs:
       - name: C6 daily hub, real cubes and saved earnings
         run: timeout 120s godot --headless --path . --script res://tests/integration/test_c6_game.gd
 
+      - name: C7 special-cube wave and payout tests
+        run: timeout 90s godot --headless --path . --script res://tests/unit/test_c7_variants.gd
+
+      - name: C7 real gold/armored 2x2 and persistent wallet
+        run: timeout 120s godot --headless --path . --script res://tests/integration/test_c7_game.gd
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |
@@ -116,7 +129,7 @@ jobs:
           grep -Fq 'platform="Windows Desktop"' export_presets.cfg
           test -f .github/workflows/windows-export.yml
 
-      - name: Boot C6 hub scene
+      - name: Boot C7 hub scene
         shell: bash
         run: |
           set -eo pipefail

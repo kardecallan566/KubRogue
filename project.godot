@@ -1,10 +1,10 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C6 Desafio do Dia"
-run/main_scene="res://scenes/c6/hub_stage.tscn"
+config/name="KubRogue — C7 Cubos Especiais"
+run/main_scene="res://scenes/c7/hub_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C6: daily offline challenge with deterministic UTC seed, saved daily records and one skill reroll. C0-C5 remain available."
+config/description="C7: golden and armored 2x2 cubes, visual identities and rewarding challenge; all past modes remain."
 
 [autoload]
 KubeSession="*res://scripts/c4/progress_service.gd"

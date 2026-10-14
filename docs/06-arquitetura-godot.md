@@ -187,3 +187,7 @@ A cena C5 de hub/arena herda **a lógica via cópia controlada do C4**, que perm
 ## 20. C6 — Sessão de desafios e recordes independentes
 
 Autoload `KubeChallenge` vem após `KubeSession` e `KubeAudio`; oferece `select_mode`, `daily_seed`, `begin_run` e `record_result`, sem modificar `KubeSession`. O arquivo `user://kubrogue_daily_v1.json` usa o adaptador `SaveStore` com limite de tamanho, `.tmp` e `.bak`; guarda no máximo 120 dias de resultados, preservando o save histórico do usuário. O sorteio de cartas usa `scripts/c6/run_build.gd` (subclasse da implementação C3) com uma possibilidade de `reroll_offer` por run e RNG ligado à seed. Uma nova cena C6 de hub/arena mantém as cenas C0–C5 intocadas. A data diária é sempre UTC e congelada no momento de entrada, não recalculada durante a partida. Sem leaderboard remoto.
+
+## 21. C7 — Diretor e variantes 2×2
+
+`special_director.gd` estende C3, injeta Dourados e Blindados em slots da tabela de ondas C3 (não insere spawns adicionais, preserva reserva da elite 3×3). `special_wallet.gd` estende o wallet C2, substituindo o payout apenas dos novos tipos e mantendo proteção contra pagamentos duplicados. `special_visuals.gd` aplica material nas peças estruturais dos 2×2 e acrescenta halo e marcador, sem alterar adesivos/giro/lógica do cubo. O estágio C7 usa o diretor e itens de C6 sem sobrepor scripts de checkpoints anteriores. Não há alterações no schema dos saves.
