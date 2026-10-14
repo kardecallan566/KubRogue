@@ -220,7 +220,7 @@ func _mode_card(parent: Node, icon: String, title: String,
 
 func _show_play_modes() -> void:
     _clear_modal()
-    _set_modal_dimensions(760,306)
+    _set_modal_dimensions(760,380)
     var headline := _label(dialog_box,"ESCOLHA SEU MODO",25)
     headline.name = "Title"
     headline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

@@ -68,7 +68,7 @@ func _run() -> void:
         "healing purchase also debits safely")
     check(game.workshop.spent==100 and game.workshop.available(150,progress.balance())==50,
         "budget tracks minted coins minus spent")
-    var total := progress.balance()
+    var total: int = int(progress.balance())
     game._buy_workshop_upgrade("tempo")
     check(progress.balance()==total and game.workshop.rank("tempo")==1,
         "insufficient run balance cannot trigger duplicate purchase")
