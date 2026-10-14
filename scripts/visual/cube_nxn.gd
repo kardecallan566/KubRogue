@@ -77,7 +77,11 @@ func scramble_now(count: int = 9, seed_value: int = 42) -> void:
     sync_poses()
 
 ## Real quarter/half turns of outer and inner physical layers.
-func rotate_layer(face: String, turns: int = 1, layer: int = 0,
+func rotate_layer(face: String, turns: int = 1,
+        duration: float = 0.26, record: bool = false) -> void:
+    await rotate_slice(face, turns, 0, duration, record)
+
+func rotate_slice(face: String, turns: int, layer: int,
         duration: float = 0.26, record: bool = false) -> void:
     if movement_busy or not NxState.FACES.has(face) or turns == 0 \
             or absi(turns) > 2 or layer < 0 or layer >= order:
@@ -106,7 +110,7 @@ func solve_next_move(duration: float = 0.26) -> void:
     if movement_busy or solution_plan.is_empty():
         return
     var command: Dictionary = solution_plan.pop_front()
-    await rotate_layer(String(command["face"]), int(command["turns"]),
+    await rotate_slice(String(command["face"]), int(command["turns"]),
         int(command["layer"]), duration, false)
     if puzzle.is_solved():
         solution_plan.clear()
