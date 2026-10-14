@@ -14,6 +14,7 @@ var serial := 0
 var recorded_serial := -1
 var run_started := false
 var last_error := ""
+var record_writable := true
 
 func _ready() -> void:
     if store == null:
@@ -23,7 +24,14 @@ func configure(adapter: Store) -> void:
     store = adapter
     records.clear()
     last_error = ""
+    record_writable = true
     var raw: Dictionary = store.read_json()
+    if raw.is_empty() and (FileAccess.file_exists(store.path) or FileAccess.file_exists(store.path + ".bak")):
+        record_writable = false
+        last_error = "Recordes diários ilegíveis: arquivo original preservado."
+    elif not raw.is_empty() and int(raw.get("version", 0)) != SAVE_SCHEMA:
+        record_writable = false
+        last_error = "Recordes diários de uma versão incompatível: arquivo preservado."
     var entries: Variant = raw.get("days", {})
     if entries is Dictionary and int(raw.get("version", 0)) == SAVE_SCHEMA:
         var keys: Array = entries.keys()
@@ -60,7 +68,14 @@ func valid_day(value: String) -> bool:
     var year := int(value.substr(0, 4))
     var month := int(value.substr(5, 2))
     var day := int(value.substr(8, 2))
-    return year >= 2025 and year <= 9999 and month >= 1 and month <= 12 and day >= 1 and day <= 31
+    if year < 2025 or year > 9999 or month < 1 or month > 12:
+        return false
+    var days_in_month := [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    var max_days: int = days_in_month[month - 1]
+    var leap_year := year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    if month == 2 and leap_year:
+        max_days = 29
+    return day >= 1 and day <= max_days
 
 func utc_day() -> String:
     return Time.get_date_string_from_system(true)
@@ -97,6 +112,8 @@ func record_result(wave: int, cubes: int, victory: bool) -> bool:
     if active_mode != "daily":
         recorded_serial = serial
         return true
+    if not record_writable:
+        return false
     var current: Dictionary = records.get(active_date, {
         "attempts":0, "wins":0, "best_wave":0, "best_cubes":0
     }).duplicate(true)

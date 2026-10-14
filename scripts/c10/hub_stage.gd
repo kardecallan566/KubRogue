@@ -173,6 +173,10 @@ func _refresh() -> void:
     collection_label.text = "BESTIÁRIO %d / 7 TIPOS DESCOBERTOS" % journal.discovery_total()
     if not session.last_error.is_empty():
         feedback_label.text = session.last_error
+    elif not challenge.last_error.is_empty():
+        feedback_label.text = challenge.last_error
+    elif not journal.last_error.is_empty():
+        feedback_label.text = journal.last_error
 
 func _clear_modal() -> void:
     for child in dialog_box.get_children():
@@ -286,6 +290,10 @@ func _show_bestiary() -> void:
     _set_modal_dimensions(860,510)
     var heading := _label(dialog_box,"◈  BESTIÁRIO DO JARDIM",25)
     heading.name = "Title"
+    if not journal.last_error.is_empty():
+        var warning := _label(dialog_box,journal.last_error,13)
+        warning.name = "Muted"
+        warning.autowrap_mode = TextServer.AUTOWRAP_WORD
     var discovered: int = journal.discovery_total()
     var total_solved := 0
     for entry in journal.CATALOG:
