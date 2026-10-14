@@ -78,3 +78,11 @@ Os sprites `assets/c5/hand_open.png` e `assets/c5/hand_grip.png` são adaptaçõ
 - **Compatibilidade:** C0–C4 continuam usando o cursor antigo; sistema de giros, recompensas, tempo e habilidades não foi modificado.
 
 Verificar na build Windows e no Godot: troca ao apertar/soltar, foco no cubo, manutenção da mão fechada durante giros com botão segurado, visibilidade do mouse padrão sobre interface e ausência de deslocamento ao alternar.
+
+## C5.3 hotfix — carregamento de PNG sem editor
+
+No Windows, executar `godot .` num clone novo e clicar em Jogar podia falhar com `Preload file ... .png has no resource loaders`. O `preload("...png")` exigia o recurso importado previamente pelo editor. A primeira execução do CI testava apenas a hub antes de importar, por isso não detectou a falha.
+
+O cursor C5 agora lê os dois arquivos PNG diretamente com `FileAccess.get_file_as_bytes()` + `Image.load_png_from_buffer()`, cria `ImageTexture` em memória na inicialização e mantém o sprite aberto/fechado sem importação. O preset Windows inclui explicitamente `assets/c5/*.png` como arquivos brutos no `.pck`.
+
+O CI também executa `tests/integration/test_c5_cold_start.gd` **antes de importar o projeto**, construindo a cena C5 e conferindo texturas e HUD. Assim o erro reportado deixa de passar despercebido na verificação de abertura limpa. Depois do `git pull`, basta `godot .`, sem apagar `user://` nem refazer seu progresso.

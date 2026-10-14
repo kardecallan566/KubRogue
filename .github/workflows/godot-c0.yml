@@ -40,6 +40,15 @@ jobs:
           timeout 45s godot --headless --path . --quit-after 12 2>&1 | tee /tmp/c4-clean-boot.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|Failed to load script' /tmp/c4-clean-boot.log; then exit 1; fi
 
+      - name: C5 cold-start gameplay and raw PNG sprites (before editor import)
+        shell: bash
+        run: |
+          set -eo pipefail
+          test -f assets/c5/hand_open.png
+          test -f assets/c5/hand_grip.png
+          timeout 65s godot --headless --path . --script res://tests/integration/test_c5_cold_start.gd 2>&1 | tee /tmp/c5-cold-game.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C5 COLD FAIL:' /tmp/c5-cold-game.log; then exit 1; fi
+
       - name: Import project and compile scripts
         shell: bash
         run: |
