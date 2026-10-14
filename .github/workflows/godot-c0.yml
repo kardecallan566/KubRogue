@@ -1,4 +1,4 @@
-name: KubRogue C0-C7 - Godot 4.7.2 validation
+name: KubRogue C0-C8 - Godot 4.7.2 validation
 
 on:
   push:
@@ -62,6 +62,13 @@ jobs:
           set -eo pipefail
           timeout 75s godot --headless --path . --script res://tests/integration/test_c7_cold_start.gd 2>&1 | tee /tmp/c7-cold.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C7 COLD FAIL:' /tmp/c7-cold.log; then exit 1; fi
+
+      - name: C8 cold boot and journal before editor import
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 75s godot --headless --path . --script res://tests/integration/test_c8_cold_start.gd 2>&1 | tee /tmp/c8-cold.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 COLD FAIL:' /tmp/c8-cold.log; then exit 1; fi
 
       - name: Import project and compile scripts
         shell: bash
@@ -135,6 +142,41 @@ jobs:
           timeout 150s godot --headless --path . --script res://tests/integration/test_c7_large_cubes.gd 2>&1 | tee /tmp/c7-large.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C7 LARGE FAIL:' /tmp/c7-large.log; then exit 1; fi
 
+      - name: C8 journal file, discovery dedup and contract payouts
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_c8_journal.gd 2>&1 | tee /tmp/c8-unit.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 UNIT FAIL:' /tmp/c8-unit.log; then exit 1; fi
+
+      - name: C8 bestiary UI, four real solves and atomic contract reward
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 150s godot --headless --path . --script res://tests/integration/test_c8_game.gd 2>&1 | tee /tmp/c8-game.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 STAGE FAIL:' /tmp/c8-game.log; then exit 1; fi
+
+      - name: C8 clean main menu and icon-based skill UI
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 120s godot --headless --path . --script res://tests/integration/test_c8_ui.gd 2>&1 | tee /tmp/c8-ui.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 UI FAIL:' /tmp/c8-ui.log; then exit 1; fi
+
+      - name: C8.2 transactional coins and run-only upgrades
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_c8_workshop.gd 2>&1 | tee /tmp/c82-workshop.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 WORKSHOP FAIL:' /tmp/c82-workshop.log; then exit 1; fi
+
+      - name: C8.2 new mode cards, gallery and working between-wave shop
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 120s godot --headless --path . --script res://tests/integration/test_c8_ux.gd 2>&1 | tee /tmp/c82-ux.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C8 UX FAIL:' /tmp/c82-ux.log; then exit 1; fi
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |
@@ -143,9 +185,9 @@ jobs:
           grep -Fq 'platform="Windows Desktop"' export_presets.cfg
           test -f .github/workflows/windows-export.yml
 
-      - name: Boot C7 hub scene
+      - name: Boot C8 hub scene
         shell: bash
         run: |
           set -eo pipefail
           godot --headless --path . --quit-after 40 2>&1 | tee /tmp/c0-boot.log
-          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:|C2.*FAIL:|C3.*FAIL:|C4.*FAIL:|C5.*FAIL:|C6.*FAIL:' /tmp/c0-boot.log; then exit 1; fi
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|GDScript backtrace|ERROR:|C0 FALHOU:|C1.*FAIL:|C2.*FAIL:|C3.*FAIL:|C4.*FAIL:|C5.*FAIL:|C6.*FAIL:|C7.*FAIL:|C8.*FAIL:' /tmp/c0-boot.log; then exit 1; fi

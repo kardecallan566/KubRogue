@@ -146,3 +146,7 @@ O C6 foi testado e aprovado no Windows, com merge do PR #7 na main. A branch `de
 ## 18. Expansão C7 — 4×4 e 5×5 como alvos avançados
 
 No mesmo PR do C7, adicionar estado genérico NxN para dimensões 4 e 5, com giros internos, modelo de cubies compactos e adesivos, histórico reversível e animação física por pivot. Um Mestre 4×4 na quarta onda e um Titã 5×5 na quinta substituem alvos sem multiplicar spawns nem afetar a elite 3×3. Pagamentos individuais só após solução. CI valida reversão de camadas internas, integridade geométrica e saldo persistente, além da exportação Windows.
+
+## 19. C8 — Bestiário e objetivos que reforçam o loop
+
+Após merge do C7 na main, o C8 coleciona os sete tipos de cubos efetivamente resolvidos, salva contagens num arquivo independente e cria três contratos **por run**. A recompensa do contrato faz parte do crédito idempotente da solução que o completou; não existe botão de reclamar moedas nem endpoint adicional. Interface compacta na hub e HUD, sem alterar o campo gramado, o modelo NxNxN e as cinco ondas. [Checklist detalhado](checkpoints/C8-bestiary-contracts.md). CI deve reproduzir partidas reais, idempotência, abertura limpa e exportação Windows, seguido de aprovação visual do usuário.

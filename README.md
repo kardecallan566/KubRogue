@@ -245,3 +245,30 @@ Para aprovação, testar a aparência dos Dourados e Blindados, a solução real
 ### Expansão C7 — Cubos 4×4×4 e 5×5×5 reais
 
 Na mesma branch do C7, os cubos **Mestre 4×4** (onda 4, +68 moedas/+5 XP) e **Titã 5×5** (onda 5, +110 moedas/+8 XP) passam a ser adversários reais. Ambos usam peças de superfície e adesivos completos, suportam rotação de camadas internas, histórico de movimentos e resolução animada pelo inverso do embaralhamento. Substituem slots existentes, sem retirar a elite 3×3 nem modificar saves. Os testes do Godot conferem 56/98 cubies, 96/150 adesivos, invariantes matemáticos, giros e pagamento único. Consulte [o checklist atualizado](docs/checkpoints/C7-special-cubes.md).
+
+## C8 — Bestiário e contratos do Jardim (em testes)
+
+Após aprovação do C7 e merge do PR #8, a branch **`dev/checkpoint-08-bestiary-contracts`** adiciona coleção persistente das **7 espécies reais de cubos** e três contratos com bônus de moedas por partida. A hub oferece o botão `BESTIÁRIO DO JARDIM`; espécies inicialmente bloqueadas são reveladas ao resolver cubos e persistem entre sessões.
+
+**Contratos:** 4 cubos (+20), 2 especiais (+35), um 4×4/5×5 (+60). As moedas extras são incluídas na transação original de cada cubo, preservando o C4. Nenhum save anterior é migrado; Bestiário usa `user://kubrogue_journal_v1.json`, independente de moedas, desafios diários e upgrades. O modo normal e o diário continuam funcionais, com cinco ondas.
+
+```powershell
+git fetch origin
+git switch dev/checkpoint-08-bestiary-contracts
+git pull origin dev/checkpoint-08-bestiary-contracts
+godot .
+```
+
+[Critérios e roteiro C8](docs/checkpoints/C8-bestiary-contracts.md). C8 aguarda CI, build Windows e **sua validação** antes de entrar na main.
+
+### C8.1 — Identidade arcade focada, menu compacto e ícones de habilidades
+
+A revisão visual reduz a hub a **Jogar, Bestiário, Configurações e Sair**. Dentro de Jogar, escolha **Normal** ou **Desafio do Dia**. O tutorial permanece acessível em Configurações e na primeira partida.
+
+A antiga loja permanente sai do fluxo do C8; moedas adquiridas e melhorias antigas permanecem preservadas no save, mas **as novas escolhas de melhoria acontecem exclusivamente dentro da partida** ao ganhar XP. As oito habilidades receberam ícones vetoriais próprios, integrados em cartas de seleção e na HUD. Habilidades adquiridas aparecem como botões de ícone com nível e **i**; ao passar o mouse há tooltip, ao clicar a breve descrição surge sem ocupar a tela constantemente. C0–C7 não foram alterados.
+
+### C8.2 — Oficina entre ondas e galeria de cubos
+
+**JOGAR** apresenta dois cards largos e compactos para Modo Normal e Desafio do Dia. O **BESTIÁRIO** usa uma galeria 2-colunas com prévias isométricas desenhadas dentro do Godot e campos sem cortes.
+
+Após concluir uma onda (enquanto a partida estiver viva), o resumo exibe **OFICINA DO CUBISTA**. Os quatro upgrades usam moedas adquiridas **na run atual** e o saldo salvo da carteira. As compras são gravadas antes de ativar o upgrade e duram até o fim daquela partida: +10 segundos nas próximas ondas, +12 de estabilidade imediata, +10% de moedas por cubo ou giros 6% mais rápidos. Volte ao resumo para escolher a próxima onda. A loja não existe no menu inicial, e as habilidades por XP continuam separadas.
