@@ -306,3 +306,16 @@ Os testes C0–C10 e a build Windows são gates obrigatórios. Veja [o roteiro d
 A branch `dev/checkpoint-11-regression-audit` mantém o gameplay aprovado do C10 e endurece a **integridade do salvamento**: não substitui backups íntegros por arquivos corrompidos, não sobrescreve versões de save desconhecidas e verifica datas reais no Desafio Diário (incluindo bissextos). Quatro novos testes automatizados verificam esses casos na carteira, Bestiário e recordes diários. O C0–C10 continua sob regressão total. **Nenhuma migração/apagamento de save existente é executada.**
 
 Confira o [relatório completo e as lacunas de teste manual](docs/checkpoints/C11-regression-audit.md) e valide no Windows antes de aprovar o PR.
+
+## C12 — Resultados com medalhas e histórico local (em teste)
+
+Ao terminar uma run, um banner mostra a medalha (Ouro, Prata ou Bronze em vitórias; sem medalha na derrota) e os resultados reais do jogador: moedas ganhas, cubos, melhor combo, contratos, Fever e habilidades. **Medalhas não concedem moedas.**
+
+Dentro do **Bestiário**, entre em **HISTÓRICO DE PARTIDAS** para rever até as 12 partidas concluídas mais recentes, com galeria de dois cards, seeds diárias e indicadores de desempenho. O menu principal continua com quatro botões. O histórico usa um arquivo próprio protegido por SaveStore e não altera moedas, saves C4/C6/C8 nem as regras dos cubos. Veja [checklist C12](docs/checkpoints/C12-results-medals.md).
+
+```powershell
+git fetch origin
+git switch dev/checkpoint-12-results-medals
+git pull origin dev/checkpoint-12-results-medals
+godot .
+```
