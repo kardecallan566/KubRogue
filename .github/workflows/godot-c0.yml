@@ -1,4 +1,4 @@
-name: KubRogue C0-C14 - Godot 4.7.2 validation
+name: KubRogue C0-C15 - Godot 4.7.2 validation
 
 on:
   push:
@@ -104,6 +104,13 @@ jobs:
           set -eo pipefail
           timeout 90s godot --headless --path . --script res://tests/integration/test_c14_cold_start.gd 2>&1 | tee /tmp/c14-cold.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C14 COLD FAIL:' /tmp/c14-cold.log; then exit 1; fi
+
+      - name: C15 cold start weekly cards and autoload
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/integration/test_c15_cold_start.gd 2>&1 | tee /tmp/c15-cold.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C15 COLD FAIL:' /tmp/c15-cold.log; then exit 1; fi
 
       - name: Import project and compile scripts
         shell: bash
@@ -310,6 +317,20 @@ jobs:
           timeout 150s godot --headless --path . --script res://tests/integration/test_c14_game.gd 2>&1 | tee /tmp/c14-game.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C14 UI FAIL:' /tmp/c14-game.log; then exit 1; fi
 
+      - name: C15 weekly calendar, records, history and save protection
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_c15_weekly.gd 2>&1 | tee /tmp/c15-weekly.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C15 WEEK FAIL:' /tmp/c15-weekly.log; then exit 1; fi
+
+      - name: C15 week selection, live victory and career history
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 150s godot --headless --path . --script res://tests/integration/test_c15_game.gd 2>&1 | tee /tmp/c15-game.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C15 GAME FAIL:' /tmp/c15-game.log; then exit 1; fi
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |
@@ -318,7 +339,7 @@ jobs:
           grep -Fq 'platform="Windows Desktop"' export_presets.cfg
           test -f .github/workflows/windows-export.yml
 
-      - name: Boot C14 main hub scene
+      - name: Boot C15 main hub scene
         shell: bash
         run: |
           set -eo pipefail
