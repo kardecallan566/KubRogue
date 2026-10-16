@@ -18,11 +18,13 @@ func _ready() -> void:
     content.add_child(medal_notice)
     # A journal_changed emission means its atomic local write succeeded.
     journal.journal_changed.connect(_check_new_medals)
+    # Combo achievements only notify after update_record commits the C4 record.
+    progress.progress_changed.connect(_check_new_medals)
 
 func restart_run() -> void:
     super.restart_run()
     if garden_medals != null and journal != null and progress != null:
-        garden_medals.snapshot(journal,progress,best_combo_in_run)
+        garden_medals.snapshot(journal,progress)
     if medal_notice != null:
         medal_notice.visible = false
     medal_notice_time = 0.0
@@ -31,7 +33,7 @@ func _check_new_medals() -> void:
     if garden_medals == null or journal == null or progress == null:
         return
     var gained: Array[Dictionary] = garden_medals.newly_unlocked(
-        journal,progress,best_combo_in_run)
+        journal,progress)
     if gained.is_empty() or medal_notice == null:
         return
     var first: Dictionary = gained[0]
