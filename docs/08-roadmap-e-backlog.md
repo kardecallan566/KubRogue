@@ -158,3 +158,7 @@ Após a aprovação do C8.2 (PR #9 integrado à main), experimentar o C9 com um 
 ## 21. C10 — Combo Fever e feedback de progressão
 
 Após aprovação do C9 (PR #10 integrado na main), C10 combina um motor de combo/fever testável e HUD dedicada, com a meta de tornar as resoluções mais satisfatórias sem poluir menus. A cada quatro soluções em sequência (máximo 12s entre acertos) ativa FEVER: bônus de +20% em moedas do cubo dentro do multiplicador existente, duração 9s e +1s por cubo durante a janela (máximo 6s por onda). O relógio funciona somente em combate ativo; pausa e modais não o consomem. Devolve efeitos de ouro e som original da camada C5. Economias C4/C8, Rotas C9 e saves ficam intactos. CI C0–C10, exportação Windows e teste visual obrigatórios. [Checklist](checkpoints/C10-combo-fever.md).
+
+## 22. C12 — Resultados, medalhas e Salão de Medalhas
+
+A auditoria C11 aprovada foi integrada ao C10 estável. A próxima etapa não adiciona jogabilidade de combate: transforma o encerramento de uma partida em um painel visual com medalha determinística e estatísticas (ganhos, contratos, Fever, XP e combo), e acrescenta o Histórico local das últimas 12 runs concluídas dentro do Bestiário. Moedas e upgrades antigos não são modificados; o novo save separado usa run ID persistido e rejeita duplicidade/versões incompatíveis. [Critérios completos](checkpoints/C12-results-medals.md). Requer regressão C0–C10, auditoria, build Windows e validação visual.

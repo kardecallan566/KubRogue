@@ -1,4 +1,4 @@
-name: KubRogue C0-C10 + Audit - Godot 4.7.2 validation
+name: KubRogue C0-C12 - Godot 4.7.2 validation
 
 on:
   push:
@@ -83,6 +83,13 @@ jobs:
           set -eo pipefail
           timeout 90s godot --headless --path . --script res://tests/integration/test_c10_cold_start.gd 2>&1 | tee /tmp/c10-cold.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C10 COLD FAIL:' /tmp/c10-cold.log; then exit 1; fi
+
+      - name: C12 history and result scenes load without imported assets
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/integration/test_c12_cold_start.gd 2>&1 | tee /tmp/c12-cold.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C12 COLD FAIL:' /tmp/c12-cold.log; then exit 1; fi
 
       - name: Import project and compile scripts
         shell: bash
@@ -247,6 +254,20 @@ jobs:
           timeout 90s godot --headless --path . --script res://tests/unit/test_audit_isolated_saves.gd 2>&1 | tee /tmp/audit-isolated.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|AUDIT ISOLATED SAVE FAIL:' /tmp/audit-isolated.log; then exit 1; fi
 
+      - name: C12 local history, medals, idempotence and corruption safety
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 90s godot --headless --path . --script res://tests/unit/test_c12_history.gd 2>&1 | tee /tmp/c12-history.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C12 HISTORY FAIL:' /tmp/c12-history.log; then exit 1; fi
+
+      - name: C12 victory summary, Hall of Fame and full C10 retention
+        shell: bash
+        run: |
+          set -eo pipefail
+          timeout 120s godot --headless --path . --script res://tests/integration/test_c12_game.gd 2>&1 | tee /tmp/c12-game.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|ERROR:|C12 STAGE FAIL:' /tmp/c12-game.log; then exit 1; fi
+
       - name: Windows Desktop export preset validation
         shell: bash
         run: |
@@ -255,7 +276,7 @@ jobs:
           grep -Fq 'platform="Windows Desktop"' export_presets.cfg
           test -f .github/workflows/windows-export.yml
 
-      - name: Boot stable C10 hub scene (audit)
+      - name: Boot C12 main hub scene
         shell: bash
         run: |
           set -eo pipefail
