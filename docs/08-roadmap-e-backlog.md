@@ -162,3 +162,7 @@ Após aprovação do C9 (PR #10 integrado na main), C10 combina um motor de comb
 ## 22. C12 — Resultados, medalhas e Salão de Medalhas
 
 A auditoria C11 aprovada foi integrada ao C10 estável. A próxima etapa não adiciona jogabilidade de combate: transforma o encerramento de uma partida em um painel visual com medalha determinística e estatísticas (ganhos, contratos, Fever, XP e combo), e acrescenta o Histórico local das últimas 12 runs concluídas dentro do Bestiário. Moedas e upgrades antigos não são modificados; o novo save separado usa run ID persistido e rejeita duplicidade/versões incompatíveis. [Critérios completos](checkpoints/C12-results-medals.md). Requer regressão C0–C10, auditoria, build Windows e validação visual.
+
+## 23. C13 — Estatísticas recentes e filtros de modos
+
+Com o PR #13 (C12) ainda em avaliação visual, preparar o C13 numa branch **derivada do C12**, sem tocar na `main`. O novo Painel de Carreira dentro de Bestiário → Histórico apresenta vitórias, taxa de vitórias, maior sequência, medalhas e somatórios apenas das últimas 12 partidas; filtros Todas/Normal/Diário também filtram os cards. Agregação read-only, sem novas moedas, alterações de save ou outro botão principal. [Critérios](checkpoints/C13-career-stats.md). Merge apenas após C12 aprovado e testes C0–C13 e Windows verdes.

@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado do desenvolvimento:** C0–C4 integrados à `main`. O **C5** está na branch `dev/checkpoint-05-polish-windows`: efeitos sonoros e música originais gerados no Godot, interface revisada, efeitos configuráveis, otimização do cenário e preset de exportação para Windows. **Ainda requer validação visual e build Windows real antes de considerar o MVP distribuível.**
+> **Estado do desenvolvimento:** C0–C11 integrados à `main`. C12 (medalhas/histórico) está no PR #13, aguardando avaliação visual; C13 (estatísticas recentes com filtros por modo) foi criado em branch dependente do C12, sem merge. CI e build Windows devem ser verificados antes da aprovação.
 
 ## Conceito em uma frase
 

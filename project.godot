@@ -1,10 +1,10 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C12 Medalhas e Histórico"
-run/main_scene="res://scenes/c12/hub_stage.tscn"
+config/name="KubRogue — C13 Estatísticas de Carreira"
+run/main_scene="res://scenes/c13/hub_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C12: local result medals and bounded run history, preserving all C0-C10 gameplay and durable savings protections."
+config/description="C13: read-only recent-career analytics and mode filters on C12 history; no gameplay or economy changes."
 
 [autoload]
 KubeSession="*res://scripts/c4/progress_service.gd"
