@@ -1,10 +1,10 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C13 Estatísticas de Carreira"
-run/main_scene="res://scenes/c13/hub_stage.tscn"
+config/name="KubRogue — C14 Conquistas do Jardim"
+run/main_scene="res://scenes/c14/hub_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C13: read-only recent-career analytics and mode filters on C12 history; no gameplay or economy changes."
+config/description="C14: permanent Garden achievements and mastery, preserving C12 result medals and C13 career filters."
 
 [autoload]
 KubeSession="*res://scripts/c4/progress_service.gd"

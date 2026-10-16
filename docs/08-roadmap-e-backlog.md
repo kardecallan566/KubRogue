@@ -166,3 +166,7 @@ A auditoria C11 aprovada foi integrada ao C10 estável. A próxima etapa não ad
 ## 23. C13 — Estatísticas recentes e filtros de modos
 
 Com o PR #13 (C12) ainda em avaliação visual, preparar o C13 numa branch **derivada do C12**, sem tocar na `main`. O novo Painel de Carreira dentro de Bestiário → Histórico apresenta vitórias, taxa de vitórias, maior sequência, medalhas e somatórios apenas das últimas 12 partidas; filtros Todas/Normal/Diário também filtram os cards. Agregação read-only, sem novas moedas, alterações de save ou outro botão principal. [Critérios](checkpoints/C13-career-stats.md). Merge apenas após C12 aprovado e testes C0–C13 e Windows verdes.
+
+## 24. C14 — Conquistas permanentes e Maestrias do Jardim
+
+Após a integração dos PRs #13 e #15, reaproveitar a proposta paralela do PR #14 como uma evolução **não destrutiva** sobre C13. São 12 medalhas permanentes retroativas, maestria de 5/20/50 por espécie, abas no Bestiário e notificação após gravação de um novo feito. O histórico local C12, filtros C13 e os quatro botões principais permanecem. Não adicionar moedas nem novo save. [Plano](checkpoints/C14-garden-achievements.md). Regra de merge: CI completo, Windows e validação visual.
