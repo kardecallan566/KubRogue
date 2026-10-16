@@ -72,6 +72,9 @@ func _run() -> void:
     game._check_new_medals()
     check(game.medal_notice.text.contains("PRIMEIRO GIRO"),
         "same medal never generates a second announcement")
+    check(session.update_record(1,1,4), "C4 combo record committed")
+    check(game.medal_notice.text.contains("RITMO DE FEVER"),
+        "combo medal announces only after persisted best-combo record")
     game.restart_run()
     check(not game.medal_notice.visible,
         "restart clears notice and snapshots previously earned unlock")
