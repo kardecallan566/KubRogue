@@ -1,4 +1,4 @@
-name: C14 - Windows test build
+name: C15 - Windows test build
 
 on:
   push:
@@ -13,6 +13,7 @@ on:
       - dev/checkpoint-12-results-medals
       - dev/checkpoint-13-career-stats
       - dev/checkpoint-14-garden-achievements
+      - dev/checkpoint-15-weekly-challenge
   workflow_dispatch:
 
 permissions:
@@ -58,7 +59,7 @@ jobs:
         run: cd builds/windows && zip -9 KubRogue-Windows-x86_64.zip KubRogue.exe KubRogue.pck
       - uses: actions/upload-artifact@v4
         with:
-          name: KubRogue-C14-Windows-x86_64
+          name: KubRogue-C15-Windows-x86_64
           path: builds/windows/KubRogue-Windows-x86_64.zip
           if-no-files-found: error
           retention-days: 14

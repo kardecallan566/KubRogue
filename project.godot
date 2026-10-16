@@ -1,17 +1,17 @@
 config_version=5
 
 [application]
-config/name="KubRogue — C14 Conquistas do Jardim"
-run/main_scene="res://scenes/c14/hub_stage.tscn"
+config/name="KubRogue — C15 Desafio Semanal"
+run/main_scene="res://scenes/c15/hub_stage.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/description="C14: permanent Garden achievements and mastery, preserving C12 result medals and C13 career filters."
+config/description="C15: offline weekly fixed seed with isolated records, preserving C12-C14 medal and history features."
 
 [autoload]
 KubeSession="*res://scripts/c4/progress_service.gd"
 KubeAudio="*res://scripts/c5/audio_director.gd"
-KubeChallenge="*res://scripts/c6/challenge_service.gd"
+KubeChallenge="*res://scripts/c15/challenge_service.gd"
 KubeJournal="*res://scripts/c8/journal_service.gd"
-KubeHistory="*res://scripts/c12/history_service.gd"
+KubeHistory="*res://scripts/c15/history_service.gd"
 
 [display]
 window/size/viewport_width=1280

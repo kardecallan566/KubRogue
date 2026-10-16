@@ -170,3 +170,7 @@ Com o PR #13 (C12) ainda em avaliação visual, preparar o C13 numa branch **der
 ## 24. C14 — Conquistas permanentes e Maestrias do Jardim
 
 Após a integração dos PRs #13 e #15, reaproveitar a proposta paralela do PR #14 como uma evolução **não destrutiva** sobre C13. São 12 medalhas permanentes retroativas, maestria de 5/20/50 por espécie, abas no Bestiário e notificação após gravação de um novo feito. O histórico local C12, filtros C13 e os quatro botões principais permanecem. Não adicionar moedas nem novo save. [Plano](checkpoints/C14-garden-achievements.md). Regra de merge: CI completo, Windows e validação visual.
+
+## 25. C15 — Desafio Semanal com seed fixa
+
+Expansão da hipótese pós-MVP de desafios semanais. **Branch dependente do C14**: terceiro modo no modal da hub (sem quinto botão), semana UTC de segunda a domingo, seed multiplataforma fixa e resultados locais guardados separadamente dos recordes diários C6. Histórico C12, filtros de C13 e maestrias C14 preservados. Não há pagamentos extras, serviços online ou mudanças na lógica de cubos 2×2–5×5. [Critérios](checkpoints/C15-weekly-challenge.md). Gate: testes C0–C15, Windows e avaliação visual.
