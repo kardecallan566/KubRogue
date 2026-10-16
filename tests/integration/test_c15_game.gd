@@ -72,7 +72,7 @@ func _run() -> void:
     game.director.wallet.coins = 130
     game.director.wallet.solved = 14
     game.best_combo_in_run = 5
-    var coins_before := session.balance()
+    var coins_before: int = int(session.balance())
     game._finish_wave()
     check(game.director.phase==Rules.Phase.VICTORY,
         "real wave director reaches victory")
