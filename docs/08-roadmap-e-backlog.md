@@ -174,3 +174,7 @@ Após a integração dos PRs #13 e #15, reaproveitar a proposta paralela do PR #
 ## 25. C15 — Desafio Semanal com seed fixa
 
 Expansão da hipótese pós-MVP de desafios semanais. **Branch dependente do C14**: terceiro modo no modal da hub (sem quinto botão), semana UTC de segunda a domingo, seed multiplataforma fixa e resultados locais guardados separadamente dos recordes diários C6. Histórico C12, filtros de C13 e maestrias C14 preservados. Não há pagamentos extras, serviços online ou mudanças na lógica de cubos 2×2–5×5. [Critérios](checkpoints/C15-weekly-challenge.md). Gate: testes C0–C15, Windows e avaliação visual.
+
+## 26. C16 — Laboratório do Cubista
+
+Em branch empilhada sobre C15 (que depende de C14), adicionar um modo de **treino livre** dentro da seleção Jogar: selecionar 2×2, 3×3, 4×4 e 5×5; girar faces/camadas com as mesmas regras físicas; embaralhar por seed e opcionalmente solicitar/aplicar dicas do histórico inverso. Sem economia, timers, estatísticas nem alterações de saves, mantendo as quatro ações da hub e os três modos com pontuação. Acesso ao laboratório e cena isolados em `scripts/c16` e `scenes/c16`. Requer testes reais de giros, puzzles resolvidos, invariantes, ausência de efeitos colaterais, cold start e build Windows. [C16](checkpoints/C16-cube-laboratory.md).
