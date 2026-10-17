@@ -64,8 +64,10 @@ func _build_world() -> void:
     camera.name = "LaboratoryCamera"
     camera.current = true
     camera.fov = 40.0
-    camera.position = Vector3(3.1,2.65,4.8)
-    camera.look_at(Vector3(0,0.35,0),Vector3.UP)
+    # _ready creates the camera before its first in-tree update; this
+    # variant does not require the Node3D to have an active World3D.
+    camera.look_at_from_position(Vector3(3.1,2.65,4.8),
+        Vector3(0,0.35,0),Vector3.UP)
     add_child(camera)
     cube_root = Node3D.new()
     cube_root.name = "PracticeCubePivot"
