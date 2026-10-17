@@ -319,3 +319,16 @@ git switch dev/checkpoint-12-results-medals
 git pull origin dev/checkpoint-12-results-medals
 godot .
 ```
+
+## C16 — Laboratório do Cubista (branch de desenvolvimento)
+
+No modal **JOGAR**, há um atalho para **LABORATÓRIO — TREINO LIVRE 2×2 A 5×5**. Trata-se de um cenário 3D com giros manuais legais, seleção de faces/camadas, embaralhamento reproduzível por seed e dicas que executam a sequência inversa da posição embaralhada. Todos os cubos usam os mesmos scripts NxNxN reais da arena.
+
+Sem timer, moedas, XP, conquistas ou histórico: serve para entender os puzzles, não para receber recompensas. O modo Normal, Desafio Diário e Desafio Semanal continuam iguais. Não há novos botões na tela inicial. [Critérios C16](docs/checkpoints/C16-cube-laboratory.md).
+
+```powershell
+git fetch origin
+git switch dev/checkpoint-16-cube-laboratory
+git pull origin dev/checkpoint-16-cube-laboratory
+godot .
+```
