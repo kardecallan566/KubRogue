@@ -1,8 +1,15 @@
 # 08 — Roadmap de pré-produção até o primeiro MVP
 
-## 0. Estado do repositório
+## 0. Estado atual do repositório (27/10/2026)
 
-C0 e C1 estão integrados à **main** após CI e aprovação visual do usuário. A branch **dev/checkpoint-02-waves-economy** traz uma prévia de duas ondas com economia por partida, estabilidade e dois tipos 2×2; C3–C5 seguem futuros, ainda não há MVP completo.
+- **Main:** C0–C13 integrados; commit `01dce0dfac0cd8d9f2bf0fa85c13209f394aa733`.
+- **C14:** PR #16 em avaliação, testes Godot e build Windows aprovados.
+- **C15:** PR #17 em avaliação, depende do C14; testes Godot e build Windows aprovados.
+- **C16:** PR #18 em avaliação, depende do C15; testes Godot e build Windows aprovados.
+- A ordem de integração é C14 → C15 → C16; todos exigem avaliação visual/jogável. O PR #14 é uma alternativa antiga de C12 e não deve ser integrado.
+- O estado detalhado e o backlog pós-C16 ficam no [documento consolidado de estado geral e roadmap](14-estado-geral-e-roadmap.md).
+
+**Nota histórica:** as seções iniciais deste arquivo registram a concepção e os critérios originais do MVP. Quando uma frase antiga divergir do estado atual da main ou dos PRs, prevalece o documento consolidado de estado geral.
 
 ## 1. Fluxo de desenvolvimento sugerido
 
@@ -159,10 +166,34 @@ Após a aprovação do C8.2 (PR #9 integrado à main), experimentar o C9 com um 
 
 Após aprovação do C9 (PR #10 integrado na main), C10 combina um motor de combo/fever testável e HUD dedicada, com a meta de tornar as resoluções mais satisfatórias sem poluir menus. A cada quatro soluções em sequência (máximo 12s entre acertos) ativa FEVER: bônus de +20% em moedas do cubo dentro do multiplicador existente, duração 9s e +1s por cubo durante a janela (máximo 6s por onda). O relógio funciona somente em combate ativo; pausa e modais não o consomem. Devolve efeitos de ouro e som original da camada C5. Economias C4/C8, Rotas C9 e saves ficam intactos. CI C0–C10, exportação Windows e teste visual obrigatórios. [Checklist](checkpoints/C10-combo-fever.md).
 
-## 22. C12 — Resultados, medalhas e Salão de Medalhas
+## 22. C12 — Resultados, medalhas e Salão de Medalhas (integrado)
 
-A auditoria C11 aprovada foi integrada ao C10 estável. A próxima etapa não adiciona jogabilidade de combate: transforma o encerramento de uma partida em um painel visual com medalha determinística e estatísticas (ganhos, contratos, Fever, XP e combo), e acrescenta o Histórico local das últimas 12 runs concluídas dentro do Bestiário. Moedas e upgrades antigos não são modificados; o novo save separado usa run ID persistido e rejeita duplicidade/versões incompatíveis. [Critérios completos](checkpoints/C12-results-medals.md). Requer regressão C0–C10, auditoria, build Windows e validação visual.
+C12 foi integrado à main pelo [PR #13](https://github.com/kardecallan566/KubRogue/pull/13). O resumo final mostra medalha cosmética e estatísticas reais (ganhos, contratos, Fever, XP e combo), e o Bestiário dá acesso ao histórico local das últimas 12 runs concluídas. Moedas e upgrades antigos não são modificados; o save separado usa run ID persistido e rejeita duplicidade/versões incompatíveis. [Critérios](checkpoints/C12-results-medals.md).
 
-## 23. C13 — Estatísticas recentes e filtros de modos
+## 23. C13 — Estatísticas recentes e filtros de modos (integrado)
 
-Com o PR #13 (C12) ainda em avaliação visual, preparar o C13 numa branch **derivada do C12**, sem tocar na `main`. O novo Painel de Carreira dentro de Bestiário → Histórico apresenta vitórias, taxa de vitórias, maior sequência, medalhas e somatórios apenas das últimas 12 partidas; filtros Todas/Normal/Diário também filtram os cards. Agregação read-only, sem novas moedas, alterações de save ou outro botão principal. [Critérios](checkpoints/C13-career-stats.md). Merge apenas após C12 aprovado e testes C0–C13 e Windows verdes.
+C13 foi integrado à main pelo [PR #15](https://github.com/kardecallan566/KubRogue/pull/15). O Painel de Carreira dentro de Bestiário → Histórico apresenta vitórias, taxa de vitórias, maior sequência, medalhas e somatórios das últimas 12 partidas; filtros Todas/Normal/Diário alteram indicadores e cards. A agregação é read-only, sem moedas novas, alterações de save ou outro botão principal. O filtro Semanal pertence à extensão C15, ainda em avaliação. [Critérios](checkpoints/C13-career-stats.md).
+
+
+## 24. C14 — Conquistas permanentes e Maestrias do Jardim (em avaliação)
+
+PR #16, branch `dev/checkpoint-14-garden-achievements`, adiciona 12 conquistas retroativas, maestrias por espécie (5/20/50 soluções), abas Cubos/Medalhas/Contratos e avisos de novas conquistas após gravação durável. O histórico e o painel de carreira C12/C13 permanecem. CI Godot e build Windows aprovados; aguarda validação visual/jogável. [PR #16](https://github.com/kardecallan566/KubRogue/pull/16) · [Plano](https://github.com/kardecallan566/KubRogue/blob/dev/checkpoint-14-garden-achievements/docs/checkpoints/C14-garden-achievements.md).
+
+## 25. C15 — Desafio Semanal offline (em avaliação; depende do C14)
+
+PR #17, branch `dev/checkpoint-15-weekly-challenge`, adiciona uma seed estável de segunda a domingo em UTC, recordes locais independentes (até 52 semanas) e filtro Semanal no histórico. Não usa backend nem concede moedas adicionais. CI Godot C0–C15 e build Windows aprovados; aguarda validação visual/jogável. [PR #17](https://github.com/kardecallan566/KubRogue/pull/17) · [Plano](https://github.com/kardecallan566/KubRogue/blob/dev/checkpoint-15-weekly-challenge/docs/checkpoints/C15-weekly-challenge.md).
+
+## 26. C16 — Laboratório do Cubista (em avaliação; depende do C15)
+
+PR #18, branch `dev/checkpoint-16-cube-laboratory`, adiciona treino livre real de cubos 2×2, 3×3, 4×4 e 5×5, giros legais das seis faces e camadas internas, embaralhamento por seed, repetição da seed e dicas pelo histórico inverso. Não usa timer, moeda, XP, conquistas ou estatísticas. CI Godot C0–C16 e build Windows aprovados; aguarda validação visual/jogável. [PR #18](https://github.com/kardecallan566/KubRogue/pull/18) · [Plano](https://github.com/kardecallan566/KubRogue/blob/dev/checkpoint-16-cube-laboratory/docs/checkpoints/C16-cube-laboratory.md).
+
+## 27. Backlog pós-C16 — candidatos, não compromissos de entrega
+
+Priorizar qualidade e playtests antes de ampliar conteúdo. Candidatos já citados nos documentos de planejamento:
+
+- **Qualidade:** símbolos/formas além de cores para acessibilidade, revisão de layout em múltiplas resoluções, medição de FPS e otimização/pooling apenas se necessário, testes com pelo menos cinco jogadores e medição do ritmo real de uma run.
+- **Gameplay:** novas variantes (por exemplo, fantasmas ou faces travadas), arenas/biomas, chefes especiais, novas sinergias de habilidades, mais desafios/seeds e skins para cubos/mão.
+- **Distribuição:** localização em inglês; avaliar gamepad, mobile, Steamworks, conquistas de plataforma e Steam Cloud após estabilizar o PC.
+- **Online opcional:** leaderboard opt-in só se houver justificativa de produto, com privacidade e segurança planejadas. Login, telemetria, multiplayer e backend não são requisitos atuais.
+
+Ainda não existe C17 aprovado. Definir o próximo checkpoint depois de testar e integrar C14–C16 e registrar os resultados dos playtests. Consulte o [estado geral e roadmap](14-estado-geral-e-roadmap.md) para o plano consolidado.

@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado do desenvolvimento:** C0–C11 integrados à `main`. C12 (medalhas/histórico) está no PR #13, aguardando avaliação visual; C13 (estatísticas recentes com filtros por modo) foi criado em branch dependente do C12, sem merge. CI e build Windows devem ser verificados antes da aprovação.
+> **Estado do desenvolvimento (27/10/2026):** C0–C13 integrados à `main`. C14 (conquistas), C15 (desafio semanal) e C16 (laboratório livre) estão implementados em PRs empilhados #16–#18; CI Godot e builds Windows passaram, mas a avaliação visual/jogável e os merges ainda estão pendentes. Consulte o [estado geral e roadmap](docs/14-estado-geral-e-roadmap.md) antes de escolher a próxima entrega.
 
 ## Conceito em uma frase
 
@@ -36,6 +36,7 @@
 | [11 — Mapa aberto](docs/11-mapa-campo-aberto-e-camera.md) | Gramado, câmera, spawn, atmosfera, composição e testes |
 | [12 — Gamefeel](docs/12-gamefeel-eventos-visuais-e-detalhamento.md) | Toque, giros, mão, recompensas, UI e sons |
 | [13 — Auditoria](docs/13-auditoria-de-consistencia.md) | Problemas corrigidos, contratos e riscos remanescentes |
+| [14 — Estado geral e roadmap](docs/14-estado-geral-e-roadmap.md) | Estado real da main, PRs em avaliação, funcionalidades prontas e backlog futuro |
 
 ## Ordem sugerida
 
