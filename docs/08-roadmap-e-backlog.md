@@ -196,4 +196,16 @@ Priorizar qualidade e playtests antes de ampliar conteúdo. Candidatos já citad
 - **Distribuição:** localização em inglês; avaliar gamepad, mobile, Steamworks, conquistas de plataforma e Steam Cloud após estabilizar o PC.
 - **Online opcional:** leaderboard opt-in só se houver justificativa de produto, com privacidade e segurança planejadas. Login, telemetria, multiplayer e backend não são requisitos atuais.
 
-Ainda não existe C17 aprovado. Definir o próximo checkpoint depois de testar e integrar C14–C16 e registrar os resultados dos playtests. Consulte o [estado geral e roadmap](14-estado-geral-e-roadmap.md) para o plano consolidado.
+C17–C30 foram organizados em um roadmap técnico separado, com lógica, arquivos, contratos, testes e critérios de aceitação por etapa. **Todos permanecem planejados, não implementados.** C17 só começa depois da integração aprovada de C14–C16. Consulte o [roadmap técnico C17–C30](16-roadmap-tecnico-C17-C30.md) e o [guia de implementação futura](15-guia-de-implementacao-futura.md).
+
+
+## 28. Roadmap técnico C17–C30 (planejado)
+
+O backlog pós-C16 foi transformado em uma sequência de 14 checkpoints com especificações individuais. O plano prioriza acessibilidade e medição antes de expandir conteúdo; depois adiciona variantes, biomas, chefe e sinergias; em seguida cosméticos, localização, gamepad e integração Steam condicional; por fim performance, QA e preparação de lançamento.
+
+- **C17–C18:** acessibilidade e métricas locais opt-in.
+- **C19–C23:** Cubo Nebuloso, Cubo Selado, biomas, Guardião do Jardim e sinergias.
+- **C24–C27:** cosméticos, PT-BR/EN, gamepad e Steam condicional.
+- **C28–C30:** performance, Release Candidate e pacote 1.0.
+
+As especificações completas estão em [16 — Roadmap técnico C17–C30](16-roadmap-tecnico-C17-C30.md); os padrões obrigatórios de arquitetura, persistência, código e testes estão em [15 — Guia de implementação futura](15-guia-de-implementacao-futura.md). Não iniciar C17 antes de C14–C16 estarem integrados e aprovados.

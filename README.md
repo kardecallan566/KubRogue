@@ -2,7 +2,7 @@
 
 **KubRogue** é um jogo single-player de ação roguelite arcade, em um campo gramado aberto em visão superior 2.5D com cubos 3D manipuláveis. A mão do jogador é controlada pelo mouse e "resolve" cubos coloridos por rotações válidas de suas camadas. Cada cubo completado concede moedas e experiência, enquanto ondas mais exigentes introduzem cubos maiores, variantes, escolhas de melhorias e decisões de risco.
 
-> **Estado do desenvolvimento (27/10/2026):** C0–C13 integrados à `main`. C14 (conquistas), C15 (desafio semanal) e C16 (laboratório livre) estão implementados em PRs empilhados #16–#18; CI Godot e builds Windows passaram, mas a avaliação visual/jogável e os merges ainda estão pendentes. Consulte o [estado geral e roadmap](docs/14-estado-geral-e-roadmap.md) antes de escolher a próxima entrega.
+> **Estado do desenvolvimento (06/11/2026):** C0–C13 integrados à `main`. C14 (conquistas), C15 (desafio semanal) e C16 (laboratório livre) estão implementados em PRs empilhados #16–#18; CI Godot e builds Windows passaram, mas a avaliação visual/jogável e os merges ainda estão pendentes. Consulte o [estado geral e roadmap](docs/14-estado-geral-e-roadmap.md) antes de escolher a próxima entrega.
 
 ## Conceito em uma frase
 
@@ -37,6 +37,10 @@
 | [12 — Gamefeel](docs/12-gamefeel-eventos-visuais-e-detalhamento.md) | Toque, giros, mão, recompensas, UI e sons |
 | [13 — Auditoria](docs/13-auditoria-de-consistencia.md) | Problemas corrigidos, contratos e riscos remanescentes |
 | [14 — Estado geral e roadmap](docs/14-estado-geral-e-roadmap.md) | Estado real da main, PRs em avaliação, funcionalidades prontas e backlog futuro |
+| [15 — Guia de implementação futura](docs/15-guia-de-implementacao-futura.md) | Padrões de arquitetura, lógica, código, saves, testes e fluxo GitHub |
+| [16 — Roadmap técnico C17–C30](docs/16-roadmap-tecnico-C17-C30.md) | Planejamento e especificações técnicas individuais dos checkpoints C17–C30 |
+
+Os checkpoints C17–C30 estão planejados, mas ainda não implementados. Consulte o [roadmap técnico C17–C30](docs/16-roadmap-tecnico-C17-C30.md) e o [guia de implementação futura](docs/15-guia-de-implementacao-futura.md) antes de iniciar uma nova branch.
 
 ## Ordem sugerida
 

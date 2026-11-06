@@ -1,6 +1,6 @@
 # KubRogue — Estado geral do projeto e roadmap
 
-> **Revisão consolidada: 27/10/2026.** Este documento separa o que está integrado à branch principal, o que já foi implementado mas aguarda avaliação e o que continua sendo uma intenção de roadmap. Os estados foram conferidos no GitHub; aprovação automatizada não substitui teste visual/jogável.
+> **Revisão consolidada: 06/11/2026.** Este documento separa o que está integrado à branch principal, o que já foi implementado mas aguarda avaliação e o que continua sendo uma intenção de roadmap. Os estados foram conferidos no GitHub; aprovação automatizada não substitui teste visual/jogável.
 
 ## 1. Resumo executivo
 
@@ -12,7 +12,7 @@ KubRogue é um jogo single-player roguelite arcade para PC, desenvolvido em Godo
 - **C14 — Conquistas e Maestrias:** implementado no PR #16; CI Godot e exportação Windows aprovados; aguarda avaliação visual/jogável.
 - **C15 — Desafio Semanal:** implementado no PR #17, dependente do C14; CI e exportação Windows aprovados; aguarda avaliação visual/jogável.
 - **C16 — Laboratório do Cubista:** implementado no PR #18, dependente do C15; CI e exportação Windows aprovados; aguarda avaliação visual/jogável.
-- **Próxima prioridade:** validar e integrar em ordem C14 → C15 → C16. Ainda não há um checkpoint C17 formalmente definido.
+- **Próxima prioridade:** validar e integrar em ordem C14 → C15 → C16. C17–C30 agora possuem planejamento técnico e especificações individuais, mas nenhum deles foi implementado. C17 só poderá começar após a integração aprovada de C14–C16.
 
 Não declarar C14–C16 como parte da versão principal até que os testes manuais sejam aprovados e os PRs integrados.
 
@@ -178,3 +178,27 @@ Uma tarefa só deve ser marcada como pronta quando:
 - [Gamefeel e eventos visuais](12-gamefeel-eventos-visuais-e-detalhamento.md)
 - [Auditoria de consistência](13-auditoria-de-consistencia.md)
 - [PR #16 — C14](https://github.com/kardecallan566/KubRogue/pull/16) · [PR #17 — C15](https://github.com/kardecallan566/KubRogue/pull/17) · [PR #18 — C16](https://github.com/kardecallan566/KubRogue/pull/18)
+
+
+## 11. Planejamento técnico C17–C30
+
+A revisão de 06/11/2026 converteu os candidatos pós-C16 em 14 especificações por checkpoint. O objetivo é que futuras implementações já tenham uma definição de lógica, arquivos esperados, contratos, persistência, testes e critérios de aceite.
+
+- [15 — Guia de implementação futura](15-guia-de-implementacao-futura.md): arquitetura real observada na base C16, padrões de código, fluxo de eventos, segurança de saves, testes e processo de branch/PR.
+- [16 — Roadmap técnico C17–C30](16-roadmap-tecnico-C17-C30.md): visão geral, dependências e sequência.
+- [C17 — Acessibilidade e conforto](checkpoints/C17-acessibilidade-e-conforto.md)
+- [C18 — Métricas locais de playtest](checkpoints/C18-metricas-locais-de-playtest.md)
+- [C19 — Cubo Nebuloso](checkpoints/C19-cubo-nebuloso.md)
+- [C20 — Cubo Selado](checkpoints/C20-cubo-selado.md)
+- [C21 — Biomas do Jardim](checkpoints/C21-biomas-do-jardim.md)
+- [C22 — Guardião do Jardim](checkpoints/C22-guardiao-do-jardim.md)
+- [C23 — Sinergias de habilidades](checkpoints/C23-sinergias-de-habilidades.md)
+- [C24 — Cosméticos e personalização](checkpoints/C24-cosmeticos-e-personalizacao.md)
+- [C25 — Localização PT-BR/EN](checkpoints/C25-localizacao-pt-en.md)
+- [C26 — Controle por gamepad](checkpoints/C26-controle-gamepad.md)
+- [C27 — Integração Steam (condicional)](checkpoints/C27-integracao-steam-condicional.md)
+- [C28 — Performance e compatibilidade](checkpoints/C28-performance-e-compatibilidade.md)
+- [C29 — Release Candidate e QA](checkpoints/C29-release-candidate-qa.md)
+- [C30 — Preparação de lançamento](checkpoints/C30-preparacao-de-lancamento.md)
+
+**Importante:** C27 depende de uma decisão formal sobre Steam e revisão de SDK/licenças. Se essa decisão não for tomada, C27 fica bloqueado e não impede a evolução offline. Multiplayer, login, backend, leaderboard e mobile continuam fora do escopo atual.
